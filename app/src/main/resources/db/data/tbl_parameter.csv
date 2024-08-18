@@ -1,0 +1,5 @@
+id,created_by,created_date,modified_by,modified_date,version,title,code,value,parameter_group_id
+1,administrator,2022-03-29 22:07:51.381060,administrator,2022-03-29 22:07:51.381060,0,wallet address,WALLET_ADDRESS,xxx,1
+2,administrator,2022-03-29 22:07:51.381060,administrator,2022-03-29 22:07:51.381060,0,first withdrawal delay,FIRST_WITHDRAWAL_DELAY,90,2
+3,administrator,2022-03-29 22:07:51.381060,administrator,2022-03-29 22:07:51.381060,0,maximum time withdrawal for user wit no referral,NO_REFERRAL_MAX_WITHDRAWAL,2,2
+4,administrator,2022-03-29 22:07:51.381060,administrator,2022-03-29 22:07:51.381060,0,the delay between each withdrawal,EACH_WITHDRAWAL_DELAY,15,2

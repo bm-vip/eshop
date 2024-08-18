@@ -1,0 +1,33 @@
+version: '3.7'
+services:
+  client:
+    image: eshop-image
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    ports:
+      - "2024:2024"
+    environment:
+      DB_URL: jdbc:postgresql://dbpostgresql:5432/eshop
+      DB_USER: postgres
+      DB_PASS: password
+    depends_on:
+      - dbpostgresql
+      
+  dbpostgresql:
+    image: postgres
+    container_name: postgresql-container
+    restart: unless-stopped
+    volumes:
+      - ./db:/docker-entrypoint-initdb.d
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_USER: postgres
+      POSTGRES_DB: eshop
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready"]
+      interval: 10s
+      timeout: 5s
+      retries: 5

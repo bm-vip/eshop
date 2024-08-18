@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{fragments/master}">
+
+<th:block layout:fragment="header">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/lib/daterangepicker.css}"/>
+</th:block>
+<div layout:fragment="content">
+    <div class="row top_tiles">
+        <div class="animated flipInY col-lg-3 col-md-3 col-sm-6 col-xs-12">
+            <div class="tile-stats">
+                <div class="icon"><i class="fa fa-building"></i></div>
+                <div id="totalCompanies" class="count">0</div>
+                <p>&nbsp;</p>
+                <p>&nbsp;</p>
+                <h3 th:text="#{totalCompanies}">تعداد کل شرکت ها</h3>
+            </div>
+        </div>
+        <div class="animated flipInY col-lg-3 col-md-3 col-sm-6 col-xs-12">
+            <div class="tile-stats">
+                <div class="icon"><i class="fa fa-download"></i></div>
+                <div id="totalStations" class="count">0</div>
+                <p>&nbsp;</p>
+                <h3 th:text="#{totalStations}">تعداد کل ایستگاه ها</h3>
+            </div>
+        </div>
+        <div class="animated flipInY col-lg-3 col-md-3 col-sm-6 col-xs-12">
+            <div class="tile-stats">
+                <div class="icon"><i class="fa fa-sun-o"></i></div>
+                <div id="totalUsers" class="count">0</div>
+                <p>&nbsp;</p>
+                <h3 th:text="#{totalUsers}">تعداد کل کاربران</h3>
+            </div>
+        </div>
+        <div class="animated flipInY col-lg-3 col-md-3 col-sm-6 col-xs-12">
+            <div class="tile-stats">
+                <div class="icon"><i class="fa fa-road"></i></div>
+                <div id="totalRoles" class="count">0</div>
+                <p>&nbsp;</p>
+                <h3 th:text="#{totalRoles}">تعداد کل نقش ها</h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="x_panel">
+                <div class="x_title">
+                    <h2 th:text="#{sentDataChart}"> نمودار ارسال اطلاعات<small th:text="#{groupByDay}"> به تفکیک روز</small></h2>
+                    <ul class="nav navbar-right panel_toolbox">
+                        <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                        </li>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
+                               aria-expanded="false"><i class="fa fa-wrench"></i></a>
+                            <ul class="dropdown-menu" role="menu">
+                                <li><a href="#" th:text="#{settings1}">تنظیمات 1</a>
+                                </li>
+                                <li><a href="#" th:text="#{settings2}">تنظیمات 2</a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li><a class="close-link"><i class="fa fa-close"></i></a>
+                        </li>
+                    </ul>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="x_content">
+                    <canvas id="sentProgressBarChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<th:block layout:fragment="footer">
+    <script th:src="@{/js/lib/icheck.min.js}"></script>
+    <script th:src="@{/js/lib/moment.min.js}"></script>
+    <script th:src="@{/js/lib/daterangepicker.js}"></script>
+    <script th:src="@{/js/lib/chart.min.js}"></script>
+    <script th:src="@{/js/lib/jquery.sparkline.min.js}"></script>
+    <script th:src="@{/js/lib/gauge.min.js}"></script>
+    <script th:src="@{/js/lib/skycons.js}"></script>
+    <script th:src="@{/js/lib/jquery.flot.js}"></script>
+    <script th:src="@{/js/lib/jquery.flot.pie.js}"></script>
+    <script th:src="@{/js/lib/jquery.flot.time.js}"></script>
+    <script th:src="@{/js/lib/jquery.flot.stack.js}"></script>
+    <script th:src="@{/js/lib/jquery.flot.resize.js}"></script>
+    <script th:src="@{/js/lib/jquery.flot.orderBars.js}"></script>
+    <script th:src="@{/js/lib/jquery.flot.spline.min.js}"></script>
+    <script th:src="@{/js/lib/curvedLines.js}"></script>
+    <script th:src="@{/js/lib/date.min.js}"></script>
+    <script th:src="@{/js/lib/jquery.vmap.js}"></script>
+    <script th:src="@{/js/lib/jquery.vmap.world.js}"></script>
+    <script th:src="@{/js/lib/jquery.vmap.sampledata.js}"></script>
+    <script th:src="@{/js/script/dashboard.js}"></script>
+</th:block>
+</html>
