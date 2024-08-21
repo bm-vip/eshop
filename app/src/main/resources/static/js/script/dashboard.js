@@ -19,8 +19,8 @@
     //     }
     // })
 
-    $.getJSON("/api/v1/company/countAll", jsonToUrlSearchParams({}), function (data) {
-        $("#totalCompanies").text(data);
+    $.getJSON("/api/v1/user/countAll", jsonToUrlSearchParams({}), function (data) {
+        $("#totalUsers").text(data);
     });
 
     $.getJSON("/api/v1/station/countAll", jsonToUrlSearchParams({}), function (data) {

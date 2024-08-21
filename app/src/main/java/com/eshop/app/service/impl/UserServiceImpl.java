@@ -57,10 +57,15 @@ public class UserServiceImpl extends BaseServiceImpl<UserFilter,UserModel, UserE
             model.setPassword(bCryptPasswordEncoder.encode(model.getPassword()));
         model.setActive(true);
         RoleModel roleModel = roleService.findByRole(RoleType.USER);
-        model.setUid(getUid());
         model.setRoles(new HashSet<>(Arrays.asList(roleModel)));
-        return mapper.toModel(userRepository.save(mapper.toEntity(model)));
+        if(StringUtils.hasLength(model.getReferralCode())) {
+            userRepository.findByUid(model.getReferralCode()).ifPresent(p->model.setParent(mapper.toModel(p)));
+        }
+        var entity = mapper.toEntity(model);
+        entity.setUid(getUid());
+        return mapper.toModel(userRepository.save(entity));
     }
+
     private String getUid() {
         var uid = ReferralCodeGenerator.generateReferralCode();
         if(!userRepository.existsByUid(uid)) {

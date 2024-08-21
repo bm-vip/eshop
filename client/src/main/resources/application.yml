@@ -39,7 +39,15 @@ spring:
         hibernate:
           envers:
             store_data_at_delete: true
+  mail:
+    host: live.smtp.mailtrap.io
+    username: api
+    password: sdf
+    port: 587
+#    properties.mail.smtp.auth: true
+#    properties.mail.smtp.starttls.enabled: true
 
+site.url: arbitrage-broker.com
 springdoc:
   api-docs:
     path: /api-docs

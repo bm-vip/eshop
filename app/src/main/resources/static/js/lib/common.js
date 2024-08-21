@@ -374,7 +374,7 @@ function initAjaxTable(selector, columns, url, filterFunction) {
 }
 
 function initTable(selector, columns, data) {
-    let opts = tableOptions();
+    let opts = tableOptions;
     opts.columns = columns;
     opts.data = data;
     opts.searching = true;

@@ -326,6 +326,7 @@ var resources = {
     'passwordRecovery': 'Password Recovery',
     'forgotPassword': 'Forgot Password',
     'loginRegister': 'Login Register',
+    'hello': 'Hello {0}',
     'sendActivationCodeAgain': 'Send Activation Code Again',
     'sms': 'sms',
     'row': 'row',

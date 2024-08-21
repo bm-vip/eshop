@@ -3,6 +3,9 @@
       layout:decorate="~{fragments/master}">
 
 <th:block layout:fragment="header">
+    <link rel="stylesheet" type="text/css" th:href="'/css/lib/datatables.bootstrap-' + #{direction} + '.css'"/>
+    <link rel="stylesheet" type="text/css" th:href="'/css/lib/datatables.bootstrap.responsive-' + #{direction} + '.css'" />
+    <link rel="stylesheet" type="text/css" th:href="@{/css/lib/datatables.bootstrap.scroller.css}"/>
     <style>
         .panel_toolbox {
             min-width: 0;
@@ -92,6 +95,11 @@
 </th:block>
 
 <th:block layout:fragment="footer">
+    <script type="text/javascript" th:src="@{/js/lib/jquery.dataTables.1.10.16.js}"></script>
+    <script type="text/javascript" th:src="@{/js/lib/bootstrap-dataTables.js}"></script>
+    <script type="text/javascript" th:src="@{/js/lib/dataTables.responsive.min.js}"></script>
+    <script type="text/javascript" th:src="@{/js/lib/buttons.bootstrap.min.js}"></script>
+    <script type="text/javascript" th:src="@{/js/lib/responsive.bootstrap.js}"></script>
     <script type="text/javascript" th:src="@{/js/script/coin.js}"></script>
 </th:block>
 </html>

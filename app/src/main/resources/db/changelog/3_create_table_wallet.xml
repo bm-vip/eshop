@@ -18,7 +18,7 @@
             <column name="modified_by" type="VARCHAR(255)"/>
             <column name="modified_date" type="DATETIME"/>
             <column defaultValueNumeric="0" name="version" type="integer"/>
-            <column name="amount" type="NUMBER(12, 2)"/>
+            <column name="amount" type="NUMBER(19, 2)"/>
             <column name="currency" type="VARCHAR(50)"/>
             <column name="transaction_type" type="VARCHAR(50)"/>
             <column name="transaction_hash" type="VARCHAR(500)"/>

@@ -79,8 +79,8 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter,WalletModel,
         var result =  super.update(model);
         if(model.isActive()) {
             var balance = walletRepository.findBalanceGroupedByCurrency(model.getUser().getId());
+            var subscriptionModel = subscriptionService.findByUserAndActivePackage(model.getUser().getId());
             for (BalanceModel balanceModel : balance) {
-                var subscriptionModel = subscriptionService.findByUserAndActivePackage(model.getUser().getId());
                 var subscriptionPackage = subscriptionPackageService.findMatchedPackageByAmountAndCurrency(balanceModel.getTotalAmount(),balanceModel.getCurrency());
                 if(subscriptionPackage != null && !subscriptionModel.getSubscriptionPackage().getId().equals(subscriptionPackage.getId())) {
                     subscriptionService.create(new SubscriptionModel().setSubscriptionPackage(subscriptionPackage).setUser(model.getUser()).setStatus(EntityStatusType.Active));
@@ -94,8 +94,15 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter,WalletModel,
     @Transactional
     public void deleteById(Long id) {
         WalletEntity entity = repository.findById(id).orElseThrow(() -> new NotFoundException("id: " + id));
-        var currentSubscription = subscriptionService.findByUserAndActivePackage(entity.getUser().getId());
-        subscriptionService.logicalDeleteById(currentSubscription.getId());
+
+        var balance = walletRepository.findBalanceGroupedByCurrency(entity.getUser().getId());
+        var subscriptionModel = subscriptionService.findByUserAndActivePackage(entity.getUser().getId());
+        for (BalanceModel balanceModel : balance) {
+            if(subscriptionModel.getSubscriptionPackage().getCurrency().equals(balanceModel.getCurrency()) && subscriptionModel.getSubscriptionPackage().getPrice().compareTo(balanceModel.getTotalAmount()) > 0) {
+                subscriptionService.logicalDeleteById(subscriptionModel.getId());
+            }
+        }
+
         repository.delete(entity);
     }
 }

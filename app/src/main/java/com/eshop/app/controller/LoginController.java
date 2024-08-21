@@ -1,17 +1,17 @@
 package com.eshop.app.controller;
 
 
+import com.eshop.app.config.MessageConfig;
 import com.eshop.app.enums.RoleType;
 import com.eshop.app.model.UserModel;
+import com.eshop.app.util.SessionHolder;
+import com.eshop.app.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestWrapper;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
-import com.eshop.app.config.MessageConfig;
-import com.eshop.app.service.impl.UserServiceImpl;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -22,26 +22,27 @@ import javax.validation.Valid;
 public class LoginController {
 
     final MessageConfig messages;
+    final SessionHolder sessionHolder;
     final HttpServletRequest request;
-    final UserServiceImpl userService;
+    final UserService userService;
 
     @RequestMapping(value = "/{name}", method = RequestMethod.GET)
-    public ModelAndView loadPage(@PathVariable String name, HttpServletRequest request) {
+    public ModelAndView loadPage(@PathVariable String name) {
         if (name == null || name.isEmpty() || name.equals("favicon.ico"))
             return new ModelAndView("dashboard");
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        UserModel user = userService.findByUserName(auth.getName());
+        UserModel user = sessionHolder.getCurrentUser();
         ModelAndView modelAndView = new ModelAndView(name);
+        modelAndView.addObject("currentUser", sessionHolder.getCurrentUserAsJsonString());
         modelAndView.addObject("fullName", user.getFirstName() + " " + user.getLastName());
         modelAndView.addObject("pageTitle", messages.getMessage(name));
-        modelAndView.addObject("errorMsg", null);
         modelAndView.addObject("errorMsg", null);
         return modelAndView;
     }
 
     @GetMapping(value = {"", "/"})
     public String index() {
-        SecurityContextHolderAwareRequestWrapper requestWrapper = new SecurityContextHolderAwareRequestWrapper(request, "");
+        var requestWrapper = sessionHolder.getRequestWrapper();
         String targetUrl = "/access-denied";
         if (requestWrapper.isUserInRole(RoleType.ADMIN) || requestWrapper.isUserInRole(RoleType.SUPER_WISER))
             targetUrl = "redirect:/dashboard";
@@ -51,7 +52,7 @@ public class LoginController {
     }
 
     @RequestMapping(value = {"/login"}, method = RequestMethod.GET)
-    public ModelAndView login(HttpServletRequest request) {
+    public ModelAndView login() {
         ModelAndView modelAndView = new ModelAndView();
         String errorMsg = request.getParameter("errorMsg");
         if (errorMsg != null)

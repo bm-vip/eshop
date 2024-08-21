@@ -16,7 +16,9 @@
 
 }(jQuery));
 
-$.cookie.json = true;
+
+const currentUser = JSON.parse($("#currentUser").val());
+
 
 $(function () {
     $('.date input').keydown(function (event) {
@@ -35,7 +37,6 @@ if (!String.prototype.format) {
         });
     };
 }
-
 
 function loadPages(page) {
     window.location.href =  page;
@@ -374,7 +375,7 @@ function initAjaxTable(selector, columns, url, filterFunction) {
 }
 
 function initTable(selector, columns, data) {
-    let opts = tableOptions();
+    let opts = tableOptions;
     opts.columns = columns;
     opts.data = data;
     opts.searching = true;
@@ -417,7 +418,7 @@ function isArray(value) {
 }
 
 function showUserAccount() {
-    $('#userAccount span').text(resources.hello.format($.cookie("userLogin").name));
+    $('#userAccount span').text(resources.hello.format(currentUser.firstName + ' ' + currentUser.lastName));
     loadHtmlFileToElement("UserAccount", null, "#myModal .modal-body", function () {
         showModal(resources.userDetail, initModal);
     });

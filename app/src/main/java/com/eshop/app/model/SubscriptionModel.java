@@ -19,4 +19,5 @@ public class SubscriptionModel extends BaseModel<Long> {
     private Integer discountPercentage;
     private BigDecimal finalPrice;
     private EntityStatusType status = EntityStatusType.Pending;
+    private long totalArbitrage;
 }

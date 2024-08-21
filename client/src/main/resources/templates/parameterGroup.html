@@ -3,6 +3,9 @@
       layout:decorate="~{fragments/master}">
 
 <th:block layout:fragment="header">
+    <link rel="stylesheet" type="text/css" th:href="#{direction} +'/datatables.net-bs/css/dataTables.bootstrap.min.css'"/>
+    <link rel="stylesheet" type="text/css" th:href="#{direction} +'/datatables.net-responsive-bs/css/responsive.bootstrap.min.css'"/>
+    <link rel="stylesheet" type="text/css" th:href="#{direction} +'/datatables.net-scroller-bs/css/scroller.bootstrap.min.css'"/>
     <style>
         .panel_toolbox {
             min-width: 0;
@@ -92,6 +95,13 @@
 </th:block>
 
 <th:block layout:fragment="footer">
+    <script type="text/javascript" th:src="#{direction} +'/iCheck/icheck.min.js'"></script>
+    <script type="text/javascript" th:src="#{direction} +'/datatables.net/js/jquery.dataTables.min.js'"></script>
+    <script type="text/javascript" th:src="#{direction} +'/datatables.net-bs/js/dataTables.bootstrap.min.js'"></script>
+    <script type="text/javascript" th:src="#{direction} +'/datatables.net-keytable/js/dataTables.keyTable.min.js'"></script>
+    <script type="text/javascript" th:src="#{direction} +'/datatables.net-responsive/js/dataTables.responsive.min.js'"></script>
+    <script type="text/javascript" th:src="#{direction} +'/datatables.net-responsive-bs/js/responsive.bootstrap.js'"></script>
+    <script type="text/javascript" th:src="#{direction} +'/datatables.net-scroller/js/dataTables.scroller.min.js'"></script>
     <script type="text/javascript" th:src="@{/js/script/parameterGroup.js}"></script>
 </th:block>
 </html>

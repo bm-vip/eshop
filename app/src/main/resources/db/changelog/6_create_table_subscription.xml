@@ -26,10 +26,10 @@
             <column name="order_count" type="integer">
                 <constraints nullable="false"/>
             </column>
-            <column name="price" type="NUMBER(12, 2)">
+            <column name="price" type="NUMBER(19, 2)">
                 <constraints nullable="false"/>
             </column>
-            <column name="max_price" type="NUMBER(12, 2)">
+            <column name="max_price" type="NUMBER(19, 2)">
                 <constraints nullable="false"/>
             </column>
             <column name="currency" type="VARCHAR(50)">
@@ -75,10 +75,11 @@
             <column name="status" type="VARCHAR(50)" defaultValue="Pending">
                 <constraints nullable="false"/>
             </column>
-            <column name="final_price" type="NUMBER(12, 2)"></column>
+            <column name="final_price" type="NUMBER(19, 2)"></column>
             <column name="deleted" type="boolean" defaultValue="false">
                 <constraints nullable="false"/>
             </column>
+            <column name="total_arbitrage" type="NUMBER(19)" defaultValueNumeric="0"></column>
         </createTable>
     </changeSet>
     <changeSet id="6-4" author="administrator">

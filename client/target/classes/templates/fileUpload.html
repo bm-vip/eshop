@@ -3,6 +3,10 @@
       layout:decorate="~{fragments/master}">
 
 <th:block layout:fragment="header">
+    <link rel="stylesheet" type="text/css" th:href="#{direction} +'/datatables.net-bs/css/dataTables.bootstrap.min.css'"/>
+    <link rel="stylesheet" type="text/css" th:href="#{direction} +'/datatables.net-responsive-bs/css/responsive.bootstrap.min.css'"/>
+    <link rel="stylesheet" type="text/css" th:href="#{direction} +'/datatables.net-scroller-bs/css/scroller.bootstrap.min.css'"/>
+    <link rel="stylesheet" type="text/css" th:href="#{direction} +'/dropzone/dist/min/dropzone.min.css'"/>
     <style>
         .panel_toolbox {
             min-width: 0;
@@ -11,7 +15,6 @@
             width: 33px;
         }
     </style>
-    <link rel="stylesheet" type="text/css" th:href="@{/css/lib/dropzone.min.css}"/>
 </th:block>
 <th:block layout:fragment="content">
     <input type="hidden" value="/api/v1/files" id="requestMapping"/>
@@ -69,24 +72,30 @@
                     <div class="clearfix"></div>
                 </div>
                 <div class="x_content">
-                    <table class="table table-striped table-bordered table-hover table-condensed dt-responsive nowrap" width="100%">
-                        <thead>
-                        <tr>
-                            <th th:text="#{name}"></th>
-                            <th th:text="#{image}"></th>
-                            <th th:text="#{modifyDate}"></th>
-                            <th><i class="fa fa-wrench"></i></th>
-                        </tr>
-                        </thead>
-                        <tfoot>
-                        <tr>
-                            <th th:text="#{name}"></th>
-                            <th th:text="#{image}"></th>
-                            <th th:text="#{modifyDate}"></th>
-                            <th><i class="fa fa-wrench"></i></th>
-                        </tr>
-                        </tfoot>
-                    </table>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="card-box table-responsive">
+                                <table class="table table-striped table-bordered table-hover table-condensed dt-responsive nowrap" width="100%">
+                                    <thead>
+                                    <tr>
+                                        <th th:text="#{name}"></th>
+                                        <th th:text="#{image}"></th>
+                                        <th th:text="#{modifyDate}"></th>
+                                        <th><i class="fa fa-wrench"></i></th>
+                                    </tr>
+                                    </thead>
+                                    <tfoot>
+                                    <tr>
+                                        <th th:text="#{name}"></th>
+                                        <th th:text="#{image}"></th>
+                                        <th th:text="#{modifyDate}"></th>
+                                        <th><i class="fa fa-wrench"></i></th>
+                                    </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -94,7 +103,14 @@
 </th:block>
 
 <th:block layout:fragment="footer">
-    <script type="text/javascript" th:src="@{/js/lib/dropzone.min.js}"></script>
+    <script type="text/javascript" th:src="#{direction} +'/iCheck/icheck.min.js'"></script>
+    <script type="text/javascript" th:src="#{direction} +'/datatables.net/js/jquery.dataTables.min.js'"></script>
+    <script type="text/javascript" th:src="#{direction} +'/datatables.net-bs/js/dataTables.bootstrap.min.js'"></script>
+    <script type="text/javascript" th:src="#{direction} +'/datatables.net-keytable/js/dataTables.keyTable.min.js'"></script>
+    <script type="text/javascript" th:src="#{direction} +'/datatables.net-responsive/js/dataTables.responsive.min.js'"></script>
+    <script type="text/javascript" th:src="#{direction} +'/datatables.net-responsive-bs/js/responsive.bootstrap.js'"></script>
+    <script type="text/javascript" th:src="#{direction} +'/datatables.net-scroller/js/dataTables.scroller.min.js'"></script>
+    <script type="text/javascript" th:src="#{direction} +'/dropzone/dist/min/dropzone.min.js'"></script>
     <script type="text/javascript" th:src="@{/js/script/fileUpload.js}"></script>
 </th:block>
 </html>
