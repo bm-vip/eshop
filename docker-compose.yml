@@ -21,7 +21,7 @@ services:
       context: ./client/
       dockerfile: Dockerfile
     ports:
-      - "80:80"
+      - "443:443"
     environment:
       DB_URL: jdbc:postgresql://dbpostgresql:5432/eshop
       DB_USER: postgres
