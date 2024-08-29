@@ -1,13 +1,5 @@
 server:
   port: 2024
-  ssl:
-    key-store: classpath:keystore.p12
-    key-store-password: ArbitrageBroker2024
-    key-store-type: PKCS12
-    key-alias: arbitrage-broker
-  error:
-    include-message: always
-    include-binding-errors: always
 # Spring Boot configuration
 spring:
   application:
