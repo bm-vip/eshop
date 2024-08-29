@@ -1,5 +1,18 @@
 version: '3.7'
 services:
+  app:
+    image: eshop-image
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    ports:
+      - "2024:2024"
+    environment:
+      DB_URL: jdbc:postgresql://dbpostgresql:5432/eshop
+      DB_USER: postgres
+      DB_PASS: password
+    depends_on:
+      - dbpostgresql
   client:
     image: eshop-image
     build:
