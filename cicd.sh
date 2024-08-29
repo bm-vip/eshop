@@ -7,12 +7,18 @@ KEY="healthtech.pem"
 # Connect via SSH, run sudo su, and execute additional Docker commands
 sudo ssh -T "root@$HOST" <<EOF
   cd eshop/exception
+  git pull
   mvn clean package verify -DskipTests
+
   cd eshop/app
+  git pull
   mvn clean package verify -DskipTests
+
   cd eshop/client
+  git pull
   mvn clean package verify -DskipTests
-  # Additional Docker commands
+
+
   docker container rm -f app-container
   docker image rm app-image
   docker container rm -f client-container
