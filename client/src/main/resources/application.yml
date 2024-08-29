@@ -1,5 +1,5 @@
 server:
-  port: 2025
+  port: 80
   ssl:
     key-store: classpath:keystore.p12
     key-store-password: ArbitrageBroker2024
