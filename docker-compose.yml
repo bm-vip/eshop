@@ -1,7 +1,8 @@
 version: '3.7'
 services:
   app:
-    image: eshop-image
+    image: app-image
+    container_name: app-container
     build:
       context: ./app/
       dockerfile: Dockerfile
@@ -14,7 +15,8 @@ services:
     depends_on:
       - dbpostgresql
   client:
-    image: eshop-image
+    image: client-image
+    container_name: client-container
     build:
       context: ./client/
       dockerfile: Dockerfile
