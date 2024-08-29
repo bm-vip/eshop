@@ -15,13 +15,14 @@
     <property name="idType" value="bigserial" dbms="postgresql"/>
     <property name="idType" value="bigint" dbms="mysql, oracle, mssql, h2"/>
 
-    <include file="/db/changelog/1_create_table_user.xml" relativeToChangelogFile="false"/>
-    <include file="/db/changelog/2_insert_data_user.xml" relativeToChangelogFile="false"/>
-    <include file="/db/changelog/3_create_table_wallet.xml" relativeToChangelogFile="false"/>
-    <include file="/db/changelog/4_create_table_parameter.xml" relativeToChangelogFile="false"/>
-    <include file="/db/changelog/5_insert_data_parameter.xml" relativeToChangelogFile="false"/>
-    <include file="/db/changelog/6_create_table_subscription.xml" relativeToChangelogFile="false"/>
-    <include file="/db/changelog/7_insert_data_subscription.xml" relativeToChangelogFile="false"/>
-    <include file="/db/changelog/8_create_table_exchange.xml" relativeToChangelogFile="false"/>
-    <include file="/db/changelog/9_insert_data_exchange.xml" relativeToChangelogFile="false"/>
+    <include file="/db/changelog/01_create_table_user.xml" relativeToChangelogFile="false"/>
+    <include file="/db/changelog/02_insert_data_user.xml" relativeToChangelogFile="false"/>
+    <include file="/db/changelog/03_create_table_wallet.xml" relativeToChangelogFile="false"/>
+    <include file="/db/changelog/04_create_table_parameter.xml" relativeToChangelogFile="false"/>
+    <include file="/db/changelog/05_insert_data_parameter.xml" relativeToChangelogFile="false"/>
+    <include file="/db/changelog/06_create_table_subscription.xml" relativeToChangelogFile="false"/>
+    <include file="/db/changelog/07_insert_data_subscription.xml" relativeToChangelogFile="false"/>
+    <include file="/db/changelog/08_create_table_exchange.xml" relativeToChangelogFile="false"/>
+    <include file="/db/changelog/09_insert_data_exchange.xml" relativeToChangelogFile="false"/>
+    <include file="/db/changelog/10_create_table_arbitrage.xml" relativeToChangelogFile="false"/>
 </databaseChangeLog>

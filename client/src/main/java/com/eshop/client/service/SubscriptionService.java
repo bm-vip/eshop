@@ -5,5 +5,4 @@ import com.eshop.client.model.SubscriptionModel;
 
 public interface SubscriptionService extends BaseService<SubscriptionFilter, SubscriptionModel, Long>, LogicalDeletedService<Long>{
     SubscriptionModel findByUserAndActivePackage(long userId);
-    long totalArbitrageByUserId(long userId);
 }

@@ -34,7 +34,7 @@ public abstract class BaseServiceImpl<F, M extends BaseModel<ID>, E extends Base
     @Transactional(readOnly = true)
     public PageModel findAllTable(F filter, Pageable pageable) {
         Predicate predicate = queryBuilder(filter);
-        Page<E> page = repository.findAll(predicate, pageable);
+        var page = repository.findAll(predicate, pageable);
 
         return new PageModel(repository.count(), page.getTotalElements(), mapper.toModel(page.getContent()));
     }
@@ -61,7 +61,7 @@ public abstract class BaseServiceImpl<F, M extends BaseModel<ID>, E extends Base
     @Override
     @Transactional(readOnly = true)
     public M findById(ID id) {
-        E entity = repository.findById(id).orElseThrow(() -> new NotFoundException("id: " + id));
+        var entity = repository.findById(id).orElseThrow(() -> new NotFoundException("id: " + id));
         return mapper.toModel(entity);
     }
 
@@ -69,15 +69,16 @@ public abstract class BaseServiceImpl<F, M extends BaseModel<ID>, E extends Base
     public M create(M model) {
         return mapper.toModel(repository.save(mapper.toEntity(model)));
     }
+
     @Override
     public M update(M model) {
-        E entity = repository.findById(model.getId()).orElseThrow(() -> new NotFoundException(String.format("%s not found by id %d", model.getClass().getName(), model.getId().toString())));
+        var entity = repository.findById(model.getId()).orElseThrow(() -> new NotFoundException(String.format("%s not found by id %d", model.getClass().getName(), model.getId().toString())));
         return mapper.toModel(repository.save(mapper.updateEntity(model, entity)));
     }
 
     @Override
     public void deleteById(ID id) {
-        E entity = repository.findById(id).orElseThrow(() -> new NotFoundException("id: " + id));
+        var entity = repository.findById(id).orElseThrow(() -> new NotFoundException("id: " + id));
         repository.delete(entity);
     }
 }

@@ -4,6 +4,7 @@ import com.eshop.client.entity.QWalletEntity;
 import com.eshop.client.entity.WalletEntity;
 import com.eshop.client.enums.EntityStatusType;
 import com.eshop.client.enums.RoleType;
+import com.eshop.client.enums.TransactionType;
 import com.eshop.client.filter.WalletFilter;
 import com.eshop.client.mapping.WalletMapper;
 import com.eshop.client.model.BalanceModel;
@@ -13,13 +14,24 @@ import com.eshop.client.repository.WalletRepository;
 import com.eshop.client.service.SubscriptionPackageService;
 import com.eshop.client.service.SubscriptionService;
 import com.eshop.client.service.WalletService;
+import com.eshop.client.util.DateUtil;
 import com.eshop.exception.common.NotFoundException;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
+import com.querydsl.core.types.dsl.DateTemplate;
+import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import static com.eshop.client.util.DateUtil.toLocalDate;
 
 @Service
 public class WalletServiceImpl extends BaseServiceImpl<WalletFilter,WalletModel, WalletEntity, Long> implements WalletService {
@@ -27,12 +39,14 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter,WalletModel,
     private final WalletRepository walletRepository;
     private final SubscriptionPackageService subscriptionPackageService;
     private final SubscriptionService subscriptionService;
+    private final JPAQueryFactory queryFactory;
 
-    public WalletServiceImpl(WalletRepository repository, WalletMapper mapper, SubscriptionPackageService subscriptionPackageService, SubscriptionService subscriptionService) {
+    public WalletServiceImpl(WalletRepository repository, WalletMapper mapper, SubscriptionPackageService subscriptionPackageService, SubscriptionService subscriptionService, JPAQueryFactory queryFactory) {
         super(repository, mapper);
         this.walletRepository = repository;
         this.subscriptionPackageService = subscriptionPackageService;
         this.subscriptionService = subscriptionService;
+        this.queryFactory = queryFactory;
     }
 
     @Override
@@ -123,5 +137,22 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter,WalletModel,
     @Override
     public List<BalanceModel> findBonusGroupedByCurrency(long userId) {
         return walletRepository.findBonusGroupedByCurrency(userId);
+    }
+    @Override
+    public Map<Long, BigDecimal> findAllWithinDateRange(long startDate, long endDate, TransactionType transactionType) {
+        QWalletEntity path = QWalletEntity.walletEntity;
+        DateTemplate<Date> truncatedDate = Expressions.dateTemplate(Date.class, "date_trunc('day', {0})", path.createdDate);
+        var results = queryFactory.select(truncatedDate, path.amount.sum())
+                .from(path)
+                .where(path.createdDate.between(new Date(startDate),new Date(endDate)))
+                .where(path.transactionType.eq(transactionType))
+                .groupBy(truncatedDate)
+                .fetch();
+        Map<Long, BigDecimal> map = results.stream()
+                .collect(Collectors.toMap(tuple -> tuple.get(truncatedDate).getTime(),tuple -> tuple.get(path.amount.sum())));
+
+        var allDates = toLocalDate(startDate).datesUntil(toLocalDate(endDate).plusDays(1)).map(DateUtil::toEpoch);
+
+        return allDates.collect(Collectors.toMap(epoch -> epoch, epoch -> map.getOrDefault(epoch, BigDecimal.ZERO)));
     }
 }

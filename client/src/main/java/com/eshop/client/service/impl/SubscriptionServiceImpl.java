@@ -185,7 +185,4 @@ public class SubscriptionServiceImpl extends BaseServiceImpl<SubscriptionFilter,
             walletRepository.save(parentWallet);
         }
     }
-    public long totalArbitrageByUserId(long userId) {
-       return subscriptionRepository.sumTotalArbitrageByUserId(userId);
-    }
 }

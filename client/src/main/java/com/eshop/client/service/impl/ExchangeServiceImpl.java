@@ -31,7 +31,7 @@ public class ExchangeServiceImpl extends BaseServiceImpl<ExchangeFilter, Exchang
         QExchangeEntity p = QExchangeEntity.exchangeEntity;
         BooleanBuilder builder = new BooleanBuilder();
         filter.getId().ifPresent(v->builder.and(p.id.eq(v)));
-        filter.getName().ifPresent(v->builder.and(p.name.eq(v)));
+        filter.getName().ifPresent(v->builder.and(p.name.toLowerCase().contains(v.toLowerCase())));
         filter.getLogo().ifPresent(v->builder.and(p.logo.eq(v)));
 
         return builder;

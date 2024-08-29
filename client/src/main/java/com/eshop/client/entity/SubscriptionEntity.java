@@ -40,8 +40,6 @@ public class SubscriptionEntity extends BaseEntity<Long> implements LogicalDelet
     @Column(name = "status")
     @Enumerated(value = EnumType.STRING)
     private EntityStatusType status;
-    @Column(name = "total_arbitrage")
-    private long totalArbitrage;
 
     @Override
     public String getSelectTitle() {

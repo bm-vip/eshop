@@ -1,5 +1,6 @@
 package com.eshop.client.controller.impl;
 
+import com.eshop.client.enums.TransactionType;
 import com.eshop.client.filter.WalletFilter;
 import com.eshop.client.model.BalanceModel;
 import com.eshop.client.model.WalletModel;
@@ -15,7 +16,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @Tag(name = "Wallet Rest Service v1")
@@ -43,6 +46,10 @@ public class WalletRestController extends BaseRestControllerImpl<WalletFilter, W
     @GetMapping("/total-bonus/{userId}")
     public ResponseEntity<List<BalanceModel>> findBonusGroupedByCurrency(@PathVariable long userId){
         return ResponseEntity.ok(walletService.findBonusGroupedByCurrency(userId));
+    }
+    @GetMapping("/get-date-range/{startDate}/{endDate}/{transactionType}")
+    public ResponseEntity<Map<Long, BigDecimal>> findAllWithinDateRange(@PathVariable long startDate, @PathVariable long endDate, @PathVariable TransactionType transactionType){
+        return ResponseEntity.ok(walletService.findAllWithinDateRange(startDate,endDate,transactionType));
     }
 
 }

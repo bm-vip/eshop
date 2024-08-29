@@ -8,10 +8,8 @@ import com.eshop.app.mapping.SubscriptionPackageMapper;
 import com.eshop.app.model.SubscriptionPackageModel;
 import com.eshop.app.repository.SubscriptionPackageRepository;
 import com.eshop.app.service.SubscriptionPackageService;
-import com.eshop.exception.common.NotFoundException;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
-import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -20,12 +18,10 @@ import java.math.BigDecimal;
 public class SubscriptionPackageServiceImpl extends BaseServiceImpl<SubscriptionPackageFilter,SubscriptionPackageModel, SubscriptionPackageEntity, Long> implements SubscriptionPackageService {
 
     private final SubscriptionPackageRepository subscriptionPackageRepository;
-    private final JPAQueryFactory queryFactory;
 
-    public SubscriptionPackageServiceImpl(SubscriptionPackageRepository repository, SubscriptionPackageMapper mapper, JPAQueryFactory queryFactory) {
+    public SubscriptionPackageServiceImpl(SubscriptionPackageRepository repository, SubscriptionPackageMapper mapper) {
         super(repository, mapper);
         this.subscriptionPackageRepository = repository;
-        this.queryFactory = queryFactory;
     }
 
     @Override

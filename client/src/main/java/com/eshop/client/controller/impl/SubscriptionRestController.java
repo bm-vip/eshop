@@ -27,8 +27,4 @@ public class SubscriptionRestController extends BaseRestControllerImpl<Subscript
     public LogicalDeletedService<Long> getService() {
         return subscriptionService;
     }
-    @GetMapping("/total-arbitrage/{userId}")
-    public Long totalArbitrageByUserId(@PathVariable long userId){
-        return subscriptionService.totalArbitrageByUserId(userId);
-    }
 }

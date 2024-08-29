@@ -7,6 +7,7 @@
 /home/behrooz/gitHub/eshop/client/src/main/java/com/eshop/client/mapping/ParameterGroupMapper.java
 /home/behrooz/gitHub/eshop/client/src/main/java/com/eshop/client/repository/ParameterRepository.java
 /home/behrooz/gitHub/eshop/client/src/main/java/com/eshop/client/mapping/ParameterMapper.java
+/home/behrooz/gitHub/eshop/client/src/main/java/com/eshop/client/util/SessionHolder.java
 /home/behrooz/gitHub/eshop/client/src/main/java/com/eshop/client/mapping/BaseMapper.java
 /home/behrooz/gitHub/eshop/client/src/main/java/com/eshop/client/service/BaseService.java
 /home/behrooz/gitHub/eshop/client/src/main/java/com/eshop/client/entity/LogicalDeleted.java
@@ -42,6 +43,7 @@
 /home/behrooz/gitHub/eshop/client/src/main/java/com/eshop/client/model/ParameterModel.java
 /home/behrooz/gitHub/eshop/client/src/main/java/com/eshop/client/controller/impl/WalletRestController.java
 /home/behrooz/gitHub/eshop/client/src/main/java/com/eshop/client/service/SubscriptionPackageService.java
+/home/behrooz/gitHub/eshop/client/src/main/java/com/eshop/client/service/impl/MailServiceImpl.java
 /home/behrooz/gitHub/eshop/client/src/main/java/com/eshop/client/ClientApplication.java
 /home/behrooz/gitHub/eshop/client/src/main/java/com/eshop/client/controller/impl/BaseRestControllerImpl.java
 /home/behrooz/gitHub/eshop/client/src/main/java/com/eshop/client/enums/CurrencyType.java
@@ -54,6 +56,8 @@
 /home/behrooz/gitHub/eshop/client/src/main/java/com/eshop/client/repository/BaseRepository.java
 /home/behrooz/gitHub/eshop/client/src/main/java/com/eshop/client/validation/Save.java
 /home/behrooz/gitHub/eshop/client/src/main/java/com/eshop/client/service/impl/ParameterServiceImpl.java
+/home/behrooz/gitHub/eshop/client/src/main/java/com/eshop/client/service/MailService.java
+/home/behrooz/gitHub/eshop/client/src/main/java/com/eshop/client/entity/ArbitrageEntity.java
 /home/behrooz/gitHub/eshop/client/target/generated-sources/java/com/eshop/client/entity/QRoleEntity.java
 /home/behrooz/gitHub/eshop/client/src/main/java/com/eshop/client/model/ExchangeModel.java
 /home/behrooz/gitHub/eshop/client/src/main/java/com/eshop/client/service/ParameterService.java
@@ -62,18 +66,22 @@
 /home/behrooz/gitHub/eshop/client/src/main/java/com/eshop/client/repository/SubscriptionPackageRepository.java
 /home/behrooz/gitHub/eshop/client/src/main/java/com/eshop/client/controller/impl/CoinRestController.java
 /home/behrooz/gitHub/eshop/client/src/main/java/com/eshop/client/service/impl/ExchangeServiceImpl.java
+/home/behrooz/gitHub/eshop/client/src/main/java/com/eshop/client/service/ArbitrageService.java
 /home/behrooz/gitHub/eshop/client/src/main/java/com/eshop/client/controller/impl/RoleRestController.java
 /home/behrooz/gitHub/eshop/client/src/main/java/com/eshop/client/service/ExchangeService.java
 /home/behrooz/gitHub/eshop/client/src/main/java/com/eshop/client/repository/CoinRepository.java
 /home/behrooz/gitHub/eshop/client/src/main/java/com/eshop/client/controller/LogicalDeletedRestController.java
 /home/behrooz/gitHub/eshop/client/src/main/java/com/eshop/client/mapping/WalletMapper.java
+/home/behrooz/gitHub/eshop/client/src/main/java/com/eshop/client/controller/impl/ArbitrageRestController.java
 /home/behrooz/gitHub/eshop/client/src/main/java/com/eshop/client/mapping/ExchangeMapper.java
 /home/behrooz/gitHub/eshop/client/src/main/java/com/eshop/client/entity/SubscriptionPackageEntity.java
 /home/behrooz/gitHub/eshop/client/target/generated-sources/java/com/eshop/client/entity/QParameterGroupEntity.java
 /home/behrooz/gitHub/eshop/client/src/main/java/com/eshop/client/repository/ExchangeRepository.java
+/home/behrooz/gitHub/eshop/client/src/main/java/com/eshop/client/model/ArbitrageModel.java
 /home/behrooz/gitHub/eshop/client/src/main/java/com/eshop/client/model/RoleModel.java
 /home/behrooz/gitHub/eshop/client/src/main/java/com/eshop/client/util/ReflectionUtil.java
 /home/behrooz/gitHub/eshop/client/src/main/java/com/eshop/client/exception/BaseExceptionHandler.java
+/home/behrooz/gitHub/eshop/client/src/main/java/com/eshop/client/mapping/ArbitrageMapper.java
 /home/behrooz/gitHub/eshop/client/src/main/java/com/eshop/client/filter/UserFilter.java
 /home/behrooz/gitHub/eshop/client/src/main/java/com/eshop/client/service/impl/BaseServiceImpl.java
 /home/behrooz/gitHub/eshop/client/src/main/java/com/eshop/client/enums/DistanceType.java
@@ -84,6 +92,7 @@
 /home/behrooz/gitHub/eshop/client/src/main/java/com/eshop/client/controller/impl/ParameterGroupRestController.java
 /home/behrooz/gitHub/eshop/client/src/main/java/com/eshop/client/controller/impl/ExchangeRestController.java
 /home/behrooz/gitHub/eshop/client/src/main/java/com/eshop/client/model/BaseModel.java
+/home/behrooz/gitHub/eshop/client/src/main/java/com/eshop/client/filter/ArbitrageFilter.java
 /home/behrooz/gitHub/eshop/client/target/generated-sources/java/com/eshop/client/entity/QSubscriptionEntity.java
 /home/behrooz/gitHub/eshop/client/src/main/java/com/eshop/client/service/impl/SubscriptionServiceImpl.java
 /home/behrooz/gitHub/eshop/client/src/main/java/com/eshop/client/controller/impl/UserRestController.java
@@ -92,7 +101,9 @@
 /home/behrooz/gitHub/eshop/client/src/main/java/com/eshop/client/service/impl/RoleServiceImpl.java
 /home/behrooz/gitHub/eshop/client/src/main/java/com/eshop/client/config/QuerydslConfig.java
 /home/behrooz/gitHub/eshop/client/src/main/java/com/eshop/client/config/SuccessLoginConfig.java
+/home/behrooz/gitHub/eshop/client/src/main/java/com/eshop/client/repository/ArbitrageRepository.java
 /home/behrooz/gitHub/eshop/client/src/main/java/com/eshop/client/service/LogicalDeletedService.java
+/home/behrooz/gitHub/eshop/client/target/generated-sources/java/com/eshop/client/entity/QArbitrageEntity.java
 /home/behrooz/gitHub/eshop/client/src/main/java/com/eshop/client/model/Select2Model.java
 /home/behrooz/gitHub/eshop/client/src/main/java/com/eshop/client/entity/ExchangeEntity.java
 /home/behrooz/gitHub/eshop/client/target/generated-sources/java/com/eshop/client/entity/QWalletEntity.java
@@ -117,3 +128,4 @@
 /home/behrooz/gitHub/eshop/client/target/generated-sources/java/com/eshop/client/entity/QBaseEntity.java
 /home/behrooz/gitHub/eshop/client/src/main/java/com/eshop/client/mapping/CoinMapper.java
 /home/behrooz/gitHub/eshop/client/src/main/java/com/eshop/client/model/BalanceModel.java
+/home/behrooz/gitHub/eshop/client/src/main/java/com/eshop/client/service/impl/ArbitrageServiceImpl.java
