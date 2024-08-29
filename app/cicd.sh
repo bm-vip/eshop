@@ -9,7 +9,7 @@ sudo ssh -T "root@$HOST" <<EOF
   git pull
   mvn clean package verify -DskipTests
 
-  docker container rm -f app-container
-  docker image rm app-image
+  docker rm -f app-container
+  docker rmi app-image
   docker compose up -d
 EOF
