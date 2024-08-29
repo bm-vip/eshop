@@ -3,7 +3,7 @@ services:
   app:
     image: eshop-image
     build:
-      context: ./
+      context: ./app/
       dockerfile: Dockerfile
     ports:
       - "2024:2024"
@@ -16,7 +16,7 @@ services:
   client:
     image: eshop-image
     build:
-      context: ./
+      context: ./client/
       dockerfile: Dockerfile
     ports:
       - "2025:2025"
