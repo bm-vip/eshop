@@ -53,3 +53,25 @@ springdoc:
     path: /api-docs
   swagger-ui:
     path: swagger
+
+#Logging
+logging:
+  file:
+    path: logs/
+    name: logs/client.log
+    max-size: 20MB
+    max-history: 180
+    clean-history-on-start: true
+  level:
+    root: ERROR
+    org:
+      springframework:
+        web: ERROR
+        security: ERROR
+      hibernate: ERROR
+    guru:
+      springframework:
+        controllers: ERROR
+  pattern:
+    console: _%d{yyyy-MMM-dd HH:mm:ss.SSS}{blue} %-5level [%thread] %logger{15} - %msg%n
+    rolling-file-name: logs/client-%d{yyyy-MM-dd-HH}.%i.log

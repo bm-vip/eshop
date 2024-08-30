@@ -20,3 +20,16 @@ spring:
     hibernate:
       ddl-auto: none
     show-sql: true
+
+#Logging
+logging:
+  level:
+    root:
+    org:
+      springframework:
+        web:
+        security:
+      hibernate:
+    guru:
+      springframework:
+        controllers:
