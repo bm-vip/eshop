@@ -63,8 +63,8 @@ public class LoginController {
     }
 
     @PostMapping("/registration")
-    public String register(@Valid @ModelAttribute("userModel") UserModel userModel) {
-        userService.register(userModel);
+    public String register(@Valid @ModelAttribute("user") UserModel user) {
+        userService.register(user);
         return "redirect:/login#signin";
     }
 

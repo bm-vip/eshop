@@ -110,7 +110,7 @@
         </div>
         <div id="register" class="animate form registration_form">
             <section class="login_content">
-                <form id="register-form" th:action="@{/registration}" method="POST">
+                <form id="register-form" th:action="@{/registration}" method="POST" th:object="${user}">
                     <h1 th:text="#{createAccount}">Create Account</h1>
                     <div class="row">
                     <div class="col-xs-12 form-group">
