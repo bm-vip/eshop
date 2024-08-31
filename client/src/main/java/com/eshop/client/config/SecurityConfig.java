@@ -5,13 +5,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.session.SessionRegistry;
+import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.session.HttpSessionEventPublisher;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import javax.sql.DataSource;
@@ -53,7 +57,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                 .antMatchers("/ltr/**","/logout","/notfound","/login","/registration","/actuator/**").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/v1/files/**", "/api/v1/common/**").permitAll()
-                .antMatchers("/dashboard","/userManagement","/wallet","/subscriptionPackage","/fileUpload/**","/subscription","/api/v1/user/**","/api/v1/role/**","/api/v1/wallet/**","/api/v1/subscriptionPackage/**","/api/v1/subscription/**","/api/v1/files/**").hasAnyRole(RoleType.name(RoleType.ADMIN), RoleType.name(RoleType.SUPER_WISER), RoleType.name(RoleType.USER))
+                .antMatchers("/dashboard","/userManagement","/wallet","/arbitrage","/subscriptionPackage","/fileUpload/**","/api/v1/arbitrage/**","/subscription","/api/v1/user/**","/api/v1/role/**","/api/v1/wallet/**","/api/v1/subscriptionPackage/**","/api/v1/subscription/**","/api/v1/files/**").hasAnyRole(RoleType.name(RoleType.ADMIN), RoleType.name(RoleType.SUPER_WISER), RoleType.name(RoleType.USER))
                 .antMatchers("/**").hasRole(RoleType.name(RoleType.ADMIN))
                 .anyRequest().authenticated()
                 .and().csrf().disable().formLogin()
@@ -69,7 +73,18 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionFixation().newSession()
                 .invalidSessionUrl("/login?errorMsg=invalidSession").sessionAuthenticationErrorUrl("/login?errorMsg=sessionAuthenticationError")
                 .maximumSessions(1)
+                .sessionRegistry(sessionRegistry())
                 .expiredUrl("/login?errorMsg=sessionExpired")
         ;
+    }
+
+    @Bean
+    public SessionRegistry sessionRegistry() {
+        return new SessionRegistryImpl();
+    }
+
+    @Bean
+    public HttpSessionEventPublisher httpSessionEventPublisher() {
+        return new HttpSessionEventPublisher();
     }
 }

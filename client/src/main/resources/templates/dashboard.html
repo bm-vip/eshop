@@ -13,12 +13,22 @@
     <div class="row" style="display: inline-block;" >
         <div class="tile_count">
             <div class="col-md-2 col-sm-4  tile_stats_count">
+                <span class="count_top"><i class="fa fa-users"></i> <th:block th:text="#{totalUsers}"/></span>
+                <div class="count" id="totalUsers">0</div>
+                <span class="count_bottom"><i class="green"><i class="fa fa-sort-asc"></i><span id="totalUsersFromLastWeek">0% </span></i> <th:block th:text="#{fromLastWeek}"/></span>
+            </div>
+            <div class="col-md-2 col-sm-4  tile_stats_count">
+                <span class="count_top"><i class="fa fa-users green"></i> <th:block th:text="#{totalOnline}"/></span>
+                <div class="count green" id="totalOnline">0</div>
+                <span class="count_bottom"><i class="green"><i class="fa fa-sort-asc"></i><span id="totalOnlineFromLastWeek">0% </span></i> <th:block th:text="#{fromLastWeek}"/></span>
+            </div>
+            <div class="col-md-2 col-sm-4  tile_stats_count">
                 <span class="count_top"><i class="fa fa-wallet"></i> <th:block th:text="#{totalBalance}"/></span>
                 <div class="count" id="totalBalance">0</div>
                 <span class="count_bottom"><i class="green"><i class="fa fa-sort-asc"></i><span id="totalBalanceFromLastWeek">0% </span></i> <th:block th:text="#{fromLastWeek}"/></span>
             </div>
             <div class="col-md-2 col-sm-4  tile_stats_count">
-                <span class="count_top"><i class="fa fa-money-bill-trend-up"></i> <th:block th:text="#{totalDeposit}"/></span>
+                <span class="count_top"><i class="fa fa-piggy-bank"></i> <th:block th:text="#{totalDeposit}"/></span>
                 <div class="count" id="totalDeposit">0</div>
                 <span class="count_bottom"><i class="green"><i class="fa fa-sort-asc"></i><span id="totalDepositFromLastWeek">0% </span></i> <th:block th:text="#{fromLastWeek}"/></span>
             </div>
@@ -28,12 +38,12 @@
                 <span class="count_bottom"><i class="green"><i class="fa fa-sort-asc"></i><span id="totalBonusFromLastWeek">0% </span></i> <th:block th:text="#{fromLastWeek}"/></span>
             </div>
             <div class="col-md-2 col-sm-4  tile_stats_count">
-                <span class="count_top"><i class="fa fa-money-bill-transfer"></i> <th:block th:text="#{totalWithdrawal}"/></span>
+                <span class="count_top"><i class="fa fa-hand-holding-usd"></i> <th:block th:text="#{totalWithdrawal}"/></span>
                 <div class="count" id="totalWithdrawal">0</div>
                 <span class="count_bottom"><i class="green"><i class="fa fa-sort-asc"></i><span id="totalWithdrawalFromLastWeek">0% </span></i> <th:block th:text="#{fromLastWeek}"/></span>
             </div>
             <div class="col-md-2 col-sm-4  tile_stats_count">
-                <span class="count_top"><i class="fa fa-user"></i> <th:block th:text="#{totalArbitrage}"/></span>
+                <span class="count_top"><i class="fa fa-money-bill-trend-up"></i> <th:block th:text="#{totalArbitrage}"/></span>
                 <div class="count" id="totalArbitrage">0</div>
                 <span class="count_bottom"><i class="green"><i class="fa fa-sort-asc"></i><span id="totalArbitrageFromLastWeek">0% </span></i> <th:block th:text="#{fromLastWeek}"/></span>
             </div>

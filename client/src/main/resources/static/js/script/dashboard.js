@@ -1,4 +1,10 @@
 ﻿$(function () {
+    $.get("/api/v1/user/total-count", function (data) {
+        $("#totalUsers").text(get(() => data, '0'));
+    });
+    $.get("/api/v1/user/total-online", function (data) {
+        $("#totalOnline").text(get(() => data, 0));
+    });
     $.getJSON("/api/v1/wallet/total-balance/" + currentUser.id, function (data) {
         $("#totalBalance").text(get(() => data[0].totalAmount, 0));
     });
@@ -15,7 +21,7 @@
         $("#totalWithdrawal").text(get(() => data[0].totalAmount, 0));
     });
 
-    $.getJSON("/api/v1/arbitrage/count-all-by-user/" + currentUser.id, function (data) {
+    $.get("/api/v1/arbitrage/count-all-by-user/" + currentUser.id, function (data) {
         $("#totalArbitrage").text(data);
     });
 
