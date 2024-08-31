@@ -21,6 +21,12 @@ spring:
       ddl-auto: none
     show-sql: true
 
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: swagger
+
 #Logging
 logging:
   level:

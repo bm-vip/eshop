@@ -50,9 +50,9 @@ spring:
 site.url: arbitrage-broker.com
 springdoc:
   api-docs:
-    path: /api-docs
+    enabled: false
   swagger-ui:
-    path: swagger
+    enabled: false
 
 #Logging
 logging:
