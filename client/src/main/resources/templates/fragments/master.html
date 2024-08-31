@@ -64,8 +64,13 @@
                                 <ul class="nav child_menu">
                                     <li><a th:href="@{/deposit}" th:text="#{deposit}"></a></li>
                                     <li><a th:href="@{/withdraw}" th:text="#{withdrawal}"></a></li>
+                                    <li><a th:href="@{/swap}"><th:block th:text="#{swap}"></th:block><span class="label label-success pull-right">Coming Soon</span></a></li>
+                                    <li><a th:href="@{/staking}"><th:block th:text="#{staking}"></th:block><span class="label label-success pull-right">Coming Soon</span></a></li>
                                 </ul>
                             </li>
+                            <li><a th:href="@{/arbitrage}" th:text="#{arbitrage}"></a></li>
+                            <li><a th:href="@{/support}" th:text="#{support}"></a></li>
+                            <li><a th:href="@{/about}" th:text="#{about}"></a></li>
                         </ul>
                     </div>
                 </div>
