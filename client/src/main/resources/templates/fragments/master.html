@@ -58,17 +58,16 @@
                                     <li><a th:href="@{/dashboard}" th:text="#{dashboard}"></a></li>
                                 </ul>
                             </li>
-                            <li sec:authorize="hasAnyRole('SUPER_WISER','ADMIN')"><a><i class="fa fa-edit"></i>
-                                <th:block th:text="#{baseInfo}"></th:block>
+                            <li sec:authorize="hasAnyRole('SUPER_WISER','ADMIN')"><a><i class="fa fa-wallet"></i>
+                                <th:block th:text="#{wallet}"></th:block>
                                 <span class="fa fa-chevron-down"></span></a>
                                 <ul class="nav child_menu">
-                                    <li><a th:href="@{/fileUpload}" th:text="#{fileUpload}"></a></li>
-                                    <li><a th:href="@{/exchange}" th:text="#{exchanges}"></a></li>
-                                    <li><a th:href="@{/coin}" th:text="#{coin}"></a></li>
+                                    <li><a th:href="@{/deposit}" th:text="#{deposit}"></a></li>
+                                    <li><a th:href="@{/withdraw}" th:text="#{withdrawal}"></a></li>
                                 </ul>
                             </li>
                             <li sec:authorize="hasRole('ADMIN')"><a><i class="fa fa-wrench"></i>
-                                <th:block th:text="#{parameters}"></th:block>
+<!--                                <th:block th:text="#{arbitrage}"></th:block>-->
                                 <span class="fa fa-chevron-down"></span></a>
                                 <ul class="nav child_menu">
                                     <li><a th:href="@{/parameterGroup}" th:text="#{parameterGroup}"></a></li>
