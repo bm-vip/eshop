@@ -1,5 +1,9 @@
--- ALTER USER postgres PASSWORD '7nd2M487dMM7kLD4';
-CREATE USER dml_user PASSWORD 'xmrtuKNbeE7O1kU';
+ALTER USER postgres PASSWORD '7nd2M487dMM7kLD4';
 CREATE SCHEMA IF NOT EXISTS eshop;
+grant all privileges on database eshop to postgres;
+
+CREATE USER dml_user PASSWORD 'xmrtuKNbeE7O1kU';
 GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO dml_user;
--- grant all privileges on database eshop to postgres;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO dml_user;
+GRANT USAGE ON SCHEMA public TO dml_user;
+
