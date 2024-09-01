@@ -24,7 +24,7 @@ spring:
     driver-class-name: org.postgresql.Driver
     url: ${DB_URL:jdbc:postgresql://dbpostgresql:5432/eshop}
     username: ${DB_USER:postgres}
-    password: ${DB_PASS:password}
+    password: ${DB_PASS:7nd2M487dMM7kLD4}
   # JPA properties
   jpa:
     hibernate:
