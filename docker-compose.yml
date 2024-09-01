@@ -24,10 +24,11 @@ services:
       - "80:80"
     environment:
       DB_URL: jdbc:postgresql://dbpostgresql:5432/eshop
-      DB_USER: postgres
-      DB_PASS: 7nd2M487dMM7kLD4
+      DB_USER: dml_user
+      DB_PASS: xmrtuKNbeE7O1kU
     depends_on:
       - dbpostgresql
+      - app
       
   dbpostgresql:
     image: postgres
