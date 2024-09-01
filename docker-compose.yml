@@ -11,7 +11,7 @@ services:
     environment:
       DB_URL: jdbc:postgresql://dbpostgresql:5432/eshop
       DB_USER: postgres
-      DB_PASS: password
+      DB_PASS: 7nd2M487dMM7kLD4
     depends_on:
       - dbpostgresql
   client:
@@ -25,7 +25,7 @@ services:
     environment:
       DB_URL: jdbc:postgresql://dbpostgresql:5432/eshop
       DB_USER: postgres
-      DB_PASS: password
+      DB_PASS: 7nd2M487dMM7kLD4
     depends_on:
       - dbpostgresql
       
