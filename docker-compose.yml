@@ -24,7 +24,7 @@ services:
       - "80:80"
     environment:
       DB_URL: jdbc:postgresql://dbpostgresql:5432/eshop
-      DB_USER: dml_user
+      DB_USER: eshop_user
       DB_PASS: xmrtuKNbeE7O1kU
     depends_on:
       - dbpostgresql
