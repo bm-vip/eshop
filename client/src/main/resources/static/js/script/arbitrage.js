@@ -13,7 +13,7 @@ $(function () {
                         <div class="">
                             <div class="pricing_features">
                                 <ul class="list-unstyled text-left">
-                                    <li><i class="fa fa-check text-success"></i> <strong>Unlimited access</strong> to this item.</li>
+                                    <li><i class="fa fa-check text-success"></i> <strong>Unlimited access</strong>.</li>
                                     <li><i class="fa fa-check text-success"></i> Order count <strong> ${value.orderCount}</strong> times</li>
                                     <li><i class="fa fa-check text-success"></i> Trading reward (<strong>${value.minTradingReward} - ${value.maxTradingReward}</strong>) ${value.currency}</li>
                                     <li><i class="fa fa-check text-success"></i> Self referral bonus <strong>${value.selfReferralBonus}</strong> ${value.currency}</li>
