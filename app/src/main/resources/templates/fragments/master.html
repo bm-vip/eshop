@@ -63,7 +63,7 @@
                                     <li><a th:href="@{/dashboard}" th:text="#{dashboard}"></a></li>
                                 </ul>
                             </li>
-                            <li sec:authorize="hasAnyRole('SUPER_WISER','ADMIN')"><a><i class="fa fa-edit"></i>
+                            <li sec:authorize="hasAnyRole('SUPER_WISER','ADMIN')"><a><i class="fa fa-database"></i>
                                 <th:block th:text="#{baseInfo}"></th:block>
                                 <span class="fa fa-chevron-down"></span></a>
                                 <ul class="nav child_menu">
@@ -72,7 +72,7 @@
                                     <li><a th:href="@{/coin}" th:text="#{coin}"></a></li>
                                 </ul>
                             </li>
-                            <li sec:authorize="hasRole('ADMIN')"><a><i class="fa fa-wrench"></i>
+                            <li sec:authorize="hasRole('ADMIN')"><a><i class="fa fa-tools"></i>
                                 <th:block th:text="#{parameters}"></th:block>
                                 <span class="fa fa-chevron-down"></span></a>
                                 <ul class="nav child_menu">
@@ -80,7 +80,7 @@
                                     <li><a th:href="@{/parameters}" th:text="#{parameters}"></a></li>
                                 </ul>
                             </li>
-                            <li sec:authorize="hasAnyRole('SUPER_WISER','ADMIN')"><a><i class="fa fa-subscript"></i>
+                            <li sec:authorize="hasAnyRole('SUPER_WISER','ADMIN')"><a><i class="fa fa-box"></i>
                                 <th:block th:text="#{subscription}"></th:block>
                                 <span class="fa fa-chevron-down"></span></a>
                                 <ul class="nav child_menu">
@@ -94,6 +94,9 @@
                             </a></li>
                             <li class="sub_menu"><a th:href="@{/wallet}"><i class="fa fa-wallet"></i>
                                 <th:block th:text="#{wallet}"></th:block>
+                            </a></li>
+                            <li class="sub_menu"><a th:href="@{/notification}"><i class="fa fa-envelope"></i>
+                                <th:block th:text="#{notifications}"></th:block>
                             </a></li>
                         </ul>
                     </div>
@@ -140,79 +143,6 @@
                                 <li><a th:href="@{/logout}"><i class="fa fa-sign-out pull-right"></i>
                                     <th:block th:text="#{exit}"></th:block>
                                 </a></li>
-                            </ul>
-                        </li>
-                        <li role="presentation" class="dropdown">
-                            <a href="javascript:;" class="dropdown-toggle info-number" data-toggle="dropdown"
-                               aria-expanded="false">
-                                <i class="fa fa-envelope"></i>
-                                <span class="badge bg-green" style="top: 0px">6</span>
-                            </a>
-                            <ul id="menu1" class="dropdown-menu list-unstyled msg_list" role="menu">
-                                <li>
-                                    <a>
-                                        <span class="image"><img th:src="@{/images/find_user.png}"
-                                                                 alt="Profile Image"/></span>
-                                        <span>
-                          <span>System Admin</span>
-                          <span class="time">3 minute ago</span>
-                        </span>
-                                        <span class="message">
-                          
-Film festivals used to be do-or-die moments for movie makers. They were where...
-                        </span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a>
-                                        <span class="image"><img th:src="@{/images/find_user.png}"
-                                                                 alt="Profile Image"/></span>
-                                        <span>
-                           <span>System Admin</span>
-                          <span class="time">3 minute ago</span>
-                        </span>
-                                        <span class="message">
-                          
-Film festivals used to be do-or-die moments for movie makers. They were where...
-                        </span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a>
-                                        <span class="image"><img th:src="@{/images/find_user.png}"
-                                                                 alt="Profile Image"/></span>
-                                        <span>
-                           <span>System Admin</span>
-                          <span class="time">3 minute ago</span>
-                        </span>
-                                        <span class="message">
-                          
-Film festivals used to be do-or-die moments for movie makers. They were where...
-                        </span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a>
-                                        <span class="image"><img th:src="@{/images/find_user.png}"
-                                                                 alt="Profile Image"/></span>
-                                        <span>
-                           <span>System Admin</span>
-                          <span class="time">3 minute ago</span>>
-                        </span>
-                                        <span class="message">
-                          
-Film festivals used to be do-or-die moments for movie makers. They were where...
-                        </span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <div class="text-center">
-                                        <a>
-                                            <strong>show all notifications</strong>
-                                            <i class="fa fa-angle-right"></i>
-                                        </a>
-                                    </div>
-                                </li>
                             </ul>
                         </li>
                     </ul>
