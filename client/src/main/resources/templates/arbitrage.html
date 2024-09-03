@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{fragments/master}">
+
+<th:block layout:fragment="header">
+    <link rel="stylesheet" type="text/css" th:href="#{direction} +'/iCheck/skins/flat/green.css'"/>
+</th:block>
+<div layout:fragment="content">
+    <div class="row">
+        <div id="subscription-package" class="col-md-12">
+
+        </div>
+    </div>
+</div>
+<th:block layout:fragment="footer">
+    <script th:src="@{/js/script/arbitrage.js}"></script>
+</th:block>
+</html>

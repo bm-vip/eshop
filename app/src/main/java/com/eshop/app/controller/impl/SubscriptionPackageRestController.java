@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@Tag(name = "SubscriptionPackage Rest Service v1")
-@RequestMapping(value = "/api/v1/subscriptionPackage")
+@Tag(name = "Subscription Package Rest Service v1")
+@RequestMapping(value = "/api/v1/subscription-package")
 public class SubscriptionPackageRestController extends BaseRestControllerImpl<SubscriptionPackageFilter, SubscriptionPackageModel, Long> {
 
     private SubscriptionPackageService subscriptionPackageService;

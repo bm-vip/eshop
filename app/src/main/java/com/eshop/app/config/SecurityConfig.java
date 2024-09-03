@@ -53,7 +53,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                 .antMatchers("/logout","/notfound","/login","/actuator/**").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/v1/files/**", "/api/v1/common/**").permitAll()
-                .antMatchers("/userManagement","/wallet","/subscriptionPackage","/fileUpload/**","/subscription","/api/v1/user/**","/api/v1/role/**","/api/v1/wallet/**","/api/v1/subscriptionPackage/**","/api/v1/subscription/**","/api/v1/files/**").hasAnyRole(RoleType.name(RoleType.ADMIN), RoleType.name(RoleType.SUPER_WISER))                .antMatchers("/dashboard").hasAnyRole(RoleType.name(RoleType.SUPER_WISER), RoleType.name(RoleType.ADMIN))
+                .antMatchers("/userManagement","/wallet","/subscriptionPackage","/fileUpload/**","/subscription","/api/v1/user/**","/api/v1/role/**","/api/v1/wallet/**","/api/v1/subscription-package/**","/api/v1/subscription/**","/api/v1/files/**").hasAnyRole(RoleType.name(RoleType.ADMIN), RoleType.name(RoleType.SUPER_WISER))                .antMatchers("/dashboard").hasAnyRole(RoleType.name(RoleType.SUPER_WISER), RoleType.name(RoleType.ADMIN))
                 .antMatchers("/**").hasRole(RoleType.name(RoleType.ADMIN))
                 .anyRequest().authenticated()
                 .and().csrf().disable().formLogin()
