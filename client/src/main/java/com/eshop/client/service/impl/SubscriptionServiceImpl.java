@@ -157,6 +157,7 @@ public class SubscriptionServiceImpl extends BaseServiceImpl<SubscriptionFilter,
     }
 
     @Override
+    @Transactional(readOnly = true)
     public SubscriptionModel findByUserAndActivePackage(long userId) {
         return mapper.toModel(subscriptionRepository.findByUserIdAndStatus(userId, EntityStatusType.Active));
     }

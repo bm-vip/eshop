@@ -6,6 +6,10 @@ import com.eshop.client.model.SubscriptionModel;
 import com.eshop.client.service.LogicalDeletedService;
 import com.eshop.client.service.SubscriptionService;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,5 +30,10 @@ public class SubscriptionRestController extends BaseRestControllerImpl<Subscript
     @Override
     public LogicalDeletedService<Long> getService() {
         return subscriptionService;
+    }
+
+    @GetMapping("find-active-by-user/{userId}")
+    public ResponseEntity<SubscriptionModel> findAll(@PathVariable Long userId){
+        return ResponseEntity.ok(subscriptionService.findByUserAndActivePackage(userId));
     }
 }
