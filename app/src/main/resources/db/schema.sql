@@ -1,6 +1,6 @@
--- ALTER USER postgres PASSWORD '7nd2M487dMM7kLD4';
--- CREATE SCHEMA IF NOT EXISTS eshop;
--- grant all privileges on database eshop to postgres;
+ALTER USER postgres PASSWORD '7nd2M487dMM7kLD4';
+CREATE SCHEMA IF NOT EXISTS eshop;
+grant all privileges on database eshop to postgres;
 
 -- CREATE ROLE eshop_user WITH LOGIN PASSWORD 'xmrtuKNbeE7O1kU';
 -- GRANT ALL PRIVILEGES ON DATABASE eshop TO eshop_user;
