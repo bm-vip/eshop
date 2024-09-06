@@ -7,7 +7,15 @@ messages = {
     code: resources.pleaseEnter.format(resources.code),
     title: resources.pleaseEnter.format(resources.title)
 };
-function loadEntityByInput() {
+function loadSaveEntityByInput() {
+    var entity = {
+        id: isNullOrEmpty($("#hdf_id").val()) ? null : $("#hdf_id").val(),
+        code: $("#code").val(),
+        title: $("#title").val()
+    };
+    return entity;
+}
+function loadSearchEntityByInput() {
     var entity = {
         id: isNullOrEmpty($("#hdf_id").val()) ? null : $("#hdf_id").val(),
         code: $("#code").val(),

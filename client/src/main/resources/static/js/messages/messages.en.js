@@ -228,6 +228,8 @@ var resources = {
     'aroundTheWeb': 'Around The Web',
     'pleaseSelect': 'Please Select {0} ',
     'invalidFormat': 'Invalid Format {0} ',
+    'invalidTronHash': 'Tron transaction hash is not valid',
+    'invalidTronAddress': 'Tron wallet address is not valid',
     'validMimType': 'ValidMim Type',
     'mustBeLessThan': '\'{0}\' Must Be Less Than \'{1}\' {2} ',
     'mustBeMoreThan': '\'{0}\' Must Be More Than \'{1}\' {2} ',

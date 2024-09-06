@@ -36,7 +36,22 @@ messages = {
     selfReferralBonus: resources.pleaseEnter.format(resources.selfReferralBonus)
 };
 
-function loadEntityByInput() {
+function loadSaveEntityByInput() {
+    let model = {
+        id: isNullOrEmpty($("#hdf_id").val()) ? null : $("#hdf_id").val(),
+        price: $("#price").val().replace(/,/g, ""),
+        maxPrice: $("#maxPrice").val().replace(/,/g, ""),
+        currency: isNullOrEmpty($("#currency").val())? null : $("#currency").val(),
+        status: isNullOrEmpty($("#status").val()) ? null : $("#status").val(),
+        name: $("#name").val(),
+        minTradingReward: $("#minTradingReward").val(),
+        maxTradingReward: $("#msxReward").val(),
+        selfReferralBonus: $("#selfReferralBonus").val(),
+        parentReferralBonus: $("#parentReferralBonus").val(),
+    };
+    return model;
+}
+function loadSearchEntityByInput() {
     let model = {
         id: isNullOrEmpty($("#hdf_id").val()) ? null : $("#hdf_id").val(),
         price: $("#price").val().replace(/,/g, ""),

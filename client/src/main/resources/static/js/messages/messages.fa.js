@@ -234,6 +234,8 @@ var resources = {
     'aroundTheWeb': 'سراسر وب',
     'pleaseSelect': 'لطفا {0} را انتخاب کنید',
     'invalidFormat': 'قالب {0} صحیح نمی باشد',
+    'invalidTronHash': 'قالب ترون هش صحیح نمی باشد',
+    'invalidTronAddress': 'قالب کیف پول ترون صحیح نمی باشد',
     'validMimType': 'پسوند فایل معتبر',
     'mustBeLessThan': '\'{0}\' باید کمتر از \'{1}\' {2} باشد',
     'mustBeMoreThan': '\'{0}\' باید بیشتر از \'{1}\' {2} باشد',

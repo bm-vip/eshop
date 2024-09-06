@@ -12,7 +12,17 @@ messages = {
     value: resources.pleaseEnter.format(resources.value)
 };
 
-function loadEntityByInput() {
+function loadSaveEntityByInput() {
+    var entity = {
+        id: isNullOrEmpty($("#hdf_id").val()) ? null : $("#hdf_id").val(),
+        parameterGroup: isNullOrEmpty($("#parameterGroupSelect2").val()) ? null :  {id: $("#parameterGroupSelect2").val()},
+        code: $("#code").val(),
+        value: $("#value").val(),
+        title: $("#title").val(),
+    };
+    return entity;
+}
+function loadSearchEntityByInput() {
     var entity = {
         id: isNullOrEmpty($("#hdf_id").val()) ? null : $("#hdf_id").val(),
         parameterGroup: isNullOrEmpty($("#parameterGroupSelect2").val()) ? null :  {id: $("#parameterGroupSelect2").val()},

@@ -26,7 +26,7 @@ $(function () {
                             </div>
                             <div class="pricing_footer">
                                 <a href="javascript:trade();" class="btn btn-success btn-block ${!active ? 'disabled' : ''}" aria-disabled="${!active}" role="button">Trade now!</a> 
-                                <a href="javascript:void(0);" class="btn btn-primary btn-block ${active ? 'disabled' : ''}" aria-disabled="${active}" role="button">Purchase<span></span></a>                          
+                                <a href="javascript:loadPages('deposit?amount=${value.price}');" class="btn btn-primary btn-block ${active ? 'disabled' : ''}" aria-disabled="${active}" role="button">Purchase<span></span></a>                          
                             </div>
                         </div>
                     </div>

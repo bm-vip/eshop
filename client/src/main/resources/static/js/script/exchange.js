@@ -8,7 +8,15 @@ messages = {
     logo: resources.pleaseEnter.format(resources.logo)
 };
 
-function loadEntityByInput() {
+function loadSaveEntityByInput() {
+    let model = {
+        id: isNullOrEmpty($("#hdf_id").val()) ? null : $("#hdf_id").val(),
+        name: $("#name").val(),
+        logo: $("#logo").val(),
+    };
+    return model;
+}
+function loadSearchEntityByInput() {
     let model = {
         id: isNullOrEmpty($("#hdf_id").val()) ? null : $("#hdf_id").val(),
         name: $("#name").val(),

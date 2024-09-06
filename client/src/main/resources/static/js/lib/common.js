@@ -280,13 +280,13 @@ function validationOptions(rules, messages, callback) {
         rules: rules,
         messages: messages,
         highlight: function (element, errorClass, validClass) {
-            $(element).closest("div[class^='col-md-']").addClass("has-error").removeClass("has-success");
+            $(element).addClass('is-invalid').closest('.col-xs-12').addClass('bad');
         },
         unhighlight: function (element, errorClass, validClass) {
-            $(element).closest("div[class^='col-md-']").addClass("has-success").removeClass("has-error");
+            $(element).removeClass('is-invalid').closest('.col-xs-12').removeClass('bad');
         },
         errorElement: 'span',
-        errorClass: 'help-block',
+        errorClass: 'invalid-feedback',
         errorPlacement: function (error, element) {
             if (element.is(":radio") || element.is(":checkbox")) {
                 error.appendTo(element.parent().parent());
@@ -359,11 +359,11 @@ function initAjaxTable(selector, columns, url, filterFunction) {
             }
             return requestParam;
         },
-        // "dataSrc": function(json) {
-        //     json.recordsTotal = json.totalElements;
-        //     json.recordsFiltered = json.totalElements;
-        //     return json.content;
-        // },
+        "dataSrc": function(json) {
+            json.recordsTotal = json.totalElements;
+            json.recordsFiltered = json.totalElements;
+            return json.content;
+        },
         'datatype': 'json',
         'error': function (xhr) {
             if(isNullOrEmpty(get(()=>xhr.responseJSON)))

@@ -75,34 +75,36 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter,WalletModel,
     @Override
     @Transactional
     public WalletModel create(WalletModel model) {
+        model.setActive(false);
         var result =  super.create(model);
-        if(model.isActive()) {
-            var balance = walletRepository.findBalanceGroupedByCurrency(model.getUser().getId());
-            for (BalanceModel balanceModel : balance) {
-                var currentSubscription = subscriptionService.findByUserAndActivePackage(model.getUser().getId());
-                var subscriptionPackage = subscriptionPackageService.findMatchedPackageByAmountAndCurrency(balanceModel.getTotalAmount(),balanceModel.getCurrency());
-                if(currentSubscription == null || (subscriptionPackage != null && !currentSubscription.getSubscriptionPackage().getId().equals(subscriptionPackage.getId()))) {
-                    subscriptionService.create(new SubscriptionModel().setSubscriptionPackage(subscriptionPackage).setUser(model.getUser()).setStatus(EntityStatusType.Active));
-                }
-            }
-        }
+//        if(model.isActive()) {
+//            var balance = walletRepository.findBalanceGroupedByCurrency(model.getUser().getId());
+//            for (BalanceModel balanceModel : balance) {
+//                var currentSubscription = subscriptionService.findByUserAndActivePackage(model.getUser().getId());
+//                var subscriptionPackage = subscriptionPackageService.findMatchedPackageByAmountAndCurrency(balanceModel.getTotalAmount(),balanceModel.getCurrency());
+//                if(currentSubscription == null || (subscriptionPackage != null && !currentSubscription.getSubscriptionPackage().getId().equals(subscriptionPackage.getId()))) {
+//                    subscriptionService.create(new SubscriptionModel().setSubscriptionPackage(subscriptionPackage).setUser(model.getUser()).setStatus(EntityStatusType.Active));
+//                }
+//            }
+//        }
         return result;
     }
 
     @Override
     @Transactional
     public WalletModel update(WalletModel model) {
+        model.setActive(false);
         var result =  super.update(model);
-        if(model.isActive()) {
-            var balance = walletRepository.findBalanceGroupedByCurrency(model.getUser().getId());
-            var subscriptionModel = subscriptionService.findByUserAndActivePackage(model.getUser().getId());
-            for (BalanceModel balanceModel : balance) {
-                var subscriptionPackage = subscriptionPackageService.findMatchedPackageByAmountAndCurrency(balanceModel.getTotalAmount(),balanceModel.getCurrency());
-                if(subscriptionPackage != null && !subscriptionModel.getSubscriptionPackage().getId().equals(subscriptionPackage.getId())) {
-                    subscriptionService.create(new SubscriptionModel().setSubscriptionPackage(subscriptionPackage).setUser(model.getUser()).setStatus(EntityStatusType.Active));
-                }
-            }
-        }
+//        if(model.isActive()) {
+//            var balance = walletRepository.findBalanceGroupedByCurrency(model.getUser().getId());
+//            var subscriptionModel = subscriptionService.findByUserAndActivePackage(model.getUser().getId());
+//            for (BalanceModel balanceModel : balance) {
+//                var subscriptionPackage = subscriptionPackageService.findMatchedPackageByAmountAndCurrency(balanceModel.getTotalAmount(),balanceModel.getCurrency());
+//                if(subscriptionPackage != null && !subscriptionModel.getSubscriptionPackage().getId().equals(subscriptionPackage.getId())) {
+//                    subscriptionService.create(new SubscriptionModel().setSubscriptionPackage(subscriptionPackage).setUser(model.getUser()).setStatus(EntityStatusType.Active));
+//                }
+//            }
+//        }
         return result;
     }
 

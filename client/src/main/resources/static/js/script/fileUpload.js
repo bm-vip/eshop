@@ -16,7 +16,12 @@ columns = [{
     sortable: false,
     render: function (data) { return "<a class='btn btn-danger fa fa-trash' id='" + data + "'></a>" }
 }];
-function loadEntityByInput(isFormData) {
+function loadSaveEntityByInput(isFormData) {
+    return {
+        name: $("#name").val()
+    };
+}
+function loadSearchEntityByInput(isFormData) {
     // if (!isNullOrEmpty(isFormData) && isFormData) {
     //     var formData = new FormData();
     //     formData.append("files", $("#file").get(0).files[0]);
@@ -44,7 +49,7 @@ function onLoad() {
     });
 }
 function afterDropzoneSubmission(response) {
-    $.publish('reloadTable');
+    dataTable.ajax.reload
     alert("File uploaded successfully:\n\n" +
         "Use this URL into the app for internal usage:\n" + response.url +
         "\n\nor\n\nUse this URL to deliver image for external usage:\nhttps://" + window.location.host + response.url);

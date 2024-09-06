@@ -24,7 +24,21 @@ messages = {
     address: resources.pleaseEnter.format(resources.address)
 };
 
-function loadEntityByInput() {
+function loadSaveEntityByInput() {
+    let model = {
+        id: isNullOrEmpty($("#hdf_id").val()) ? null : $("#hdf_id").val(),
+        amount: $("#amount").val().replace(/,/g, ""),
+        currency: isNullOrEmpty($("#currency").val())? null : $("#currency").val(),
+        transactionType: isNullOrEmpty($("#transactionType").val()) ? null : $("#transactionType").val(),
+        user: isNullOrEmpty($("#userSelect2").val())? null : {id: $("#userSelect2").val()},
+        userId: $("#userSelect2").val(),
+        transactionHash: $("#transactionHash").val(),
+        address: $("#address").val(),
+        active: isNullOrEmpty($("#status").val())? null : $("#status").val(),
+    };
+    return model;
+}
+function loadSearchEntityByInput() {
     let model = {
         id: isNullOrEmpty($("#hdf_id").val()) ? null : $("#hdf_id").val(),
         amount: $("#amount").val().replace(/,/g, ""),

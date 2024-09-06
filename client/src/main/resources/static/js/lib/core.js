@@ -12,15 +12,15 @@ window.onload = function () {
     });
 
     //$('.date input,.date .input-group-addon').MdPersianDateTimePicker(datePickerOptions());
-
-    ajaxUrl = $("#requestMapping").val();
+    if(!isNullOrEmpty($("#requestMapping").val()))
+        ajaxUrl = $("#requestMapping").val();
 
     $('form:eq(0):not(#myModal form)').validate(validationOptions(rules, messages, function (form) {
             let fn = window["submitForm"];
             if (typeof fn === 'function') {
                 fn(form);
             } else {
-                fn = window["loadEntityByInput"];
+                fn = window["loadSaveEntityByInput"];
                 if (typeof fn === 'function') {
                     let entity = fn(true);
                     if (entity instanceof FormData) {
@@ -86,7 +86,7 @@ window.onload = function () {
         if (typeof loadTable === 'function') {
             loadTable();
         } else {
-            dataTable = initAjaxTable('.table:not(#myModal .table):eq(0)', columns, ajaxUrl + "/findAllTable", "loadEntityByInput");
+            dataTable = initAjaxTable('.table:not(#myModal .table):eq(0)', columns, ajaxUrl, "loadSearchEntityByInput");
             $.subscribe('reloadTable', dataTable.ajax.reload);
         }
     }

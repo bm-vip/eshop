@@ -38,7 +38,22 @@ messages = {
         equalTo: resources.confirmPasswordDoesNotMach
     }
 }
-function loadEntityByInput() {
+function loadSaveEntityByInput() {
+    let entity = {
+        id: isNullOrEmpty($("#hdf_id").val()) ? null : $("#hdf_id").val(),
+        email: $("#email").val(),
+        userName: $("#userName").val(),
+        password: $("#password").val(),
+        parent: isNullOrEmpty($("#parentSelect2").val()) ? null : {id: $("#parentSelect2").val()},
+        firstName: $("#firstName").val(),
+        lastName: $("#lastName").val(),
+        active: $("#status").val(),
+        walletAddress: $("#walletAddress").val(),
+        roles: arrayToJsonArray($("#roleSelect2").val())
+    };
+    return entity;
+}
+function loadSearchEntityByInput() {
     let entity = {
         id: isNullOrEmpty($("#hdf_id").val()) ? null : $("#hdf_id").val(),
         email: $("#email").val(),

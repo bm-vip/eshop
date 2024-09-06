@@ -45,9 +45,9 @@ function onLoad() {
 }
 function afterDropzoneSubmission(response) {
     $.publish('reloadTable');
-    alert("File uploaded successfully:\n\n" +
-        "Use this URL into the app for internal usage:\n" + response.url +
-        "\n\nor\n\nUse this URL to deliver image for external usage:\nhttps://" + window.location.host + response.url);
+    // alert("File uploaded successfully:\n\n" +
+    //     "Use this URL into the app for internal usage:\n" + response.url +
+    //     "\n\nor\n\nUse this URL to deliver image for external usage:\nhttps://" + window.location.host + response.url);
 }
 function clearAll_(){
     $('#name').val('');

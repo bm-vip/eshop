@@ -21,6 +21,17 @@ $.validator.addMethod("pattern", function (value, element, param) {
     return param.test(value);
 }, $.validator.format(resources.invalidFormat));
 
+$.validator.addMethod("validTronHash", function (value, element) {
+    // Tron transaction hash regex: 64 hexadecimal characters
+    const tronHashRegex = /^[0-9a-fA-F]{64}$/;
+    return this.optional(element) || tronHashRegex.test(value);
+}, resources.invalidTronHash);
+
+$.validator.addMethod("validTronWallet", function (value, element) {
+    // Tron wallet addresses must be 34 characters long, start with 'T', and only contain valid Base58 characters
+    return this.optional(element) || /^[T][1-9A-HJ-NP-Za-km-z]{33}$/.test(value);
+}, resources.invalidTronAddress);
+
 // Accept a value from a file input based on a required mimetype
 $.validator.addMethod("accept", function (value, element, param) {
 

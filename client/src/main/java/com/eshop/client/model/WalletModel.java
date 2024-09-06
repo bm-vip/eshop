@@ -18,9 +18,9 @@ public class WalletModel extends BaseModel<Long> {
     @NotNull
     private String transactionHash;
     @NotNull
-    private CurrencyType currency;
+    private CurrencyType currency = CurrencyType.USDT;
     private UserModel user;
     private String address;
-    private boolean active;
+    private boolean active = false;
 
 }
