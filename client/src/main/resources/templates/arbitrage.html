@@ -5,6 +5,12 @@
 <th:block layout:fragment="header">
     <link rel="stylesheet" type="text/css" th:href="#{direction} +'/iCheck/skins/flat/green.css'"/>
     <link rel="stylesheet" type="text/css" th:href="#{direction} +'/bootstrap-progressbar/css/bootstrap-progressbar-3.3.4.min.css'"/>
+    <style>
+        .disabled{
+            filter: grayscale(100%);
+            pointer-events: none;
+        }
+    </style>
 </th:block>
 <div layout:fragment="content">
 
