@@ -1,6 +1,8 @@
 package com.eshop.client.mapping;
 
+import org.mapstruct.BeanMapping;
 import org.mapstruct.MappingTarget;
+import org.mapstruct.NullValuePropertyMappingStrategy;
 
 import java.util.List;
 
@@ -10,7 +12,7 @@ public interface BaseMapper<M,E> {
 
     E toEntity(final M model);
     List<E> toEntity(final List<M> models);
-
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     E updateEntity(M model, @MappingTarget E entity);
     List<E> updateEntity(List<M> modelList, @MappingTarget List<E> entityList);
 }

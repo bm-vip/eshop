@@ -20,6 +20,9 @@ function loadEntityByInput() {
 }
 
 columns = [{
+    data: 'user',
+    render: function (data) { return "{0} {1}".format(data.firstName, data.lastName) }
+},{
     data: 'subscriptionPackage.name'
 },{
     data: 'status'

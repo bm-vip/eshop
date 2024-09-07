@@ -82,7 +82,9 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter,WalletModel,
             var subscriptionModel = subscriptionService.findByUserAndActivePackage(model.getUser().getId());
             for (BalanceModel balanceModel : balance) {
                 var subscriptionPackage = subscriptionPackageService.findMatchedPackageByAmountAndCurrency(balanceModel.getTotalAmount(),balanceModel.getCurrency());
-                if(subscriptionPackage != null && !subscriptionModel.getSubscriptionPackage().getId().equals(subscriptionPackage.getId())) {
+                if(subscriptionPackage != null) {
+                    if(subscriptionModel != null && subscriptionModel.getSubscriptionPackage().getId().equals(subscriptionPackage.getId()))
+                        return result;
                     subscriptionService.create(new SubscriptionModel().setSubscriptionPackage(subscriptionPackage).setUser(model.getUser()).setStatus(EntityStatusType.Active));
                 }
             }
