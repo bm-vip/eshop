@@ -24,6 +24,8 @@ services:
       dockerfile: Dockerfile
     ports:
       - "80:80"
+    volumes:
+      - uploads_volume:/app/uploads
     environment:
       DB_URL: jdbc:postgresql://dbpostgresql:5432/eshop
       DB_USER: eshop_user
