@@ -12,6 +12,8 @@ import com.querydsl.core.types.Predicate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 
 @Service
 public class CoinServiceImpl extends BaseServiceImpl<CoinFilter, CoinModel, CoinEntity, Long> implements CoinService {
@@ -35,5 +37,11 @@ public class CoinServiceImpl extends BaseServiceImpl<CoinFilter, CoinModel, Coin
         filter.getLogo().ifPresent(v->builder.and(p.logo.eq(v)));
 
         return builder;
+    }
+
+
+    @Override
+    public CoinModel findByRandom() {
+        return mapper.toModel(repository.findByRandom());
     }
 }

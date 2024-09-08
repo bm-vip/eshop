@@ -38,49 +38,47 @@ $(function () {
     });
 
 });
-function trade() {
+async function trade() {
     $("#trading-content").show();
     goToByScroll("#trading-content");
     //create trading orders
-    $.get("/api/v1/subscription/find-active-by-user/" + currentUser.id, function (subscription) {
-        const orderCount = get(()=> subscription.subscriptionPackage.orderCount,0);
-        if(orderCount > 0) {
-            $("#trading-order").empty();
-            for (let i = 0; i < orderCount; i++) {
-                const orderElement = `              
-                <div class="col-md-3 widget widget_tally_box">
-                    <div class="x_panel">
-                        <div class="x_title">
-                            <h2>Order ${i+1}</h2>
-                            <div class="clearfix"></div>
-                        </div>
-                        <div class="x_content">
-
-                            <div style="text-align: center; margin-bottom: 17px">
-                             <span class="chart" data-percent="100">
-                                  <span class="percent"></span>
-                             </span>
-                            </div>
-
-                            <h3 class="name_title">Finance</h3>
-                            <p>Short Description</p>
-
-                            <div class="divider"></div>
-
-                            <p>If you've decided to go in development mode and tweak all of this a bit, there
-                                are few things you should do.</p>
-                        </div>
+    let subscription = await (await fetch("/api/v1/subscription/find-active-by-user/" + currentUser.id)).json();
+    const orderCount = get(() => subscription.subscriptionPackage.orderCount, 0);
+    if (orderCount > 0) {
+        $("#trading-order").empty();
+        for (let i = 0; i < orderCount; i++) {
+            let coin = await (await fetch('api/v1/coin/buy/' + currentUser.id)).json();
+            let exchanges = await (await fetch('api/v1/exchange/buy/' + currentUser.id)).json();
+            const orderElement = `              
+            <div class="col-md-3 widget widget_tally_box">
+                <div class="x_panel">
+                    <div class="x_title">
+                        <h2>Order ${i + 1}</h2>
+                        <div class="clearfix"></div>
                     </div>
-                </div>`;
-                // Append the order element to the trading container
-                $("#trading-order").append(orderElement);
-            }
-            initPieChart();
+                    <div class="x_content">
+
+                        <div style="text-align: center; margin-bottom: 17px">
+                         <span id="order-${i + 1}" class="chart" data-percent="100">
+                              <span class="percent"></span>
+                         </span>
+                        </div>
+
+                        <h3 class="name_title"><img width="40px" src="${coin.logo}"/> ${coin.name}</h3>
+                        <p>From exchange <img width="20px" src="${exchanges[0].logo}"/> ${exchanges[0].name} to <img width="20px" src="${exchanges[1].logo}"/> ${exchanges[1].name}</p>
+
+                        <div class="divider"></div>
+                        <a href="javascript:initPieChart('#order-${i + 1}');" class="btn btn-primary btn-block" role="button">Buy</a> 
+                    </div>
+                </div>
+            </div>`;
+            // Append the order element to the trading container
+            $("#trading-order").append(orderElement);
         }
-    });
+    }
 }
-function initPieChart(){
-    $('.chart').easyPieChart({
+function initPieChart(id){
+    $(id).easyPieChart({
         easing: 'easeOutElastic',
         delay: 3000,
         barColor: '#26B99A',

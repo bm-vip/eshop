@@ -12,6 +12,8 @@ import com.querydsl.core.types.Predicate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 
 @Service
 public class ExchangeServiceImpl extends BaseServiceImpl<ExchangeFilter, ExchangeModel, ExchangeEntity, Long> implements ExchangeService {
@@ -35,5 +37,10 @@ public class ExchangeServiceImpl extends BaseServiceImpl<ExchangeFilter, Exchang
         filter.getLogo().ifPresent(v->builder.and(p.logo.eq(v)));
 
         return builder;
+    }
+
+    @Override
+    public List<ExchangeModel> findByRandom() {
+        return mapper.toModel(repository.findByRandom());
     }
 }
