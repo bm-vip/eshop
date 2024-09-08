@@ -1,3 +1,5 @@
+let SERVER_ADDRESS; (async () => SERVER_ADDRESS = (await (await fetch("/api/v1/parameter/find-by-code/SERVER_ADDRESS")).json()).value)();
+
 $(function () {
     //create subscription packages
     $.getJSON("/api/v1/subscription-package?size=100", function (subscriptionPackages) {
@@ -64,8 +66,8 @@ async function trade() {
                          </span>
                         </div>
 
-                        <h3 class="name_title"><img width="40px" src="${coin.logo}"/> ${coin.name}</h3>
-                        <p>From exchange <img width="20px" src="${exchanges[0].logo}"/> ${exchanges[0].name} to <img width="20px" src="${exchanges[1].logo}"/> ${exchanges[1].name}</p>
+                        <h3 class="name_title"><img width="40px" src="${SERVER_ADDRESS + coin.logo}"/> ${coin.name}</h3>
+                        <p>From exchange <img width="20px" src="${SERVER_ADDRESS + exchanges[0].logo}"/> ${exchanges[0].name} to <img width="20px" src="${SERVER_ADDRESS + exchanges[1].logo}"/> ${exchanges[1].name}</p>
 
                         <div class="divider"></div>
                         <a href="javascript:initPieChart('#order-${i + 1}');" class="btn btn-primary btn-block" role="button">Buy</a> 
