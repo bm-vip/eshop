@@ -116,30 +116,19 @@ function removeUrlparameter(parameter) {
     return url;
 }
 
-function show_info(mes, fixStatus) {
+function show_info(mes) {
     $("#myAlert .alert-content").html(mes);
-    if (isNullOrEmpty(fixStatus) && fixStatus) {
-        $("#myAlert").removeClass("alert-danger alert-warning alert-success").addClass("alert-info").show();
-    } else {
-        $("#myAlert").removeClass("alert-danger alert-warning alert-success").addClass("alert-info").show().delay(3000).fadeOut();
-    }
-
+    $("#myAlert").removeClass("alert-danger alert-warning alert-success").addClass("alert-info").show().delay(3000).fadeOut();
 }
 
 function show_success(mes) {
     $("#myAlert .alert-content").html(mes);
     $("#myAlert").removeClass("alert-danger alert-warning alert-info").addClass("alert-success").show().delay(3000).fadeOut();
-
 }
 
-function show_warning(mes, fixStatus) {
+function show_warning(mes) {
     $("#myAlert .alert-content").html(mes);
-    if (isNullOrEmpty(fixStatus) && fixStatus) {
-        $("#myAlert").removeClass("alert-success alert-danger alert-info").addClass("alert-warning").show();
-    } else {
-        $("#myAlert").removeClass("alert-success alert-danger alert-info").addClass("alert-warning").show().delay(3000)
-            .fadeOut();
-    }
+    $("#myAlert").removeClass("alert-success alert-danger alert-info").addClass("alert-warning").show().delay(3000).fadeOut();
 }
 
 function show_error(mes) {
