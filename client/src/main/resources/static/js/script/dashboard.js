@@ -7,6 +7,7 @@
     });
     $.getJSON("/api/v1/wallet/total-balance/" + currentUser.id, function (data) {
         $("#totalBalance").text(get(() => data[0].totalAmount, 0));
+        $(".currency").text(get(() => data[0].currency, 'USDT'));
     });
 
     $.getJSON("/api/v1/wallet/total-deposit/" + currentUser.id, function (data) {

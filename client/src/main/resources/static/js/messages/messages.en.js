@@ -400,4 +400,5 @@ var resources = {
     'selfReferralBonus': 'Self referral bonus',
     'parentReferralBonus': 'Parent referral bonus',
     'trade':'Trade',
+    'depositAlert':'Your request is being reviewed, if matches, the result will be added to your account balance after a few hours.'
 };

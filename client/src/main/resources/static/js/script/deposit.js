@@ -84,3 +84,11 @@ function loadSearchEntityByInput() {
 function clearAll_(){
     $("#amount,#transactionHash").val('');
 }
+function afterSubmitForm(entity) {
+    $("#deposit-alert").remove();
+    let infoElement = `<div id="deposit-alert" class="alert alert-info">
+    <button onclick="$('#deposit-alert').hide()" class="close">&times;</button>
+    <div class="alert-content">${resources.depositAlert}</div>
+</div>`;
+    $(".btn-primary").after(infoElement);
+}
