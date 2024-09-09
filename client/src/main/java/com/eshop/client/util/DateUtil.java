@@ -22,9 +22,13 @@ public class DateUtil {
         return Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant());
     }
 
-    private static String addZero(int value) {
+    public static String addZero(int value) {
         if (value < 10)
             return "0" + value;
         else return value + "";
+    }
+    public static Date truncate(Date date) {
+        // Convert back to Date with time set to 00:00:00
+        return Date.from(toLocalDate(date).atStartOfDay(ZoneId.systemDefault()).toInstant());
     }
 }

@@ -2,7 +2,7 @@ package com.eshop.client.controller;
 
 import com.eshop.client.model.PageModel;
 import com.eshop.client.model.Select2Model;
-import com.eshop.client.validation.Save;
+import com.eshop.client.validation.Create;
 import com.eshop.client.validation.Update;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.data.domain.Page;
@@ -47,8 +47,8 @@ public interface BaseRestController<F, M, ID extends Serializable> {
 
     @PostMapping
     @ResponseBody
-    @Operation(summary = "${api.baseRest.save}", description = "${api.baseRest.save.desc}")
-    ResponseEntity<M> create(@Validated(Save.class) @RequestBody M model);
+    @Operation(summary = "${api.baseRest.create}", description = "${api.baseRest.create.desc}")
+    ResponseEntity<M> create(@Validated(Create.class) @RequestBody M model);
 
     @PatchMapping
     @ResponseBody

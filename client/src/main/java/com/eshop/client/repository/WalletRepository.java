@@ -30,4 +30,10 @@ public interface WalletRepository extends BaseRepository<WalletEntity, Long> {
 			+ "AND (:userId is null or w.user.id = :userId) AND w.active is true "
 			+ "GROUP BY w.currency")
 	 List<BalanceModel> findBonusGroupedByCurrency(Long userId);
+
+	@Query("SELECT new com.eshop.client.model.BalanceModel(w.currency, SUM(w.amount)) "
+			+ "FROM WalletEntity w WHERE w.transactionType = com.eshop.client.enums.TransactionType.REWARD "
+			+ "AND (:userId is null or w.user.id = :userId) AND w.active is true "
+			+ "GROUP BY w.currency")
+	List<BalanceModel> findRewardGroupedByCurrency(Long userId);
 }

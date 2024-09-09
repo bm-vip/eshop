@@ -6,6 +6,7 @@ import lombok.Data;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 @Data
 @Entity
@@ -48,5 +49,22 @@ public class SubscriptionPackageEntity extends BaseEntity<Long> {
     public String getSelectTitle() {
         if(name == null) return null;
         return name.concat(" ").concat(" ").concat(price.toString()).concat(" ").concat(currency.getTitle());
+    }
+    @Transient
+    public BigDecimal getReward(BigDecimal balance) {
+        if (balance.compareTo(price) < 0 || balance.compareTo(maxPrice) > 0) {
+//            throw new IllegalArgumentException("User balance must be within the range of price and maxPrice");
+            return BigDecimal.ZERO;
+        }
+        // Normalize user balance within the range [0, 1]
+        BigDecimal balanceRange = maxPrice.subtract(price);
+        BigDecimal normalizedBalance = balance.subtract(price).divide(balanceRange, 10, RoundingMode.HALF_UP);
+        // Scale the reward based on the normalized balance
+        var _minTradingReward = new BigDecimal(Float.toString(minTradingReward));
+        var _maxTradingReward = new BigDecimal(Float.toString(maxTradingReward));
+        BigDecimal rewardRange = _maxTradingReward.subtract(_minTradingReward);
+        BigDecimal reward = _minTradingReward.add(normalizedBalance.multiply(rewardRange));
+
+        return reward.setScale(2, RoundingMode.HALF_UP); // Set the scale to 2 decimal places
     }
 }

@@ -1,4 +1,4 @@
 package com.eshop.client.validation;
 
-public interface Save {
+public interface Create {
 }

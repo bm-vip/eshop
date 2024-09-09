@@ -30,6 +30,7 @@
             <column name="subscription_id" type="bigint">
                 <constraints nullable="false"/>
             </column>
+            <column name="reward" type="NUMBER(19, 2)"/>
         </createTable>
     </changeSet>
     <changeSet id="10-3" author="administrator">

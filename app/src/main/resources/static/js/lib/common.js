@@ -16,6 +16,17 @@
 
 }(jQuery));
 
+$.postJSON = function(url, data, success, dataType) {
+    return $.ajax({
+        url: url,
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify(data),  // Convert the JavaScript object to JSON string
+        success: success,
+        dataType: dataType
+    });
+};
+
 $.cookie.json = true;
 
 $(function () {

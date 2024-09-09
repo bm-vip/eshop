@@ -16,6 +16,17 @@
 
 }(jQuery));
 
+$.postJSON = function(url, data, success, error, dataType) {
+    return $.ajax({
+        url: url,
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify(data),
+        success: success,
+        error: error,
+        dataType: dataType
+    });
+};
 
 const currentUser = JSON.parse($("#currentUser").val());
 
@@ -123,12 +134,12 @@ function show_info(mes) {
 
 function show_success(mes) {
     $("#myAlert .alert-content").html(mes);
-    $("#myAlert").removeClass("alert-danger alert-warning alert-info").addClass("alert-success").show().delay(3000).fadeOut();
+    $("#myAlert").removeClass("alert-danger alert-warning alert-info").addClass("alert-success").show().delay(5000).fadeOut();
 }
 
 function show_warning(mes) {
     $("#myAlert .alert-content").html(mes);
-    $("#myAlert").removeClass("alert-success alert-danger alert-info").addClass("alert-warning").show().delay(3000).fadeOut();
+    $("#myAlert").removeClass("alert-success alert-danger alert-info").addClass("alert-warning").show().delay(5000).fadeOut();
 }
 
 function show_error(mes) {

@@ -2,6 +2,7 @@ package com.eshop.client.service.impl;
 
 import com.eshop.client.entity.QSubscriptionEntity;
 import com.eshop.client.entity.SubscriptionEntity;
+import com.eshop.client.entity.UserEntity;
 import com.eshop.client.entity.WalletEntity;
 import com.eshop.client.enums.EntityStatusType;
 import com.eshop.client.enums.RoleType;
@@ -38,6 +39,7 @@ public class SubscriptionServiceImpl extends BaseServiceImpl<SubscriptionFilter,
     private final UserRepository userRepository;
     private final WalletRepository walletRepository;
     private final ParameterService parameterService;
+    private final String walletAddressValue;
 
     public SubscriptionServiceImpl(SubscriptionRepository repository, SubscriptionMapper mapper, SubscriptionPackageRepository subscriptionPackageRepository, UserRepository userRepository, WalletRepository walletRepository, ParameterService parameterService) {
         super(repository, mapper);
@@ -46,6 +48,7 @@ public class SubscriptionServiceImpl extends BaseServiceImpl<SubscriptionFilter,
         this.userRepository = userRepository;
         this.walletRepository = walletRepository;
         this.parameterService = parameterService;
+        this.walletAddressValue = parameterService.findByCode(ParameterService.walletAddress).getValue();
     }
     @Override
     public JpaRepository<SubscriptionEntity,Long> getRepository() {
@@ -163,7 +166,6 @@ public class SubscriptionServiceImpl extends BaseServiceImpl<SubscriptionFilter,
     }
 
     private void addBonus(SubscriptionEntity entity) {
-        var walletAddressValue = parameterService.findByCode(ParameterService.walletAddress).getValue();
         var selfReferralBonus = entity.getSubscriptionPackage().getSelfReferralBonus();
         WalletEntity selfWallet = new WalletEntity();
         selfWallet.setActive(true);

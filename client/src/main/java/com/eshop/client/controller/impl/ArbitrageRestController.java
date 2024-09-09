@@ -24,4 +24,8 @@ public class ArbitrageRestController extends BaseRestControllerImpl<ArbitrageFil
     public long countAllByUserId(@PathVariable long userId) {
         return arbitrageService.countAllByUserId(userId);
     }
+    @GetMapping("daily-limit-purchase/{userId}")
+    public boolean dailyLimitPurchase(@PathVariable long userId) {
+        return arbitrageService.dailyLimitPurchase(userId);
+    }
 }

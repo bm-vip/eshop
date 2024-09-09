@@ -3,6 +3,10 @@ package com.eshop.client.entity;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
+
+import static com.eshop.client.util.MapperHelper.get;
+import static com.eshop.client.util.MapperHelper.getOrDefault;
 
 @Data
 @Entity
@@ -27,9 +31,10 @@ public class ArbitrageEntity extends BaseEntity<Long> {
 	@ManyToOne
 	@JoinColumn(name = "subscription_id")
 	private SubscriptionEntity subscription;
+	private BigDecimal reward;
 
 	@Override
 	public String getSelectTitle() {
-		return user.getSelectTitle().concat(" ").concat(coin.getName()).concat(" ").concat(exchange.getName());
+		return getOrDefault(()->user.getSelectTitle(),"").concat(" ").concat(getOrDefault(()->coin.getName(),"")).concat(" ").concat(getOrDefault(()->exchange.getName(),""));
 	}
 }

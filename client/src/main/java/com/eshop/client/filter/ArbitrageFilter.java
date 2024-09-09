@@ -12,6 +12,7 @@ import java.util.Optional;
 @Accessors(chain = true)
 public class ArbitrageFilter {
     private Long id;
+    private Date createdDate;
     private Date createdDateFrom;
     private Date createdDateTo;
     private Long userId;
@@ -23,55 +24,32 @@ public class ArbitrageFilter {
         return Optional.ofNullable(id);
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public Optional<Date> getCreatedDateFrom() {
         return Optional.ofNullable(createdDateFrom);
-    }
-
-    public void setCreatedDateFrom(Date createdDateFrom) {
-        this.createdDateFrom = createdDateFrom;
     }
 
     public Optional<Date> getCreatedDateTo() {
         return Optional.ofNullable(createdDateTo);
     }
 
-    public void setCreatedDateTo(Date createdDateTo) {
-        this.createdDateTo = createdDateTo;
+    public Optional<Date> getCreatedDate() {
+        return Optional.ofNullable(createdDate);
     }
 
     public Optional<Long> getUserId() {
         return Optional.ofNullable(userId);
     }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
-    }
-
     public Optional<Long> getExchangeId() {
         return Optional.ofNullable(exchangeId);
-    }
-
-    public void setExchangeId(Long exchangeId) {
-        this.exchangeId = exchangeId;
     }
 
     public Optional<Long> getCoinId() {
         return Optional.ofNullable(coinId);
     }
 
-    public void setCoinId(Long coinId) {
-        this.coinId = coinId;
-    }
-
     public Optional<Long> getSubscriptionId() {
         return Optional.ofNullable(subscriptionId);
     }
 
-    public void setSubscriptionId(Long subscriptionId) {
-        this.subscriptionId = subscriptionId;
-    }
 }

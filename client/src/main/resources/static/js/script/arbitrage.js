@@ -39,6 +39,12 @@ $(function () {
 
 });
 async function trade() {
+    let dailyLimitPurchase = await (await fetch("/api/v1/arbitrage/daily-limit-purchase/" + currentUser.id)).json();
+    if(dailyLimitPurchase) {
+        show_warning("You have reached the daily purchase limitation, please try tomorrow.");
+        return;
+    }
+
     $("#trading-content").show();
     goToByScroll("#trading-content");
     //create trading orders
@@ -68,7 +74,7 @@ async function trade() {
                         <p>From exchange <img width="20px" src="${exchanges[0].logo}"/> ${exchanges[0].name} to <img width="20px" src="${exchanges[1].logo}"/> ${exchanges[1].name}</p>
 
                         <div class="divider"></div>
-                        <a href="javascript:initPieChart('#order-${i + 1}');" class="btn btn-primary btn-block" role="button">Buy</a> 
+                        <a id="buy-btn-${i + 1}" href="javascript:buy(${i + 1}, ${exchanges[0].id}, ${coin.id}, ${subscription.id});" class="btn btn-primary btn-block" role="button">Buy</a> 
                     </div>
                 </div>
             </div>`;
@@ -77,8 +83,8 @@ async function trade() {
         }
     }
 }
-function initPieChart(id){
-    $(id).easyPieChart({
+function buy(index, exchangeId, coinId, subscriptionId){
+    $("#order-" + index).easyPieChart({
         easing: 'easeOutElastic',
         delay: 3000,
         barColor: '#26B99A',
@@ -89,6 +95,16 @@ function initPieChart(id){
         lineCap: 'butt',
         onStep: function (from, to, percent) {
             $(this.el).find('.percent').text(Math.round(percent));
+        },
+        onStop:function (from, to){
+            console.log('Animation complete. Final percentage: ' + to);
+            $.postJSON("/api/v1/arbitrage",{user:{id:currentUser.id}, exchange:{id:exchangeId}, coin:{id: coinId}, subscription:{id:subscriptionId}}, function (data) {
+                $("#buy-btn-" + index).addClass("disabled").attr("aria-disabled", "true").after(`<p>You received ${data.reward} commission from this purchase!</p>`);
+            },function (error){
+                if(isNullOrEmpty(get(() => error.responseJSON)))
+                    show_error('ajax answer post returned error: ' + header.responseText);
+                else show_error(error.responseJSON.error + ' (' + error.responseJSON.status + ') <br>' + error.responseJSON.message);
+            });
         },
         animate: {
             duration: 5000, // 5 seconds animation duration

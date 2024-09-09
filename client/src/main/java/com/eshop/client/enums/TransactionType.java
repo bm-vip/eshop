@@ -15,6 +15,7 @@ public enum TransactionType {
     DEPOSIT("deposit"),
     WITHDRAWAL("withdrawal"),
     BONUS("bonus"),
+    REWARD("reward"),
     ;
 
 

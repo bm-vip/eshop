@@ -8,6 +8,7 @@ import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import static com.eshop.client.util.MapperHelper.getOrDefault;
 import static javax.persistence.FetchType.EAGER;
 import static javax.persistence.FetchType.LAZY;
 
@@ -43,6 +44,6 @@ public class SubscriptionEntity extends BaseEntity<Long> implements LogicalDelet
 
     @Override
     public String getSelectTitle() {
-        return user.getSelectTitle() + " | " + subscriptionPackage.getSelectTitle();
+        return getOrDefault(()->user.getSelectTitle(),"") + " | " + getOrDefault(()->subscriptionPackage.getSelectTitle(),"");
     }
 }
