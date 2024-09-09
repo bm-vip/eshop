@@ -4,6 +4,8 @@ package com.eshop.client.controller;
 import com.eshop.client.config.MessageConfig;
 import com.eshop.client.enums.RoleType;
 import com.eshop.client.model.UserModel;
+import com.eshop.client.service.MailService;
+import com.eshop.client.service.OneTimePasswordService;
 import com.eshop.client.service.impl.UserServiceImpl;
 import com.eshop.client.util.SessionHolder;
 import lombok.AllArgsConstructor;
@@ -23,6 +25,8 @@ public class LoginController {
     final SessionHolder sessionHolder;
     final HttpServletRequest request;
     final UserServiceImpl userService;
+    final OneTimePasswordService oneTimePasswordService;
+    final MailService mailService;
 
     @RequestMapping(value = "/{name}", method = RequestMethod.GET)
     public ModelAndView loadPage(@PathVariable String name) {
@@ -65,6 +69,22 @@ public class LoginController {
     @PostMapping("/registration")
     public String register(@Valid @ModelAttribute("user") UserModel user) {
         userService.register(user);
+        return "redirect:/login#signin";
+    }
+
+    @PostMapping("/send-OTP")
+    public String changePassword(@Valid @ModelAttribute("user") UserModel user) {
+        String subject = "Here's the code to reset your password";
+        var entity = userService.findByEmail(user.getEmail());
+        var  code = oneTimePasswordService.create(entity.getId());
+        String body = "<p>Hello " + entity.getSelectTitle() + "</p>"
+                + "<p>For security reason, you're required to use the following "
+                + "One Time Password to verify your email.:</p>"
+                + "<p><b>" + code + "</b></p>"
+                + "<br>"
+                + "<p>Note: this OTP is set to expire in 5 minutes.</p>";
+
+        mailService.send(user.getEmail(), subject, body);
         return "redirect:/login#signin";
     }
 

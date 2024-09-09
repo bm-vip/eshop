@@ -25,4 +25,5 @@
     <include file="/db/changelog/08_create_table_exchange.xml" relativeToChangelogFile="false"/>
     <include file="/db/changelog/09_insert_data_exchange.xml" relativeToChangelogFile="false"/>
     <include file="/db/changelog/10_create_table_arbitrage.xml" relativeToChangelogFile="false"/>
+    <include file="/db/changelog/11_create_table_one_time_password.xml" relativeToChangelogFile="false"/>
 </databaseChangeLog>

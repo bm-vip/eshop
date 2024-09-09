@@ -43,6 +43,10 @@ public class UserServiceImpl extends BaseServiceImpl<UserFilter,UserModel, UserE
     public UserModel findByUserName(String userName) {
         return mapper.toModel(userRepository.findByUserName(userName).orElseThrow(() -> new NotFoundException("userName: " + userName)));
     }
+    @Override
+    public UserModel findByEmail(String email) {
+        return mapper.toModel(userRepository.findByEmail(email).orElseThrow(() -> new NotFoundException("userName: " + email)));
+    }
 
     @Override
     public UserModel register(UserModel model) {

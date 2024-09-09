@@ -4016,27 +4016,45 @@ a.hiddenanchor {
   max-width: 350px;
   position: relative; }
 
-.registration_form, .login_form {
+.registration_form, .login_form, .send_otp_form {
   position: absolute;
   top: 0px;
-  width: 100%; }
+  width: 100%;
+}
 
 .registration_form {
   z-index: 21;
   opacity: 0;
   width: 100%; }
 
-.login_form {
-  z-index: 22; }
-
-#signup:target ~ .login_wrapper .registration_form, #signin:target ~ .login_wrapper .login_form {
+.send_otp_form {
   z-index: 22;
+  opacity: 0;
+  width: 100%;
+}
+
+.login_form {
+  z-index: 23;
+}
+
+#signup:target ~ .login_wrapper .registration_form, #signin:target ~ .login_wrapper .login_forml {
+  z-index: 23;
   -webkit-animation-name: fadeInLeft;
   animation-name: fadeInLeft;
   -webkit-animation-delay: .1s;
   animation-delay: .1s; }
 
 #signup:target ~ .login_wrapper .login_form, #signin:target ~ .login_wrapper .registration_form {
+  -webkit-animation-name: fadeOutLeft;
+  animation-name: fadeOutLeft; }
+#send_otp:target ~ .login_wrapper .send_otp_form, #signin:target ~ .login_wrapper .login_forml {
+  z-index: 23;
+  -webkit-animation-name: fadeInLeft;
+  animation-name: fadeInLeft;
+  -webkit-animation-delay: .1s;
+  animation-delay: .1s; }
+
+#send_otp:target ~ .login_wrapper .login_form, #signin:target ~ .login_wrapper .send_otp_form {
   -webkit-animation-name: fadeOutLeft;
   animation-name: fadeOutLeft; }
 

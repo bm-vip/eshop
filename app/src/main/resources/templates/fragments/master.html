@@ -23,6 +23,28 @@
     <link rel="stylesheet" type="text/css" th:href="@{/css/lib/bootstrap-tagsinput.css}"/>
     <link rel="stylesheet" type="text/css" th:href="'/css/lib/bootstrap.custom.' + #{locale} + '.css'"/>
 
+    <style>
+        #myAlert {
+            display: none;
+            position: fixed;
+            top: 10%;
+            left: 2%;
+            right: 70%;
+            z-index: 2147483647;
+        }
+        @media (max-width: 768px) {
+            #myAlert {
+                display: none; /* Adjust visibility as needed */
+                position: fixed;
+                top: 5%;    /* Bring it down slightly for mobile */
+                left: 5%;   /* Center the element better */
+                right: 5%;  /* Increase right to make it fit within the smaller screen */
+                z-index: 2147483647;
+            }
+        }
+
+    </style>
+
     <script type="text/javascript" th:src="'/js/messages/messages.' + #{locale} + '.js'"></script>
     <script type="text/javascript" th:src="@{/js/lib/jquery.min.js}"></script>
     <script type="text/javascript" th:src="@{/js/lib/bootstrap.min.js}"></script>
@@ -207,8 +229,7 @@
 </div>
 <!-- /. Modal -->
 <!-- Alert  class={alert-danger,alert-warning,alert-info,alert-success}-->
-<div id="myAlert" class="alert fade in"
-     style="display: none; position: fixed; top: 10%; left: 2%; right: 70%; z-index: 2147483647;">
+<div id="myAlert" class="alert fade in">
     <button onclick="$('#myAlert').hide()" class="close">&times;</button>
     <div class="alert-content"></div>
 </div>

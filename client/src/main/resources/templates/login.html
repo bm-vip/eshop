@@ -12,7 +12,7 @@
     <link rel="stylesheet" type="text/css" th:href="#{direction} +'/bootstrap/dist/css/bootstrap.min.css'"/>
     <link rel="stylesheet" type="text/css" th:href="#{direction} +'/font-awesome/css/font-awesome.min.css'"/>
     <link rel="stylesheet" type="text/css" th:href="#{direction} +'/animate.css/animate.min.css'"/>
-    <link rel="stylesheet" type="text/css" th:href="#{direction} +'/build/css/custom.min.css'"/>
+    <link rel="stylesheet" type="text/css" th:href="#{direction} +'/build/css/custom.css'"/>
     <style>
         .form-group {
             margin-right: auto!important;
@@ -45,6 +45,7 @@
 <div>
     <a class="hiddenanchor" id="signup"></a>
     <a class="hiddenanchor" id="signin"></a>
+    <a class="hiddenanchor" id="send_otp"></a>
 
     <div class="login_wrapper">
         <div class="animate form login_form">
@@ -54,10 +55,10 @@
 
                     <div class="row">
                         <div class="col-xs-12 form-group">
-                            <div class='alert alert-danger' th:if="${errorMsg != null}">
+                            <div class='alert alert-danger' th:if="${errorMsg != null && errorMsg!='invalidSession'}">
                                 <button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;
                                 </button>
-                                <p th:text="${errorMsg}"></p>
+                                <p th:text="#{${errorMsg}}"></p>
                             </div>
                         </div>
                     </div>
@@ -76,21 +77,84 @@
                     </div>
                     </div>
                     <div class="row">
-                    <div class="col-xs-12 form-group">
-                        <button tabindex="3" type="submit" class="btn btn-secondary" style="width: 100%;" th:value="#{enter}">Enter</button>
-                    </div>
-                    </div>
-                    <div class="row">
-                    <div class="col-xs-12">
-                        <a class="reset_pass" href="#" th:text="#{lostYourPass}">Lost your password</a>
-                    </div>
+                        <div class="col-xs-12 form-group">
+                            <button tabindex="3" type="submit" class="btn btn-secondary" style="width: 100%;" th:value="#{enter}">Enter</button>
+                        </div>
                     </div>
                     <div class="clearfix"></div>
 
                     <div class="separator">
-                        <p class="change_link">New to site?
-                            <a href="#signup" class="to_register"> Create Account </a>
-                        </p>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <p class="change_link">
+                                    <th:block th:text="#{lostYourPass}"></th:block>
+                                    <a class="send_otp" href="#send_otp" th:text="#{send} + ' OTP'">Send OTP</a>
+                                </p>
+                            </div>
+                            <div class="col-xs-12">
+                                <p class="change_link">New to site?
+                                    <a href="#signup" class="to_register"> Create Account </a>
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="clearfix"></div>
+                        <br/>
+
+                        <div>
+                            <h2><i class="fa fa-eye" style="width: 50px"></i>
+                                <th:block th:text="#{siteName}"></th:block>
+                            </h2>
+                            <p>
+                                <th:block th:text="#{AllRightReserved}"></th:block>
+                                <th:block th:text="#{siteName}"></th:block>
+                                <th:block th:text="#{forCompanyAt}"></th:block>
+                            </p>
+                        </div>
+                    </div>
+                </form>
+            </section>
+        </div>
+        <div class="animate form send_otp_form">
+            <section class="login_content">
+                <form id="send_otp-form" th:action="@{/send-OTP}" method="POST" class="form-horizontal">
+                    <h1 th:text="#{send} + ' OTP'"></h1>
+
+                    <div class="row">
+                        <div class="col-xs-12 form-group">
+                            <div class='alert alert-danger' th:if="${errorMsg != null && errorMsg!='invalidSession'}">
+                                <button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;
+                                </button>
+                                <p th:text="#{${errorMsg}}"></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                    <div class="col-xs-12 form-group">
+                        <input type="text" class="form-control" th:placeholder="#{email}" name="email" autofocus tabindex="1">
+                        <span class="fa fa-envelope form-control-feedback right" aria-hidden="true"></span>
+                    </div>
+                    </div>
+                    <div class="row">
+                    <div class="col-xs-12 form-group">
+                        <button tabindex="2" type="submit" class="btn btn-secondary" style="width: 100%;" th:value="#{enter}">Enter</button>
+                    </div>
+                    </div>
+                    <div class="clearfix"></div>
+                    <div class="separator">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <p class="change_link">Remember the password?
+                                    <a href="#signin" class="to_register" th:text="#{login}">Log in</a>
+                                </p>
+                            </div>
+                            <div class="col-xs-12">
+                                <p class="change_link">New to site?&nbsp;
+                                    <a href="#signup" class="to_register" th:text="#{createAccount}">Create Account</a>
+                                </p>
+                            </div>
+                        </div>
+
                         <div class="clearfix"></div>
                         <br/>
 
@@ -114,9 +178,9 @@
                     <h1 th:text="#{createAccount}">Create Account</h1>
                     <div class="row">
                     <div class="col-xs-12 form-group">
-                        <div class='alert alert-danger' th:if="${errorMsg != null}">
+                        <div class='alert alert-danger' th:if="${errorMsg != null && errorMsg!='invalidSession'}">
                             <button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;</button>
-                            <p th:text="${errorMsg}"></p>
+                            <p th:text="#{${errorMsg}}"></p>
                         </div>
                     </div>
                     </div>
@@ -179,9 +243,13 @@
                     <div class="clearfix"></div>
 
                     <div class="separator">
-                        <p class="change_link">Already a member ?
-                            <a href="#signin" class="to_register" th:text="#{login}">Log in</a>
-                        </p>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <p class="change_link">Already a member ?
+                                    <a href="#signin" class="to_register" th:text="#{login}">Log in</a>
+                                </p>
+                            </div>
+                        </div>
 
                         <div class="clearfix"></div>
                         <br/>
@@ -232,6 +300,38 @@
             messages: {
                 userName: resources.pleaseEnter.format(resources.userName),
                 password: resources.pleaseEnter.format(resources.password)
+            },
+            highlight: function (element) {
+                $(element).addClass('is-invalid').closest('.col-xs-12').addClass('bad');
+            },
+            unhighlight: function (element) {
+                $(element).removeClass('is-invalid').closest('.col-xs-12').removeClass('bad');
+            },
+            errorElement: 'span',
+            errorClass: 'invalid-feedback',
+            errorPlacement: function (error, element) {
+                if (element.parent('.input-group').length) {
+                    error.insertAfter(element.parent());
+                } else {
+                    error.insertAfter(element);
+                }
+            },
+            submitHandler: function (form) {
+                form.submit();
+            }
+        });
+        $('#send_otp-form').validate({
+            rules: {
+                email: {
+                    required: true,
+                    email: true
+                }
+            },
+            messages: {
+                email: {
+                    required: resources.pleaseEnter.format(resources.email),
+                    email: resources.invalidFormat.format(resources.email)
+                }
             },
             highlight: function (element) {
                 $(element).addClass('is-invalid').closest('.col-xs-12').addClass('bad');
