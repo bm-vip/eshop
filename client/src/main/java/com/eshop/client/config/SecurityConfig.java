@@ -57,7 +57,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                 .antMatchers("/ltr/**","/logout","/notfound","/login","/registration","/actuator/**").permitAll()
                 .antMatchers(HttpMethod.GET,  "/dashboard","/deposit","/arbitrage","/api/v1/files/**", "/api/v1/common/**","/api/v1/wallet/**","/api/v1/coin/**","/api/v1/exchange/**","/api/v1/parameter/**","/api/v1/subscription/**","/api/v1/subscription-package/**","/api/v1/user/**","/api/v1/role/**","/api/v1/arbitrage/**").hasAnyRole(RoleType.name(RoleType.ADMIN),RoleType.name(RoleType.SUPER_WISER), RoleType.name(RoleType.USER))
-                .antMatchers(HttpMethod.POST, "/api/v1/wallet/**","/api/v1/arbitrage").hasAnyRole(RoleType.name(RoleType.ADMIN),RoleType.name(RoleType.SUPER_WISER), RoleType.name(RoleType.USER))
+                .antMatchers(HttpMethod.POST, "/api/v1/wallet","/api/v1/arbitrage").hasAnyRole(RoleType.name(RoleType.ADMIN),RoleType.name(RoleType.SUPER_WISER), RoleType.name(RoleType.USER))
                 .antMatchers("/**").hasRole(RoleType.name(RoleType.ADMIN))
                 .anyRequest().authenticated()
                 .and().csrf().disable().formLogin()
