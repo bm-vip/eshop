@@ -18,7 +18,7 @@ $(function () {
                                     <ul class="list-unstyled text-left">
                                         <li><i class="fa fa-check text-success"></i> <strong>Unlimited access</strong>.</li>
                                         <li><i class="fa fa-check text-success"></i> Order count <strong> ${value.orderCount}</strong> times</li>
-                                        <li><i class="fa fa-check text-success"></i> Trading reward (<strong>${value.minTradingReward} - ${value.maxTradingReward}</strong>) ${value.currency}</li>
+                                        <li><i class="fa fa-check text-success"></i> Trading reward between range (<strong>${value.minTradingReward} - ${value.maxTradingReward}</strong>) ${value.currency}</li>
                                         <li><i class="fa fa-check text-success"></i> User profit percentage (<strong>${value.userProfitPercentage}%</strong>)</li>
                                         <li><i class="fa fa-check text-success"></i> Site profit percentage (<strong>${value.siteProfitPercentage}%</strong>)</li>
                                         <li><i class="fa fa-check text-success"></i> Withdrawal duration per day (<strong>${value.withdrawalDurationPerDay}</strong>)</li>

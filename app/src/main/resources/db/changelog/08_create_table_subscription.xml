@@ -123,5 +123,6 @@
             CREATE UNIQUE INDEX uc_subscription_user_status ON "tbl_subscription" (user_id) WHERE status = 'Active' and deleted = false;
         </sql>
         <addUniqueConstraint tableName="tbl_subscription_package" columnNames="name,duration" constraintName="uc_subscription_package_name_duration"></addUniqueConstraint>
+        <addUniqueConstraint tableName="tbl_subscription_package_detail" columnNames="subscription_package_id,amount" constraintName="uc_subscription_package_detail_amount_subscription_package_id"></addUniqueConstraint>
     </changeSet>
 </databaseChangeLog>

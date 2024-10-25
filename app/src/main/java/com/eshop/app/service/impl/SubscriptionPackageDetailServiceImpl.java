@@ -6,7 +6,10 @@ import com.eshop.app.filter.SubscriptionPackageDetailFilter;
 import com.eshop.app.mapping.SubscriptionPackageDetailMapper;
 import com.eshop.app.model.SubscriptionPackageDetailModel;
 import com.eshop.app.repository.SubscriptionPackageDetailRepository;
+import com.eshop.app.repository.SubscriptionPackageRepository;
 import com.eshop.app.service.SubscriptionPackageDetailService;
+import com.eshop.exception.common.BadRequestException;
+import com.eshop.exception.common.NotFoundException;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
 import org.springframework.data.domain.Page;
@@ -17,10 +20,12 @@ import org.springframework.stereotype.Service;
 public class SubscriptionPackageDetailServiceImpl extends BaseServiceImpl<SubscriptionPackageDetailFilter, SubscriptionPackageDetailModel, SubscriptionPackageDetailEntity, Long> implements SubscriptionPackageDetailService {
 
     private final SubscriptionPackageDetailRepository repository;
+    private final SubscriptionPackageRepository subscriptionPackageRepository;
 
-    public SubscriptionPackageDetailServiceImpl(SubscriptionPackageDetailRepository repository, SubscriptionPackageDetailMapper mapper) {
+    public SubscriptionPackageDetailServiceImpl(SubscriptionPackageDetailRepository repository, SubscriptionPackageDetailMapper mapper, SubscriptionPackageRepository subscriptionPackageRepository) {
         super(repository, mapper);
         this.repository = repository;
+        this.subscriptionPackageRepository = subscriptionPackageRepository;
     }
 
     @Override
@@ -36,6 +41,20 @@ public class SubscriptionPackageDetailServiceImpl extends BaseServiceImpl<Subscr
         filter.getMaxProfit().ifPresent(v -> builder.and(path.maxProfit.eq(v)));
 
         return builder;
+    }
+
+    @Override
+    public SubscriptionPackageDetailModel create(SubscriptionPackageDetailModel model) {
+        var subscriptionPackage = subscriptionPackageRepository.findById(model.getSubscriptionPackage().getId()).orElseThrow(() -> new NotFoundException(String.format("%s not found by id %d", model.getClass().getName(), model.getSubscriptionPackage().getId().toString())));
+        if(model.getMinProfit().floatValue() < subscriptionPackage.getMinTradingReward())
+            throw new BadRequestException("MinProfit must be greater or equal than " + subscriptionPackage.getMinTradingReward());
+        if(model.getMinProfit().floatValue() > subscriptionPackage.getMaxTradingReward())
+            throw new BadRequestException("MinProfit must be less or equal than " + subscriptionPackage.getMaxTradingReward());
+        if(model.getMaxProfit().floatValue() < subscriptionPackage.getMinTradingReward())
+            throw new BadRequestException("MaxProfit must be greater or equal than " + subscriptionPackage.getMinTradingReward());
+        if(model.getMaxProfit().floatValue() > subscriptionPackage.getMaxTradingReward())
+            throw new BadRequestException("MaxProfit must be less or equal than " + subscriptionPackage.getMaxTradingReward());
+        return super.create(model);
     }
 
     @Override

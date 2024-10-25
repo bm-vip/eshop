@@ -50,6 +50,8 @@ public class BaseExceptionHandler {
             return new ResponseEntity<>(new ErrorResponse(status, path, "Wallet with same transaction hash is already in use."), status);
         } else if (errorMessage.contains("uc_one_time_password_user_id_password")) {
             return new ResponseEntity<>(new ErrorResponse(status, path, "OTP with same password and user is already in use."), status);
+        }else if (errorMessage.contains("uc_subscription_package_detail_amount_subscription_package_id")) {
+            return new ResponseEntity<>(new ErrorResponse(status, path, "Amount with same SubscriptionPackage is already in use."), status);
         }
 
         else if (errorMessage.contains("fk_tbl_user_rol_on_role_id")) {

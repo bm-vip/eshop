@@ -115,7 +115,7 @@ columns = [{
     data: 'id',
     searchable: false,
     sortable: false,
-    render: function (data) { return `<a class="btn btn-default fa fa-pencil" id="${data}" data-bs-toggle="tooltip" title="Edit"></a> <a class="btn btn-danger fa fa-trash" id="${data}" data-bs-toggle="tooltip" title="Delete"></a> <a class="btn btn-info fa fa-list-alt" data-toggle="modal" data-target=".bs-example-modal-lg" id="${data}" data-bs-toggle="tooltip" title="Detail"></a>` }
+    render: function (data, type, row) { return `<a class="btn btn-default fa fa-pencil" id="${data}" data-bs-toggle="tooltip" title="Edit"></a> <a class="btn btn-danger fa fa-trash" id="${data}" data-bs-toggle="tooltip" title="Delete"></a> <a class="btn btn-info fa fa-list-alt" data-toggle="modal" data-target=".bs-example-modal-lg" id="${data}" modal-title="${row.name}" data-bs-toggle="tooltip" title="Detail"></a>` }
 }];
 
 function loadInputByEntity(model) {
@@ -243,6 +243,7 @@ function onLoad() {
                     $("#myModal .modal-content").unblock();
                     if(isNullOrEmpty(get(()=>header.responseJSON)))
                         show_error('ajax answer post returned error: ' + header.responseText);
+                    else if(header.responseJSON.status == 400) show_warning(header.responseJSON.error + ' (' + header.responseJSON.status + ') <br>' + header.responseJSON.message);
                     else show_error(header.responseJSON.error + ' (' + header.responseJSON.status + ') <br>' + header.responseJSON.message);
                 }
             });
@@ -281,6 +282,7 @@ function onLoad() {
                 error: function (header, status, error) {
                     if(isNullOrEmpty(get(()=>header.responseJSON)))
                         show_error('ajax answer post returned error: ' + header.responseText);
+                    else if(header.responseJSON.status == 400) show_warning(header.responseJSON.error + ' (' + header.responseJSON.status + ') <br>' + header.responseJSON.message);
                     else show_error(header.responseJSON.error + ' (' + header.responseJSON.status + ') <br>' + header.responseJSON.message);
                 }
             });
@@ -303,10 +305,6 @@ function loadSaveDetailEntityByInput() {
 }
 function loadSearchDetailEntityByInput() {
     let entity = {
-        id: isNullOrEmpty($("#myModal #hdf_subscriptionPackageDetailId").val()) ? null : $("#myModal #hdf_subscriptionPackageDetailId").val(),
-        minProfit: $("#myModal #minProfit").val(),
-        maxProfit: $("#myModal #maxProfit").val(),
-        amount: $("#myModal #amount").val().replace(/,/g, ""),
         subscriptionPackageId:isNullOrEmpty($("#myModal #hdf_subscriptionPackageId").val())? null :  $("#myModal #hdf_subscriptionPackageId").val(),
     };
     return entity;
@@ -321,6 +319,6 @@ function loadDetailInputByEntity(model) {
 }
 function initModal(element) {
     $("#myModal #hdf_subscriptionPackageId").val(element.attr('id'));
-    $("#myModal .modal-header #myModalLabel small").text(element.closest('tr').find('td:first').text());
+    $("#myModal .modal-header #myModalLabel small").text(element.attr('modal-title'));
     $.publish("reloadDetailTable");
 }
