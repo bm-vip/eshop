@@ -23,6 +23,8 @@ public class UserFilter {
     private Boolean hasParent;
     private String treePath;
     private String walletAddress;
+    private String profileImageUrl;
+    private Long countryId;
     private Set<Long> roles;
 
     public Optional<Long> getId() {
@@ -99,5 +101,16 @@ public class UserFilter {
 
     public Optional<Set<Long>> getRoles() {
         return Optional.ofNullable(roles);
+    }
+
+    public Optional<String> getProfileImageUrl() {
+        if (profileImageUrl == null || profileImageUrl.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(profileImageUrl);
+    }
+
+    public Optional<Long> getCountryId() {
+        return Optional.ofNullable(countryId);
     }
 }

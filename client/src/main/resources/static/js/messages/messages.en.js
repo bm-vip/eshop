@@ -73,6 +73,8 @@ var resources = {
     'KB': 'KB',
     'language': 'language',
     'lastName': 'lastName',
+    'country': 'Country',
+    'referralCode': 'Referral code',
     'lastNews': 'lastNews',
     'lastPlacards': 'Last Placards',
     'lastVideos': 'Last Videos',
@@ -365,6 +367,7 @@ var resources = {
     'latitude':'latitude',
     'longitude':'longitude',
     'webSiteUrl':'webSiteUrl',
+    'siteUrl':'arbitrage-broker.com',
     'vendor':'vendor',
     'tenderOffer':'Tender Offer',
     'tenderSubject':'Tender Subject',
@@ -400,5 +403,6 @@ var resources = {
     'selfReferralBonus': 'Self referral bonus',
     'parentReferralBonus': 'Parent referral bonus',
     'trade':'Trade',
-    'depositAlert':'Your request is being reviewed, if matches, the result will be added to your account balance after a few hours.'
+    'depositAlert':'Your request is being reviewed, if matches, the result will be added to your account balance after a few hours.',
+    'withdrawalAlert':'Your request is being reviewed, the amount will be deposited to your wallet after maximum 24 hours.'
 };

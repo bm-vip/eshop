@@ -1,13 +1,15 @@
 package com.eshop.client.util;
 
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.ZoneId;
+import java.time.*;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 public class DateUtil {
     public static LocalDate toLocalDate(Date date){
         return LocalDate.ofInstant(date.toInstant(), ZoneId.systemDefault());
+    }
+    public static LocalDateTime toLocalDateTime(Date date){
+        return LocalDateTime.ofInstant(date.toInstant(), ZoneId.systemDefault());
     }
     public static LocalDate toLocalDate(Long epochMilli){
         return Instant.ofEpochMilli(epochMilli)
@@ -30,5 +32,31 @@ public class DateUtil {
     public static Date truncate(Date date) {
         // Convert back to Date with time set to 00:00:00
         return Date.from(toLocalDate(date).atStartOfDay(ZoneId.systemDefault()).toInstant());
+    }
+
+    public static String timeAgo(Date date) {
+        LocalDateTime dateTime = toLocalDateTime(date);
+        LocalDateTime now = LocalDateTime.now();
+        Duration duration = Duration.between(dateTime, now);
+
+        long seconds = duration.getSeconds();
+        if (seconds < 60) {
+            return seconds + " seconds ago";
+        } else if (seconds < 3600) {
+            long minutes = seconds / 60;
+            return minutes + " mins ago";
+        } else if (seconds < 86400) {
+            long hours = seconds / 3600;
+            return hours + " hours ago";
+        } else if (seconds < 172800) { // 2 days
+            return "yesterday";
+        } else {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM d, yyyy");
+            return dateTime.format(formatter);
+        }
+    }
+
+    public static void main(String[] args) {
+        System.out.println(timeAgo(new Date()));
     }
 }

@@ -30,12 +30,12 @@ public class SubscriptionPackageFilter {
     private Float maxTradingReward;
     private Float maxTradingRewardFrom;
     private Float maxTradingRewardTo;
-    private Float selfReferralBonus;
-    private Float selfReferralBonusFrom;
-    private Float selfReferralBonusTo;
     private Float parentReferralBonus;
     private Float parentReferralBonusFrom;
     private Float parentReferralBonusTo;
+    private Integer withdrawalDurationPerDay;
+    private Integer userProfitPercentage;
+    private Integer siteProfitPercentage;
 
     public Optional<Long> getId() {
         return Optional.ofNullable(id);
@@ -118,20 +118,8 @@ public class SubscriptionPackageFilter {
     public Optional<Float> getMaxTradingRewardTo() {
         return Optional.ofNullable(maxTradingRewardTo);
     }
-
-    public Optional<Float> getSelfReferralBonus() {
-        return Optional.ofNullable(selfReferralBonus);
-    }
     public Optional<Float> getParentReferralBonus() {
         return Optional.ofNullable(parentReferralBonus);
-    }
-
-    public Optional<Float> getSelfReferralBonusFrom() {
-        return Optional.ofNullable(selfReferralBonusFrom);
-    }
-
-    public Optional<Float> getSelfReferralBonusTo() {
-        return Optional.ofNullable(selfReferralBonusTo);
     }
 
     public Optional<Float> getParentReferralBonusFrom() {
@@ -140,5 +128,17 @@ public class SubscriptionPackageFilter {
 
     public Optional<Float> getParentReferralBonusTo() {
         return Optional.ofNullable(parentReferralBonusTo);
+    }
+
+    public Optional<Integer> getWithdrawalDurationPerDay() {
+        return Optional.ofNullable(withdrawalDurationPerDay);
+    }
+
+    public Optional<Integer> getUserProfitPercentage() {
+        return Optional.ofNullable(userProfitPercentage);
+    }
+
+    public Optional<Integer> getSiteProfitPercentage() {
+        return Optional.ofNullable(siteProfitPercentage);
     }
 }

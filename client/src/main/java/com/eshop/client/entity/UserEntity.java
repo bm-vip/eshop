@@ -47,6 +47,13 @@ public class UserEntity extends BaseEntity<Long> {
 	private String treePath;
 	@Column(name = "wallet_address")
 	private String walletAddress;
+	@Column(name = "child_count")
+	private int childCount;
+	@Column(name = "profile_image_url")
+	private String profileImageUrl;
+	@ManyToOne
+	@JoinColumn(name = "country_id")
+	private CountryEntity country;
 
 	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(name = "tbl_user_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))

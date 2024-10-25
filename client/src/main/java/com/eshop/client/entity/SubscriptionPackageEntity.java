@@ -2,11 +2,15 @@ package com.eshop.client.entity;
 
 import com.eshop.client.enums.CurrencyType;
 import com.eshop.client.enums.EntityStatusType;
+import com.eshop.client.util.NumberUtil;
 import lombok.Data;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
-import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Data
 @Entity
@@ -40,31 +44,38 @@ public class SubscriptionPackageEntity extends BaseEntity<Long> {
     private Float minTradingReward;
     @Column(name = "max_trading_reward", nullable = false)
     private Float maxTradingReward;
-    @Column(name = "self_referral_bonus", nullable = false)
-    private Float selfReferralBonus;
     @Column(name = "parent_referral_bonus", nullable = false)
     private Float parentReferralBonus;
+    @Column(name = "withdrawal_duration_per_day", nullable = false)
+    private int withdrawalDurationPerDay;
+    @Column(name = "user_profit_percentage", nullable = false)
+    private int userProfitPercentage;
+    @Column(name = "site_profit_percentage", nullable = false)
+    private int siteProfitPercentage;
+    @OneToMany(mappedBy = "subscriptionPackage", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<SubscriptionPackageDetailEntity> subscriptionPackageDetails = new ArrayList<>();
+    @Transient
+    public BigDecimal getReward(BigDecimal balance) {
+        var list = subscriptionPackageDetails.stream().map(x->x.getAmount()).collect(Collectors.toList());
+        list.sort(Comparator.naturalOrder());
+        BigDecimal closestAmount = null;
+        for (BigDecimal amount : list) {
+            if (amount.compareTo(balance) <= 0) {
+                closestAmount = amount;
+            } else {
+                break;
+            }
+        }
+        if(closestAmount == null)
+            return BigDecimal.ZERO;
+        final BigDecimal amount = closestAmount;
+        var spd = subscriptionPackageDetails.stream().filter(x->x.getAmount().compareTo(amount) == 0).findAny().get();
+        return NumberUtil.getRandom(spd.getMinProfit(),spd.getMaxProfit());
+    }
 
     @Override
     public String getSelectTitle() {
         if(name == null) return null;
         return name.concat(" ").concat(" ").concat(price.toString()).concat(" ").concat(currency.getTitle());
-    }
-    @Transient
-    public BigDecimal getReward(BigDecimal balance) {
-        if (balance.compareTo(price) < 0 || balance.compareTo(maxPrice) > 0) {
-//            throw new IllegalArgumentException("User balance must be within the range of price and maxPrice");
-            return BigDecimal.ZERO;
-        }
-        // Normalize user balance within the range [0, 1]
-        BigDecimal balanceRange = maxPrice.subtract(price);
-        BigDecimal normalizedBalance = balance.subtract(price).divide(balanceRange, 10, RoundingMode.HALF_UP);
-        // Scale the reward based on the normalized balance
-        var _minTradingReward = new BigDecimal(Float.toString(minTradingReward));
-        var _maxTradingReward = new BigDecimal(Float.toString(maxTradingReward));
-        BigDecimal rewardRange = _maxTradingReward.subtract(_minTradingReward);
-        BigDecimal reward = _minTradingReward.add(normalizedBalance.multiply(rewardRange));
-
-        return reward.setScale(2, RoundingMode.HALF_UP); // Set the scale to 2 decimal places
     }
 }

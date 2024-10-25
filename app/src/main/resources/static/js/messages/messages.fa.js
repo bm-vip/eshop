@@ -27,6 +27,7 @@ var resources = {
     'contactInfo': 'اطلاعات تماس',
     'contentManagement': 'مدیریت محتوا',
     'count': 'تعداد',
+    'country': 'کشور',
     'crationDate': 'تاریخ ایجاد',
     'currency': 'تومان',
     'current': 'فعلی',
@@ -417,4 +418,10 @@ var resources = {
     'selfReferralBonus': 'پاداش خود معرف',
     'parentReferralBonus': 'پاداش والد معرف',
     'trade':'معامله',
+    'subscriptionPackageDetail':'جزئیات بسته اشتراک',
+    'minProfit':'حداقل سود',
+    'maxProfit':'حداکثر سود',
+    'withdrawalDurationPerDay':'مدت زمان برداشت سپرده اصلی',
+    'userProfitPercentage':'درصد سود کاربر',
+    'siteProfitPercentage':'درصد سود سایت'
 };

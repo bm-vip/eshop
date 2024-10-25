@@ -10,9 +10,10 @@ import java.util.List;
 import java.util.Map;
 
 public interface WalletService extends BaseService<WalletFilter, WalletModel, Long> {
-    List<BalanceModel> findBalanceGroupedByCurrency(long userId);
-    List<BalanceModel> findDepositGroupedByCurrency(long userId);
-    List<BalanceModel> findWithdrawalGroupedByCurrency(long userId);
-    List<BalanceModel> findBonusGroupedByCurrency(long userId);
+    List<BalanceModel> totalBalanceGroupedByCurrency(long userId);
+    List<BalanceModel> totalDepositGroupedByCurrency(long userId);
+    List<BalanceModel> totalWithdrawalGroupedByCurrency(long userId);
+    List<BalanceModel> totalBonusGroupedByCurrency(long userId);
+    List<BalanceModel> totalProfitGroupedByCurrency(long userId);
     Map<Long, BigDecimal> findAllWithinDateRange(long startDate, long endDate, TransactionType transactionType);
 }

@@ -1,5 +1,6 @@
 package com.eshop.app.entity;
 
+import com.eshop.app.enums.CurrencyType;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -32,6 +33,8 @@ public class ArbitrageEntity extends BaseEntity<Long> {
 	private SubscriptionEntity subscription;
 
 	private BigDecimal reward;
+	@Enumerated(value = EnumType.STRING)
+	private CurrencyType currency;
 
 	@Override
 	public String getSelectTitle() {

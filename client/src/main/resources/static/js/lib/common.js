@@ -28,8 +28,26 @@ $.postJSON = function(url, data, success, error, dataType) {
     });
 };
 
-const currentUser = JSON.parse($("#currentUser").val());
+var currentUser = JSON.parse($("#currentUser").val());
+let userOccupied = 0;
+if(!isNullOrEmpty(currentUser.firstName))
+    userOccupied+=5;
+if(!isNullOrEmpty(currentUser.lastName))
+    userOccupied+=5;
+if(currentUser.childCount > 0)
+    userOccupied+=10;
+if(!isNullOrEmpty(currentUser.email))
+    userOccupied+=10;
+if(!isNullOrEmpty(currentUser.profileImageUrl))
+    userOccupied+=10;
+if(!isNullOrEmpty(currentUser.country))
+    userOccupied+=10;
+if(!isNullOrEmpty(currentUser.walletAddress))
+    userOccupied+=10;
 
+$("#userOccupied").text(`${userOccupied}%`);
+if(!isNullOrEmpty(currentUser.profileImageUrl))
+    $("#avatar-image-url").attr('src',currentUser.profileImageUrl);
 
 $(function () {
     $('.date input').keydown(function (event) {
@@ -128,24 +146,47 @@ function removeUrlparameter(parameter) {
 }
 
 function show_info(mes) {
-    $("#myAlert .alert-content").html(mes);
-    $("#myAlert").removeClass("alert-danger alert-warning alert-success").addClass("alert-info").show().delay(3000).fadeOut();
+    // $("#myAlert .alert-content").html(mes);
+    // $("#myAlert").removeClass("alert-danger alert-warning alert-success").addClass("alert-info").show().delay(3000).fadeOut();
+    new PNotify({
+        title: 'New Thing',
+        text: mes,
+        type: 'info',
+        styling: 'bootstrap3'
+    });
 }
 
 function show_success(mes) {
-    $("#myAlert .alert-content").html(mes);
-    $("#myAlert").removeClass("alert-danger alert-warning alert-info").addClass("alert-success").show().delay(5000).fadeOut();
+    // $("#myAlert .alert-content").html(mes);
+    // $("#myAlert").removeClass("alert-danger alert-warning alert-info").addClass("alert-success").show().delay(5000).fadeOut();
+    new PNotify({
+        title: 'Success',
+        text: mes,
+        type: 'success',
+        styling: 'bootstrap3'
+    });
 }
 
 function show_warning(mes) {
-    $("#myAlert .alert-content").html(mes);
-    $("#myAlert").removeClass("alert-success alert-danger alert-info").addClass("alert-warning").show().delay(5000).fadeOut();
+    // $("#myAlert .alert-content").html(mes);
+    // $("#myAlert").removeClass("alert-success alert-danger alert-info").addClass("alert-warning").show().delay(5000).fadeOut();
+    new PNotify({
+        title: 'Notice',
+        text: mes,
+        styling: 'bootstrap3'
+    });
 }
 
 function show_error(mes) {
-    $("#myAlert .alert-content").html(mes);
-    $("#myAlert").removeClass("alert-success alert-warning alert-info").addClass("alert-danger").show();
-
+    // $("#myAlert .alert-content").html(mes);
+    // $("#myAlert").removeClass("alert-success alert-warning alert-info").addClass("alert-danger").show();
+    new PNotify({
+        title: 'Oh No!',
+        text: mes,
+        type: 'error',
+        hide: false,
+        styling: 'bootstrap3'
+    });
 }
 
 function get(lambdaExpr, defaultValue) {// () => supplier expr
@@ -304,7 +345,8 @@ function validationOptions(rules, messages, callback) {
     }
 }
 
-var tableOptions = {
+function tableOptions() {
+    return {
         "responsive": true,
         "processing": true,
         "searching": false,
@@ -339,9 +381,9 @@ var tableOptions = {
             }
         }
     };
-
+}
 function initAjaxTable(selector, columns, url, filterFunction) {
-    let opts = tableOptions;
+    let opts = tableOptions();
     opts.serverSide = true;
     opts.columns = columns;
     opts.ajax = {
@@ -375,7 +417,7 @@ function initAjaxTable(selector, columns, url, filterFunction) {
 }
 
 function initTable(selector, columns, data) {
-    let opts = tableOptions;
+    let opts = tableOptions();
     opts.columns = columns;
     opts.data = data;
     opts.searching = true;
@@ -384,7 +426,7 @@ function initTable(selector, columns, data) {
 
 function loadHtmlFileToElement(fileName, params, selector, callBack) {
     $.blockUI(blockUiOptions());
-    $.get("/getHtmlFile/" + fileName, {params: JSON.stringify(params)},
+    $.get("/get-html-file/" + fileName, {params: JSON.stringify(params)},
         function (data) {
             $.unblockUI();
             if (typeof callBack === 'function') {

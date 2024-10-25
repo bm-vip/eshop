@@ -3,6 +3,7 @@ rules = {
     lastName: "required",
     userName: "required",
     roleSelect2: "required",
+    countrySelect2: "required",
     status: "required",
     password: {
         required: true,
@@ -23,6 +24,7 @@ messages = {
     lastName: resources.pleaseEnter.format(resources.lastName),
     userName: resources.pleaseEnter.format(resources.userName),
     roleSelect2: resources.pleaseSelect.format(resources.role),
+    countrySelect2: resources.pleaseSelect.format(resources.country),
     status: resources.pleaseSelect.format(resources.status),
     password: {
         required: resources.pleaseEnter.format(resources.password),
@@ -49,7 +51,9 @@ function loadEntityByInput() {
         lastName: $("#lastName").val(),
         active: $("#status").val(),
         walletAddress: $("#walletAddress").val(),
-        roles: arrayToJsonArray($("#roleSelect2").val())
+        roles: arrayToJsonArray($("#roleSelect2").val()),
+        country: isNullOrEmpty($("#countrySelect2").val()) ? null : {id: $("#countrySelect2").val()},
+        profileImageUrl:  $("#profileImageUrl").val(),
     };
     return entity;
 }
@@ -68,8 +72,14 @@ function loadInputByEntity(entity) {
     $("#parentSelect2").html("<option value='" + get(() => model.parent.id) + "' selected>" + get(() => model.parent.name) + "</option>").trigger('change');
     $("#parentSelect2").val(get(() => model.parent.id)).trigger('change');
     $('#walletAddress').val(entity.walletAddress);
+    $('#profileImageUrl').val(entity.profileImageUrl);
 }
 columns = [{
+    data: 'profileImageUrl',
+    searchable: false,
+    sortable: false,
+    render: function (data) { return `<img src="${isNullOrEmpty(data) ? '/images/find_user.png' : data}" style="width: 35px;"></img>` }
+},{
     data: 'email'
 },{
     data: 'walletAddress'
@@ -86,6 +96,8 @@ columns = [{
     render: function (data) { return toLocalizingDateString(data, true) }
 },{
     data: 'treePath'
+},{
+    data: 'country.name'
 }, {
     data: 'id',
     searchable: false,

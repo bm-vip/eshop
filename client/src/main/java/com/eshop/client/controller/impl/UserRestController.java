@@ -2,6 +2,7 @@ package com.eshop.client.controller.impl;
 
 import com.eshop.client.filter.UserFilter;
 import com.eshop.client.model.UserModel;
+import com.eshop.client.repository.CountryUsers;
 import com.eshop.client.service.UserService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
@@ -9,6 +10,7 @@ import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @Tag(name = "User Rest Service v1")
@@ -34,6 +36,10 @@ public class UserRestController extends BaseRestControllerImpl<UserFilter, UserM
     }
     @GetMapping("/total-online")
     public ResponseEntity<Integer> totalOnline(){
-        return ResponseEntity.ok(sessionRegistry.getAllPrincipals().size() + 1000);
+        return ResponseEntity.ok(sessionRegistry.getAllPrincipals().size() + 480000);
+    }
+    @GetMapping("/count-by-country")
+    public ResponseEntity<List<CountryUsers>> findAllUserCountByCountry(){
+        return ResponseEntity.ok(userService.findAllUserCountByCountry());
     }
 }

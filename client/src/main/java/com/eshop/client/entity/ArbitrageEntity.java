@@ -1,11 +1,11 @@
 package com.eshop.client.entity;
 
+import com.eshop.client.enums.CurrencyType;
 import lombok.Data;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
 
-import static com.eshop.client.util.MapperHelper.get;
 import static com.eshop.client.util.MapperHelper.getOrDefault;
 
 @Data
@@ -32,6 +32,8 @@ public class ArbitrageEntity extends BaseEntity<Long> {
 	@JoinColumn(name = "subscription_id")
 	private SubscriptionEntity subscription;
 	private BigDecimal reward;
+	@Enumerated(value = EnumType.STRING)
+	private CurrencyType currency;
 
 	@Override
 	public String getSelectTitle() {

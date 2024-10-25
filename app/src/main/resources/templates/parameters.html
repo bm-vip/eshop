@@ -50,7 +50,7 @@
                             <div class="col-md-6 form-group">
                                 <label th:text="#{parameterGroup}"></label>
                                 <th:block
-                                        th:replace="fragments/select2 :: select2('4',#{parameterGroup}, 'parameterGroup', 'api/v1/parameterGroup/findAllSelect','{title:params.term}',false)"></th:block>
+                                        th:replace="fragments/select2 :: select2('4',#{parameterGroup}, 'parameterGroup', 'api/v1/parameterGroup/findAllSelect','{title:params.term}',false,null)"></th:block>
                             </div>
                         </div>
                         <div class="ln_solid"></div>

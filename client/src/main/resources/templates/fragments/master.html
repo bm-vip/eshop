@@ -14,7 +14,10 @@
     <link rel="stylesheet" type="text/css" th:href="#{direction} +'/bootstrap/dist/css/bootstrap.min.css'"/>
     <link rel="stylesheet" type="text/css" th:href="@{/css/lib/bootstrap-rtl.min.css}" th:if="#{direction} == 'rtl'"/>
     <link rel="stylesheet" type="text/css" th:href="@{/css/fontawesome/css/all.min.css}"/>
-    <link rel="stylesheet" type="text/css" th:href="#{direction} +'/nprogress/nprogress.css'"/>
+    <link rel="stylesheet" type="text/css" th:href="#{direction} +'/bootstrap-progressbar/css/bootstrap-progressbar-3.3.4.min.css'">
+    <link rel="stylesheet" type="text/css" th:href="#{direction} +'/pnotify/dist/pnotify.css'">
+    <link rel="stylesheet" type="text/css" th:href="#{direction} +'/pnotify/dist/pnotify.buttons.css'">
+    <link rel="stylesheet" type="text/css" th:href="#{direction} +'/pnotify/dist/pnotify.nonblock.css'">
     <link rel="stylesheet" type="text/css" th:href="#{direction} +'/build/css/custom.min.css'"/>
 
     <script type="text/javascript" th:src="'/js/messages/messages.' + #{locale} + '.js'"></script>
@@ -39,7 +42,34 @@
                 z-index: 2147483647;
             }
         }
+        span .select2-selection {
+            text-align: left;
+        }
+        .select2-container--bootstrap .select2-selection--single,.select2-search__field {
+            border-radius: 0 !important;
+        }
+        .select2-search__field {
+            outline: none;
+            z-index: 1000; /* Ensures the input remains above other elements */
+        }
 
+        .select2-container--bootstrap .select2-selection--single .select2-selection__arrow {
+            border-radius: 0 !important; /* Remove border-radius for arrow */
+        }
+
+        .select2-container--bootstrap .select2-selection--single:focus {
+            outline: none;
+        }
+        .select2-container--bootstrap .select2-selection__arrow {
+            display: none; /* Hide the arrow icon */
+        }
+        .select2-container--bootstrap .select2-selection__clear{
+            margin-right: 20px;
+        }
+        .select2-container--bootstrap .select2-selection {
+            color: rgb(108, 117, 122) !important;
+            font-size: 12px!important;
+        }
     </style>
     <th:block layout:fragment="header"></th:block>
 </head>
@@ -58,7 +88,7 @@
                 <!-- menu profile quick info -->
                 <div class="profile clearfix">
                     <div class="profile_pic">
-                        <img th:src="@{/images/find_user.png}" alt="..." class="img-circle profile_img">
+                        <img id="avatar-image-url" th:src="@{/images/find_user.png}" alt="..." class="img-circle profile_img">
                     </div>
                     <div class="profile_info">
                         <span th:text="#{welcome}"></span>:
@@ -84,12 +114,12 @@
                                 <span class="fa fa-chevron-down"></span></a>
                                 <ul class="nav child_menu">
                                     <li><a th:href="@{/deposit}" th:text="#{deposit}"></a></li>
-                                    <li><a th:href="@{/withdraw}" th:text="#{withdrawal}"></a></li>
+                                    <li><a th:href="@{/withdrawal}" th:text="#{withdrawal}"></a></li>
                                     <li><a th:href="@{/swap}"><th:block th:text="#{swap}"></th:block><span class="label label-success pull-right">Coming Soon</span></a></li>
                                     <li><a th:href="@{/staking}"><th:block th:text="#{staking}"></th:block><span class="label label-success pull-right">Coming Soon</span></a></li>
                                 </ul>
                             </li>
-                            <li><a th:href="@{/arbitrage}"><i class="fa fa-money-bill-trend-up"></i> <th:block th:text="#{arbitrage}"></th:block></a></li>
+                            <li><a th:href="@{/arbitrage}"><i class="fa fa-money-bill-trend-up"></i> <th:block th:text="#{arbitrageBot}"></th:block></a></li>
                             <li><a th:href="@{/support}"><i class="fa fa-headset"></i> <th:block th:text="#{support}"></th:block></a></li>
                             <li><a th:href="@{/about}"><i class="fa fa-info-circle"></i> <th:block th:text="#{about}"></th:block></a></li>
                         </ul>
@@ -127,10 +157,9 @@
                                     <img th:src="@{/images/find_user.png}" alt=""><th:block th:text="${fullName}"></th:block>
                                 </a>
                                 <div class="dropdown-menu dropdown-usermenu pull-right" aria-labelledby="navbarDropdown">
-                                    <a class="dropdown-item"  th:href="@{/profile}" th:text="#{profile}"> Profile</a>
-                                    <a class="dropdown-item"  th:href="@{/settings}">
-                                        <span class="badge bg-red pull-right">50%</span>
-                                        <span>Settings</span>
+                                    <a class="dropdown-item" th:href="@{/profile}">
+                                        <span id="userOccupied" class="badge bg-red pull-right">50%</span>
+                                        <span th:text="#{profile}">Profile</span>
                                     </a>
                                     <a class="dropdown-item"  th:href="@{/profile}">Help</a>
                                     <a class="dropdown-item"  th:href="@{/logout}"><i class="fa fa-sign-out pull-right"></i> <th:block th:text="#{logout}"></th:block></a>
@@ -140,61 +169,29 @@
                             <li role="presentation" class="nav-item dropdown open">
                                 <a href="javascript:;" class="dropdown-toggle info-number" id="navbarDropdown1" data-toggle="dropdown" aria-expanded="false">
                                     <i class="fa fa-envelope"></i>
-                                    <span class="badge bg-green">6</span>
+                                    <span class="badge bg-green" th:text="${notifications?.totalElements ?: 0}">6</span>
                                 </a>
                                 <ul class="dropdown-menu list-unstyled msg_list" role="menu" aria-labelledby="navbarDropdown1">
-                                    <li class="nav-item">
-                                        <a class="dropdown-item">
-                                            <span class="image"><img th:src="@{/images/find_user.png}" alt="Profile Image" /></span>
-                                            <span>
-                          <span>John Smith</span>
-                          <span class="time">3 mins ago</span>
-                        </span>
-                                            <span class="message">
-                          Film festivals used to be do-or-die moments for movie makers. They were where...
-                        </span>
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="dropdown-item">
-                                            <span class="image"><img th:src="@{/images/find_user.png}" alt="Profile Image" /></span>
-                                            <span>
-                          <span>John Smith</span>
-                          <span class="time">3 mins ago</span>
-                        </span>
-                                            <span class="message">
-                          Film festivals used to be do-or-die moments for movie makers. They were where...
-                        </span>
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="dropdown-item">
-                                            <span class="image"><img th:src="@{/images/find_user.png}" alt="Profile Image" /></span>
-                                            <span>
-                          <span>John Smith</span>
-                          <span class="time">3 mins ago</span>
-                        </span>
-                                            <span class="message">
-                          Film festivals used to be do-or-die moments for movie makers. They were where...
-                        </span>
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="dropdown-item">
-                                            <span class="image"><img th:src="@{/images/find_user.png}" alt="Profile Image" /></span>
-                                            <span>
-                          <span>John Smith</span>
-                          <span class="time">3 mins ago</span>
-                        </span>
-                                            <span class="message">
-                          Film festivals used to be do-or-die moments for movie makers. They were where...
-                        </span>
-                                        </a>
-                                    </li>
+                                    <th:block th:if="${notifications != null && notifications.size > 0}">
+                                        <th:block th:each="n: ${notifications}">
+                                            <li class="nav-item">
+                                                <a class="dropdown-item" th:href="'/notification?id='+${n.id}">
+                                                    <span class="image"><img th:src="@{/images/find_user.png}" alt="Profile Image" /></span>
+                                                    <span>
+                                                      <span th:text="${n.sender.selectTitle}">John Smith</span>
+                                                      <span class="time" th:text="${n.createdDateAgo}">3 mins ago</span>
+                                                    </span>
+                                                    <span class="message" th:text="${n.subject}">
+                                                      Film festivals used to be do-or-die moments for movie makers. They were where...
+                                                    </span>
+                                                </a>
+                                            </li>
+                                        </th:block>
+                                    </th:block>
                                     <li class="nav-item">
                                         <div class="text-center">
-                                            <a class="dropdown-item">
-                                                <strong>See All Alerts</strong>
+                                            <a class="dropdown-item" href="/notification">
+                                                <strong>See All Notifications</strong>
                                                 <i class="fa fa-angle-right"></i>
                                             </a>
                                         </div>
@@ -233,9 +230,9 @@
 <!-- /. Alert -->
 </div>
 
-<script type="text/javascript" th:src="#{direction} +'/fastclick/lib/fastclick.js'"></script>
-<script type="text/javascript" th:src="#{direction} +'/nprogress/nprogress.js'"></script>
-<script type="text/javascript" th:src="#{direction} +'/build/js/custom.min.js'"></script>
+<script type="text/javascript" th:src="#{direction} +'/pnotify/dist/pnotify.js'"></script>
+<script type="text/javascript" th:src="#{direction} +'/pnotify/dist/pnotify.buttons.js'"></script>
+<script type="text/javascript" th:src="#{direction} +'/pnotify/dist/pnotify.nonblock.js'"></script>
 <script type="text/javascript" th:src="@{/js/lib/jquery.blockUI.min.js}"></script>
 <script type="text/javascript" th:src="@{/js/lib/jalaali.js}"></script>
 <script type="text/javascript" th:src="@{/js/lib/DateUtils.js}"></script>
@@ -243,6 +240,8 @@
 <script type="text/javascript" th:src="@{/js/lib/jquery.validate.additional-methods.js}"></script>
 <script type="text/javascript" th:src="@{/js/lib/common.js}"></script>
 <script type="text/javascript" th:src="@{/js/lib/core.js}"></script>
+<script type="text/javascript" th:src="#{direction} +'/bootstrap-progressbar/bootstrap-progressbar.min.js'"></script>
+<script type="text/javascript" th:src="#{direction} +'/build/js/custom.min.js'"></script>
 <th:block layout:fragment="footer"></th:block>
 </body>
 </html>

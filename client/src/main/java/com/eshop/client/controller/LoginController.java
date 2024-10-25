@@ -5,10 +5,12 @@ import com.eshop.client.config.MessageConfig;
 import com.eshop.client.enums.RoleType;
 import com.eshop.client.model.UserModel;
 import com.eshop.client.service.MailService;
-import com.eshop.client.service.OneTimePasswordService;
+import com.eshop.client.service.NotificationService;
 import com.eshop.client.service.impl.UserServiceImpl;
 import com.eshop.client.util.SessionHolder;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
@@ -25,8 +27,8 @@ public class LoginController {
     final SessionHolder sessionHolder;
     final HttpServletRequest request;
     final UserServiceImpl userService;
-    final OneTimePasswordService oneTimePasswordService;
     final MailService mailService;
+    final NotificationService notificationService;
 
     @RequestMapping(value = "/{name}", method = RequestMethod.GET)
     public ModelAndView loadPage(@PathVariable String name) {
@@ -36,6 +38,7 @@ public class LoginController {
         UserModel user = sessionHolder.getCurrentUser();
         ModelAndView modelAndView = new ModelAndView(name);
         modelAndView.addObject("currentUser", sessionHolder.getCurrentUserAsJsonString());
+        modelAndView.addObject("notifications", notificationService.findAllByRecipientIdAndNotRead(user.getId(), PageRequest.of(0,10)));
         modelAndView.addObject("fullName", user.getFirstName() + " " + user.getLastName());
         modelAndView.addObject("pageTitle", messages.getMessage(name));
         modelAndView.addObject("errorMsg", null);
@@ -74,17 +77,9 @@ public class LoginController {
 
     @PostMapping("/send-OTP")
     public String changePassword(@Valid @ModelAttribute("user") UserModel user) {
-        String subject = "Here's the code to reset your password";
-        var entity = userService.findByEmail(user.getEmail());
-        var  code = oneTimePasswordService.create(entity.getId());
-        String body = "<p>Hello " + entity.getSelectTitle() + "</p>"
-                + "<p>For security reason, you're required to use the following "
-                + "One Time Password to verify your email.:</p>"
-                + "<p><b>" + code + "</b></p>"
-                + "<br>"
-                + "<p>Note: this OTP is set to expire in 5 minutes.</p>";
-
-        mailService.send(user.getEmail(), subject, body);
+        try {
+            mailService.sendOTP(user.getEmail());
+        } catch(Exception e) {}
         return "redirect:/login#signin";
     }
 

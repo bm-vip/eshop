@@ -40,31 +40,18 @@ public class SubscriptionPackageEntity extends BaseEntity<Long> {
     private Float minTradingReward;
     @Column(name = "max_trading_reward", nullable = false)
     private Float maxTradingReward;
-    @Column(name = "self_referral_bonus", nullable = false)
-    private Float selfReferralBonus;
     @Column(name = "parent_referral_bonus", nullable = false)
     private Float parentReferralBonus;
+    @Column(name = "withdrawal_duration_per_day", nullable = false)
+    private int withdrawalDurationPerDay;
+    @Column(name = "user_profit_percentage", nullable = false)
+    private int userProfitPercentage;
+    @Column(name = "site_profit_percentage", nullable = false)
+    private int siteProfitPercentage;
 
     @Override
     public String getSelectTitle() {
         if(name == null) return null;
         return name.concat(" ").concat(" ").concat(price.toString()).concat(" ").concat(currency.getTitle());
-    }
-    @Transient
-    public BigDecimal getReward(BigDecimal balance) {
-        if (balance.compareTo(price) < 0 || balance.compareTo(maxPrice) > 0) {
-//            throw new IllegalArgumentException("User balance must be within the range of price and maxPrice");
-            return BigDecimal.ZERO;
-        }
-        // Normalize user balance within the range [0, 1]
-        BigDecimal balanceRange = maxPrice.subtract(price);
-        BigDecimal normalizedBalance = balance.subtract(price).divide(balanceRange, 10, RoundingMode.HALF_UP);
-        // Scale the reward based on the normalized balance
-        var _minTradingReward = new BigDecimal(Float.toString(minTradingReward));
-        var _maxTradingReward = new BigDecimal(Float.toString(maxTradingReward));
-        BigDecimal rewardRange = _maxTradingReward.subtract(_minTradingReward);
-        BigDecimal reward = _minTradingReward.add(normalizedBalance.multiply(rewardRange));
-
-        return reward.setScale(2, RoundingMode.HALF_UP); // Set the scale to 2 decimal places
     }
 }

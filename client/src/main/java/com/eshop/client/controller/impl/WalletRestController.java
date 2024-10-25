@@ -5,11 +5,7 @@ import com.eshop.client.filter.WalletFilter;
 import com.eshop.client.model.BalanceModel;
 import com.eshop.client.model.WalletModel;
 import com.eshop.client.service.WalletService;
-import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -32,20 +28,24 @@ public class WalletRestController extends BaseRestControllerImpl<WalletFilter, W
         this.walletService = service;
     }
     @GetMapping("/total-balance/{userId}")
-    public ResponseEntity<List<BalanceModel>> findBalanceGroupedByCurrency(@PathVariable long userId){
-        return ResponseEntity.ok(walletService.findBalanceGroupedByCurrency(userId));
+    public ResponseEntity<List<BalanceModel>> totalBalanceGroupedByCurrency(@PathVariable long userId){
+        return ResponseEntity.ok(walletService.totalBalanceGroupedByCurrency(userId));
     }
     @GetMapping("/total-deposit/{userId}")
-    public ResponseEntity<List<BalanceModel>> findDepositGroupedByCurrency(@PathVariable long userId){
-        return ResponseEntity.ok(walletService.findDepositGroupedByCurrency(userId));
+    public ResponseEntity<List<BalanceModel>> totalDepositGroupedByCurrency(@PathVariable long userId){
+        return ResponseEntity.ok(walletService.totalDepositGroupedByCurrency(userId));
     }
     @GetMapping("/total-withdrawal/{userId}")
-    public ResponseEntity<List<BalanceModel>> findWithdrawalGroupedByCurrency(@PathVariable long userId){
-        return ResponseEntity.ok(walletService.findWithdrawalGroupedByCurrency(userId));
+    public ResponseEntity<List<BalanceModel>> totalWithdrawalGroupedByCurrency(@PathVariable long userId){
+        return ResponseEntity.ok(walletService.totalWithdrawalGroupedByCurrency(userId));
     }
     @GetMapping("/total-bonus/{userId}")
-    public ResponseEntity<List<BalanceModel>> findBonusGroupedByCurrency(@PathVariable long userId){
-        return ResponseEntity.ok(walletService.findBonusGroupedByCurrency(userId));
+    public ResponseEntity<List<BalanceModel>> totalBonusGroupedByCurrency(@PathVariable long userId){
+        return ResponseEntity.ok(walletService.totalBonusGroupedByCurrency(userId));
+    }
+    @GetMapping("/total-profit/{userId}")
+    public ResponseEntity<List<BalanceModel>> totalProfitGroupedByCurrency(@PathVariable long userId){
+        return ResponseEntity.ok(walletService.totalProfitGroupedByCurrency(userId));
     }
     @GetMapping("/get-date-range/{startDate}/{endDate}/{transactionType}")
     public ResponseEntity<Map<Long, BigDecimal>> findAllWithinDateRange(@PathVariable long startDate, @PathVariable long endDate, @PathVariable TransactionType transactionType){

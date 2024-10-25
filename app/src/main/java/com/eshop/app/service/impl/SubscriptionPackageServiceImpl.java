@@ -48,12 +48,12 @@ public class SubscriptionPackageServiceImpl extends BaseServiceImpl<Subscription
         filter.getMaxTradingReward().ifPresent(v -> builder.and(path.maxTradingReward.eq(v)));
         filter.getMaxTradingRewardFrom().ifPresent(v -> builder.and(path.maxTradingReward.goe(v)));
         filter.getMaxTradingRewardTo().ifPresent(v -> builder.and(path.maxTradingReward.loe(v)));
-        filter.getSelfReferralBonus().ifPresent(v -> builder.and(path.selfReferralBonus.eq(v)));
-        filter.getSelfReferralBonusFrom().ifPresent(v -> builder.and(path.selfReferralBonus.goe(v)));
-        filter.getSelfReferralBonusTo().ifPresent(v -> builder.and(path.selfReferralBonus.loe(v)));
         filter.getParentReferralBonus().ifPresent(v -> builder.and(path.parentReferralBonus.eq(v)));
         filter.getParentReferralBonusFrom().ifPresent(v -> builder.and(path.parentReferralBonus.goe(v)));
         filter.getParentReferralBonusTo().ifPresent(v -> builder.and(path.parentReferralBonus.loe(v)));
+        filter.getWithdrawalDurationPerDay().ifPresent(v -> builder.and(path.withdrawalDurationPerDay.eq(v)));
+        filter.getUserProfitPercentage().ifPresent(v -> builder.and(path.userProfitPercentage.eq(v)));
+        filter.getSiteProfitPercentage().ifPresent(v -> builder.and(path.siteProfitPercentage.eq(v)));
 
         return builder;
     }

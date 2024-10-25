@@ -125,36 +125,73 @@ function removeUrlparameter(parameter) {
     }
     return url;
 }
-
 function show_info(mes, fixStatus) {
-    $("#myAlert .alert-content").html(mes);
-    if (isNullOrEmpty(fixStatus) && fixStatus) {
-        $("#myAlert").removeClass("alert-danger alert-warning alert-success").addClass("alert-info").show();
-    } else {
-        $("#myAlert").removeClass("alert-danger alert-warning alert-success").addClass("alert-info").show().delay(3000).fadeOut();
-    }
-
+    // $("#myAlert .alert-content").html(mes);
+    // if (isNullOrEmpty(fixStatus) && fixStatus) {
+    //     $("#myAlert").removeClass("alert-danger alert-warning alert-success").addClass("alert-info").show();
+    // } else {
+    //     $("#myAlert").removeClass("alert-danger alert-warning alert-success").addClass("alert-info").show().delay(3000).fadeOut();
+    // }
+    new PNotify({
+        title: 'New Thing',
+        text: mes,
+        type: 'info',
+        styling: 'bootstrap3',
+        nonblock: {nonblock: !0},
+        before_close: function (e) {
+            return e.update({title: e.options.title + " - Enjoy your Stay", before_close: null}), e.queueRemove(), !1
+        }
+    });
 }
 
 function show_success(mes) {
-    $("#myAlert .alert-content").html(mes);
-    $("#myAlert").removeClass("alert-danger alert-warning alert-info").addClass("alert-success").show().delay(3000).fadeOut();
-
+    // $("#myAlert .alert-content").html(mes);
+    // $("#myAlert").removeClass("alert-danger alert-warning alert-info").addClass("alert-success").show().delay(3000).fadeOut();
+    new PNotify({
+        title: 'Success',
+        text: mes,
+        type: 'success',
+        styling: 'bootstrap3',
+        nonblock: {nonblock: !0},
+        before_close: function (e) {
+            return e.update({title: e.options.title + " - Enjoy your Stay", before_close: null}), e.queueRemove(), !1
+        }
+    });
 }
 
 function show_warning(mes, fixStatus) {
-    $("#myAlert .alert-content").html(mes);
-    if (isNullOrEmpty(fixStatus) && fixStatus) {
-        $("#myAlert").removeClass("alert-success alert-danger alert-info").addClass("alert-warning").show();
-    } else {
-        $("#myAlert").removeClass("alert-success alert-danger alert-info").addClass("alert-warning").show().delay(3000)
-            .fadeOut();
-    }
+    // $("#myAlert .alert-content").html(mes);
+    // if (isNullOrEmpty(fixStatus) && fixStatus) {
+    //     $("#myAlert").removeClass("alert-success alert-danger alert-info").addClass("alert-warning").show();
+    // } else {
+    //     $("#myAlert").removeClass("alert-success alert-danger alert-info").addClass("alert-warning").show().delay(3000)
+    //         .fadeOut();
+    // }
+    new PNotify({
+        title: 'Notice',
+        text: mes,
+        styling: 'bootstrap3',
+        nonblock: {nonblock: !0},
+        before_close: function (e) {
+            return e.update({title: e.options.title + " - Enjoy your Stay", before_close: null}), e.queueRemove(), !1
+        }
+    });
 }
 
 function show_error(mes) {
-    $("#myAlert .alert-content").html(mes);
-    $("#myAlert").removeClass("alert-success alert-warning alert-info").addClass("alert-danger").show();
+    // $("#myAlert .alert-content").html(mes);
+    // $("#myAlert").removeClass("alert-success alert-warning alert-info").addClass("alert-danger").show();
+    new PNotify({
+        title: 'Oh No!',
+        text: mes,
+        type: 'error',
+        hide: false,
+        styling: 'bootstrap3',
+        nonblock: {nonblock: !0},
+        before_close: function (e) {
+            return e.update({title: e.options.title + " - Enjoy your Stay", before_close: null}), e.queueRemove(), !1
+        }
+    });
 
 }
 
@@ -314,7 +351,8 @@ function validationOptions(rules, messages, callback) {
     }
 }
 
-var tableOptions = {
+function tableOptions() {
+    return {
         "responsive": true,
         "processing": true,
         "searching": false,
@@ -349,11 +387,11 @@ var tableOptions = {
             }
         }
     };
-
-function initAjaxTable(selector, columns, url, filterFunction) {
-    let opts = tableOptions;
+}
+function initAjaxTable(selector, fields, url, filterFunction) {
+    let opts = tableOptions();
     opts.serverSide = true;
-    opts.columns = columns;
+    opts.columns = fields;
     opts.ajax = {
         'type': 'GET',
         'url': url,
@@ -384,9 +422,9 @@ function initAjaxTable(selector, columns, url, filterFunction) {
     return $(selector).DataTable(opts);
 }
 
-function initTable(selector, columns, data) {
-    let opts = tableOptions;
-    opts.columns = columns;
+function initTable(selector, fields, data) {
+    let opts = tableOptions();
+    opts.columns = fields;
     opts.data = data;
     opts.searching = true;
     return $(selector).DataTable(opts);
@@ -394,7 +432,7 @@ function initTable(selector, columns, data) {
 
 function loadHtmlFileToElement(fileName, params, selector, callBack) {
     $.blockUI(blockUiOptions());
-    $.get("/getHtmlFile/" + fileName, {params: JSON.stringify(params)},
+    $.get("/get-html-file/" + fileName, {params: JSON.stringify(params)},
         function (data) {
             $.unblockUI();
             if (typeof callBack === 'function') {
@@ -425,13 +463,6 @@ function goToByScroll(selector) {
 
 function isArray(value) {
     return value && typeof value === 'object' && value.constructor === Array;
-}
-
-function showUserAccount() {
-    $('#userAccount span').text(resources.hello.format($.cookie("userLogin").name));
-    loadHtmlFileToElement("UserAccount", null, "#myModal .modal-body", function () {
-        showModal(resources.userDetail, initModal);
-    });
 }
 
 function setSwitchery(selector, checked) {

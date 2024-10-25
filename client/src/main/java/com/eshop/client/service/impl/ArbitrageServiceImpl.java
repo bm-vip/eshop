@@ -16,7 +16,6 @@ import com.eshop.client.repository.WalletRepository;
 import com.eshop.client.service.ArbitrageService;
 import com.eshop.client.service.ParameterService;
 import com.eshop.client.util.DateUtil;
-import com.eshop.exception.common.BadRequestException;
 import com.eshop.exception.common.NotAcceptableException;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
@@ -26,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 
@@ -66,6 +66,9 @@ public class ArbitrageServiceImpl extends BaseServiceImpl<ArbitrageFilter, Arbit
         filter.getExchangeId().ifPresent(v-> builder.and(p.exchange.id.eq(v)));
         filter.getCoinId().ifPresent(v-> builder.and(p.coin.id.eq(v)));
         filter.getSubscriptionId().ifPresent(v-> builder.and(p.subscription.id.eq(v)));
+        filter.getRewardFrom().ifPresent(v-> builder.and(p.reward.goe(v)));
+        filter.getRewardTo().ifPresent(v-> builder.and(p.reward.loe(v)));
+        filter.getCurrency().ifPresent(v-> builder.and(p.currency.eq(v)));
 
         return builder;
     }
@@ -77,21 +80,26 @@ public class ArbitrageServiceImpl extends BaseServiceImpl<ArbitrageFilter, Arbit
             throw new NotAcceptableException("You have reached the daily purchase limitation, please try tomorrow.");
 
         var subscription = subscriptionRepository.findByUserIdAndStatus(model.getUser().getId(), EntityStatusType.Active);
-        var balanceList = walletRepository.findBalanceGroupedByCurrency(model.getUser().getId());
+        var balanceList = walletRepository.totalBalanceGroupedByCurrency(model.getUser().getId());
         var balance = balanceList.stream().filter(x->x.getCurrency().equals(subscription.getSubscriptionPackage().getCurrency())).findFirst();
         var user = new UserEntity();user.setId(model.getUser().getId());
+        var reward = subscription.getSubscriptionPackage().getReward(balance.get().getTotalAmount());
 
-        WalletEntity buyReward = new WalletEntity();
-        buyReward.setActive(true);
-        buyReward.setAmount(subscription.getSubscriptionPackage().getReward(balance.get().getTotalAmount()));
-        buyReward.setUser(user);
-        buyReward.setCurrency(subscription.getSubscriptionPackage().getCurrency());
-        buyReward.setTransactionType(TransactionType.REWARD);
-        buyReward.setAddress(walletAddressValue);
-        walletRepository.save(buyReward);
-        model.setReward(buyReward.getAmount());
+        if(reward.compareTo(BigDecimal.ZERO) == 1) {
+            WalletEntity buyReward = new WalletEntity();
+            buyReward.setActive(true);
+            buyReward.setAmount(reward);
+            buyReward.setUser(user);
+            buyReward.setCurrency(subscription.getSubscriptionPackage().getCurrency());
+            buyReward.setTransactionType(TransactionType.REWARD);
+            buyReward.setAddress(walletAddressValue);
+            walletRepository.save(buyReward);
+            model.setReward(buyReward.getAmount());
+            model.setCurrency(subscription.getSubscriptionPackage().getCurrency());
 
-        return super.create(model);
+            return super.create(model);
+        }
+        throw new NotAcceptableException("Your profit is equal to zero, please contact support.");
     }
 
     @Override

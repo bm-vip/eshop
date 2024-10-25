@@ -19,7 +19,9 @@ $(function () {
                                         <li><i class="fa fa-check text-success"></i> <strong>Unlimited access</strong>.</li>
                                         <li><i class="fa fa-check text-success"></i> Order count <strong> ${value.orderCount}</strong> times</li>
                                         <li><i class="fa fa-check text-success"></i> Trading reward (<strong>${value.minTradingReward} - ${value.maxTradingReward}</strong>) ${value.currency}</li>
-                                        <li><i class="fa fa-check text-success"></i> Self referral bonus <strong>${value.selfReferralBonus}</strong> ${value.currency}</li>
+                                        <li><i class="fa fa-check text-success"></i> User profit percentage (<strong>${value.userProfitPercentage}%</strong>)</li>
+                                        <li><i class="fa fa-check text-success"></i> Site profit percentage (<strong>${value.siteProfitPercentage}%</strong>)</li>
+                                        <li><i class="fa fa-check text-success"></i> Withdrawal duration per day (<strong>${value.withdrawalDurationPerDay}</strong>)</li>
                                         <li><i class="fa fa-check text-success"></i> Parent referral bonus <strong>${value.parentReferralBonus}</strong> ${value.currency}</li>
                                     </ul>
                                 </div>
@@ -74,7 +76,7 @@ async function trade() {
                         <p>From exchange <img width="20px" src="${exchanges[0].logo}"/> ${exchanges[0].name} to <img width="20px" src="${exchanges[1].logo}"/> ${exchanges[1].name}</p>
 
                         <div class="divider"></div>
-                        <a id="buy-btn-${i + 1}" href="javascript:buy(${i + 1}, ${exchanges[0].id}, ${coin.id}, ${subscription.id});" class="btn btn-primary btn-block" role="button">Buy</a> 
+                        <a id="buy-btn-${i + 1}" href="javascript:buy(${i + 1}, ${exchanges[0].id}, ${coin.id}, ${subscription.id});" class="btn btn-primary btn-block" role="button">Buy/Sell</a> 
                     </div>
                 </div>
             </div>`;
@@ -83,7 +85,8 @@ async function trade() {
         }
     }
 }
-function buy(index, exchangeId, coinId, subscriptionId){
+function buy(index, exchangeId, coinId, subscriptionId) {
+    $("#buy-btn-" + index).addClass("disabled").attr("aria-disabled", "true");
     $("#order-" + index).easyPieChart({
         easing: 'easeOutElastic',
         delay: 3000,
@@ -96,18 +99,18 @@ function buy(index, exchangeId, coinId, subscriptionId){
         onStep: function (from, to, percent) {
             $(this.el).find('.percent').text(Math.round(percent));
         },
-        onStop:function (from, to){
+        onStop:function (from, to) {
             console.log('Animation complete. Final percentage: ' + to);
             $.postJSON("/api/v1/arbitrage",{user:{id:currentUser.id}, exchange:{id:exchangeId}, coin:{id: coinId}, subscription:{id:subscriptionId}}, function (data) {
-                $("#buy-btn-" + index).addClass("disabled").attr("aria-disabled", "true").after(`<p>You received ${data.reward} commission from this purchase!</p>`);
-            },function (error){
+                $("#buy-btn-" + index).after(`<p>You received ${data.reward} profit from this purchase!</p>`);
+            },function (error) {
                 if(isNullOrEmpty(get(() => error.responseJSON)))
                     show_error('ajax answer post returned error: ' + header.responseText);
                 else show_error(error.responseJSON.error + ' (' + error.responseJSON.status + ') <br>' + error.responseJSON.message);
             });
         },
         animate: {
-            duration: 5000, // 5 seconds animation duration
+            duration: (Math.floor(Math.random() * (60 - 20 + 1)) + 20) * 1000, // random number 20000-60000 seconds animation duration
             enabled: true
         }
     });

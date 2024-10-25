@@ -59,7 +59,7 @@ public abstract class BaseServiceImpl<F, M extends BaseModel<ID>, E extends Base
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public M findById(ID id) {
         var entity = repository.findById(id).orElseThrow(() -> new NotFoundException("id: " + id));
         return mapper.toModel(entity);

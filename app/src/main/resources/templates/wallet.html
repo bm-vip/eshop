@@ -51,7 +51,7 @@
                             </div>
                             <div class="col-md-6 form-group">
                                 <label th:text="#{user}"></label>
-                                <th:block th:replace="fragments/select2 :: select2('4',#{user}, 'user', '/api/v1/user/findAllSelect','{title:params.term}',false)"></th:block>
+                                <th:block th:replace="fragments/select2 :: select2('4',#{user}, 'user', '/api/v1/user/findAllSelect','{title:params.term}',false,null)"></th:block>
                             </div>
                         </div>
                         <div class="row">

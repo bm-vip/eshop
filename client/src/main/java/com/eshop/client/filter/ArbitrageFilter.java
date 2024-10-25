@@ -1,9 +1,11 @@
 package com.eshop.client.filter;
 
+import com.eshop.client.enums.CurrencyType;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Optional;
 
@@ -19,6 +21,9 @@ public class ArbitrageFilter {
     private Long exchangeId;
     private Long coinId;
     private Long subscriptionId;
+    private BigDecimal rewardFrom;
+    private BigDecimal rewardTo;
+    private CurrencyType currency;
 
     public Optional<Long> getId() {
         return Optional.ofNullable(id);
@@ -52,4 +57,15 @@ public class ArbitrageFilter {
         return Optional.ofNullable(subscriptionId);
     }
 
+    public Optional<BigDecimal> getRewardFrom() {
+        return Optional.ofNullable(rewardFrom);
+    }
+
+    public Optional<BigDecimal> getRewardTo() {
+        return Optional.ofNullable(rewardTo);
+    }
+
+    public Optional<CurrencyType> getCurrency() {
+        return Optional.ofNullable(currency);
+    }
 }

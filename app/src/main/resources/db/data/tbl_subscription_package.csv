@@ -1,4 +1,4 @@
-id,created_by,created_date,modified_by,modified_date,version,name,duration,order_count,price,max_price,currency,status,description,min_trading_reward,max_trading_reward,self_referral_bonus,parent_referral_bonus
-1,administrator,2024-08-03 20:01:11.000000,administrator,2024-08-03 20:01:34.000000,0,Silver,-1,2,50.00,499.99,USDT,Active,Silver plan with maximum 2 arbitrage orders,0.50,3.5,7,3.5
-2,administrator,2024-08-03 20:01:11.000000,administrator,2024-08-03 20:01:34.000000,0,Gold,-1,3,500.00,1999.99,USDT,Active,Gold plan with maximum 3 arbitrage orders,3.5,6.0,8,4
+id,created_by,created_date,modified_by,modified_date,version,name,duration,order_count,price,max_price,currency,status,description,min_trading_reward,max_trading_reward,parent_referral_bonus,withdrawal_duration_per_day,user_profit_percentage,site_profit_percentage
+1,administrator,2024-08-03 20:01:11.000000,administrator,2024-08-03 20:01:34.000000,0,Silver,-1,2,50.00,499.99,USDT,Active,Silver plan with maximum 2 arbitrage orders,0.0012,0.037,1,90,20,10
+2,administrator,2024-08-03 20:01:11.000000,administrator,2024-08-03 20:01:34.000000,0,Gold,-1,3,500.00,1999.99,USDT,Active,Gold plan with maximum 3 arbitrage orders,0.0043,0.11,2.5,90,50,40
 

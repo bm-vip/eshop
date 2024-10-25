@@ -1,5 +1,6 @@
 package com.eshop.client.model;
 
+import com.eshop.client.enums.CurrencyType;
 import com.eshop.client.validation.Create;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
@@ -21,4 +22,5 @@ public class ArbitrageModel extends BaseModel<Long> {
     private SubscriptionModel subscription;
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private BigDecimal reward;
+    private CurrencyType currency;
 }

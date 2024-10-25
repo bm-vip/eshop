@@ -1,6 +1,8 @@
 package com.eshop.app.repository;
 
 import com.eshop.app.entity.WalletEntity;
+import com.eshop.app.enums.CurrencyType;
+import com.eshop.app.enums.TransactionType;
 import com.eshop.app.model.BalanceModel;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -25,4 +27,6 @@ public interface WalletRepository extends BaseRepository<WalletEntity, Long> {
 			+ "AND (:userId is null or w.user.id = :userId) AND w.active is true "
 			+ "GROUP BY w.currency")
 	 List<BalanceModel> findWithdrawalGroupedByCurrency(Long userId);
+
+	boolean existsByUserIdAndTransactionTypeAndCurrencyAndActiveTrue(Long userId, TransactionType transactionType, CurrencyType currencyType);
 }

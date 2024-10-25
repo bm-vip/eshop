@@ -27,6 +27,7 @@ var resources = {
     'contactInfo': 'Contact Info',
     'contentManagement': 'Content Management',
     'count': 'count',
+    'country': 'Country',
     'crationDate': 'Creation Date',
     'currency': 'currency',
     'current': 'current',
@@ -399,4 +400,10 @@ var resources = {
     'selfReferralBonus': 'Self referral bonus',
     'parentReferralBonus': 'Parent referral bonus',
     'trade':'Trade',
+    'subscriptionPackageDetail':'Subscription Package Detail',
+    'minProfit': 'Min profit',
+    'maxProfit': 'Max profit',
+    'withdrawalDurationPerDay':'Withdrawal duration per day',
+    'userProfitPercentage':'user profit percentage',
+    'siteProfitPercentage':'site profit percentage'
 };

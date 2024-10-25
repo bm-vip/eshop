@@ -37,6 +37,9 @@ public class ArbitrageServiceImpl extends BaseServiceImpl<ArbitrageFilter, Arbit
         filter.getExchangeId().ifPresent(v-> builder.and(p.exchange.id.eq(v)));
         filter.getCoinId().ifPresent(v-> builder.and(p.coin.id.eq(v)));
         filter.getSubscriptionId().ifPresent(v-> builder.and(p.subscription.id.eq(v)));
+        filter.getRewardFrom().ifPresent(v-> builder.and(p.reward.goe(v)));
+        filter.getRewardTo().ifPresent(v-> builder.and(p.reward.loe(v)));
+        filter.getCurrency().ifPresent(v-> builder.and(p.currency.eq(v)));
 
         return builder;
     }

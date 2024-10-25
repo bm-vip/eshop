@@ -148,7 +148,7 @@ function submitEntity(entity) {
             }
         },
         error: function (header, status, error) {
-            if(isNullOrEmpty(get(()=>header.responseJSON)))
+            if(isNullOrEmpty(get(() => header.responseJSON)))
                 show_error('ajax answer post returned error: ' + header.responseText);
             else show_error(header.responseJSON.error + ' (' + header.responseJSON.status + ') <br>' + header.responseJSON.message);
         }

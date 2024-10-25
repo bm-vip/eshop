@@ -12,14 +12,25 @@
     <link rel="stylesheet" type="text/css" th:href="#{direction} +'/bootstrap/dist/css/bootstrap.min.css'"/>
     <link rel="stylesheet" type="text/css" th:href="#{direction} +'/font-awesome/css/font-awesome.min.css'"/>
     <link rel="stylesheet" type="text/css" th:href="#{direction} +'/animate.css/animate.min.css'"/>
+    <link rel="stylesheet" type="text/css" th:href="#{direction} +'/pnotify/dist/pnotify.css'">
+    <link rel="stylesheet" type="text/css" th:href="#{direction} +'/pnotify/dist/pnotify.buttons.css'">
+    <link rel="stylesheet" type="text/css" th:href="#{direction} +'/pnotify/dist/pnotify.nonblock.css'">
+    <link rel="stylesheet" type="text/css" th:href="#{direction} +'/select2/dist/css/select2.min.css'">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/lib/select2-bootstrap.css}"/>
     <link rel="stylesheet" type="text/css" th:href="#{direction} +'/build/css/custom.css'"/>
     <style>
+        .login_content form input {
+            margin: 0!important;
+        }
+        .login_content .form-group {
+            margin: 0 0 20px!important;
+        }
         .form-group {
             margin-right: auto!important;
             margin-left: auto!important;
             width: 100% !important;
         }
-        .form-control {
+        .form-control, .form-group {
             border-radius: 0 !important;
             width: 100% !important;
         }
@@ -39,7 +50,43 @@
         .alert {
             padding: 10px;
         }
+        .form-control-feedback.right {
+            margin-top: 5px;
+        }
+        span .select2-selection {
+            text-align: left;
+        }
+        .select2-container--bootstrap .select2-selection--single,.select2-search__field {
+            border-radius: 0 !important;
+        }
+
+        .select2-container--bootstrap .select2-selection--single .select2-selection__arrow {
+            border-radius: 0 !important; /* Remove border-radius for arrow */
+        }
+
+        .select2-container--bootstrap .select2-selection--single:focus {
+            outline: none;
+        }
+        .select2-container--bootstrap .select2-selection__arrow {
+            display: none; /* Hide the arrow icon */
+        }
+        .select2-container--bootstrap .select2-selection__clear{
+            margin-right: 20px;
+        }
+        .select2-container--bootstrap .select2-selection {
+            color: rgb(108, 117, 122) !important;
+            font-size: 12px!important;
+        }
     </style>
+    <script type="text/javascript" th:src="'/js/messages/messages.' + #{locale} + '.js'" ></script>
+    <script type="text/javascript" th:src="#{direction} +'/jquery/dist/jquery.min.js'"></script>
+    <script type="text/javascript" th:src="#{direction} +'/pnotify/dist/pnotify.js'"></script>
+    <script type="text/javascript" th:src="#{direction} +'/pnotify/dist/pnotify.buttons.js'"></script>
+    <script type="text/javascript" th:src="#{direction} +'/pnotify/dist/pnotify.nonblock.js'"></script>
+    <script type="text/javascript" th:src="#{direction} +'/select2/dist/js/select2.full.min.js'"></script>
+    <script type="text/javascript" th:src="@{/js/lib/jquery.validate.min.js}" ></script>
+    <script type="text/javascript" th:src="#{direction} +'/bootstrap/dist/js/bootstrap.bundle.min.js'"></script>
+    <script type="text/javascript" th:src="#{direction} +'/build/js/custom.min.js'"></script>
 </head>
 <body class="login" th:dir="#{direction}">
 <div>
@@ -131,13 +178,13 @@
                     </div>
                     <div class="row">
                     <div class="col-xs-12 form-group">
-                        <input type="text" class="form-control" th:placeholder="#{email}" name="email" autofocus tabindex="1">
+                        <input type="text" class="form-control" th:placeholder="#{email}" name="email" autofocus tabindex="4">
                         <span class="fa fa-envelope form-control-feedback right" aria-hidden="true"></span>
                     </div>
                     </div>
                     <div class="row">
                     <div class="col-xs-12 form-group">
-                        <button tabindex="2" type="submit" class="btn btn-secondary" style="width: 100%;" th:value="#{enter}">Enter</button>
+                        <button tabindex="5" type="submit" class="btn btn-secondary" style="width: 100%;" th:value="#{enter}">Enter</button>
                     </div>
                     </div>
                     <div class="clearfix"></div>
@@ -174,7 +221,7 @@
         </div>
         <div id="register" class="animate form registration_form">
             <section class="login_content">
-                <form id="register-form" th:action="@{/registration}" method="POST" th:object="${user}">
+                <form id="register-form">
                     <h1 th:text="#{createAccount}">Create Account</h1>
                     <div class="row">
                     <div class="col-xs-12 form-group">
@@ -188,7 +235,7 @@
                     <div class="col-xs-12 form-group">
                         <input type="text" class="form-control" th:placeholder="#{userName}" id="userName"
                                name="userName" autofocus
-                               tabindex="4">
+                               tabindex="6">
                         <span class="fa fa-user form-control-feedback right" aria-hidden="true"></span>
                     </div>
                     </div>
@@ -196,48 +243,53 @@
                     <div class="col-xs-12 form-group">
                         <input type="email" class="form-control" th:placeholder="#{email}" id="email"
                                name="email"
-                               tabindex="5">
+                               tabindex="7">
                         <span class="fa fa-envelope form-control-feedback right" aria-hidden="true"></span>
                     </div>
                     </div>
                     <div class="row">
                     <div class="col-xs-12 form-group">
                         <input type="password" class="form-control" th:placeholder="#{password}" id="password"
-                               name="password" tabindex="6">
+                               name="password" tabindex="8">
                         <span class="fa fa-lock form-control-feedback right" aria-hidden="true"></span>
                     </div>
                     </div>
                     <div class="row">
                     <div class="col-xs-12 form-group">
                         <input type="password" class="form-control" th:placeholder="#{repeatPassword}"
-                               id="repeatPassword" name="repeatPassword" tabindex="6">
+                               id="repeatPassword" name="repeatPassword" tabindex="9">
                         <span class="fa fa-lock form-control-feedback right" aria-hidden="true"></span>
                     </div>
                     </div>
                     <div class="row">
                     <div class="col-xs-12 form-group">
                         <input type="text" class="form-control" th:placeholder="#{name}" id="firstName" name="firstName"
-                               tabindex="7">
+                               tabindex="10">
                         <span class="fa fa-pencil form-control-feedback right" aria-hidden="true"></span>
                     </div>
                     </div>
                     <div class="row">
                     <div class="col-xs-12 form-group">
                         <input type="text" class="form-control" th:placeholder="#{lastName}" id="lastName"
-                               name="lastName" tabindex="8">
+                               name="lastName" tabindex="11">
                         <span class="fa fa-pencil form-control-feedback right" aria-hidden="true"></span>
                     </div>
                     </div>
                     <div class="row">
                     <div class="col-xs-12 form-group">
+                        <th:block th:replace="fragments/select2 :: select2('12', #{country}, 'country', 'api/v1/country/findAllSelect','{name:params.term}',false, null)"></th:block>
+                    </div>
+                    </div>
+                    <div class="row">
+                    <div class="col-xs-12 form-group">
                         <input type="text" class="form-control" th:placeholder="#{referralCode}" id="referralCode"
-                               th:value="${referralCode ?: ''}" name="referralCode" tabindex="9">
+                               th:value="${referralCode ?: ''}" name="referralCode" tabindex="13">
                         <span class="fa fa-user form-control-feedback right" aria-hidden="true"></span>
                     </div>
                     </div>
                     <div class="row">
                     <div class="col-xs-12 form-group">
-                        <button tabindex="10" type="submit" class="btn btn-secondary" style="width: 100%;" th:value="#{register}">Register</button>
+                        <button tabindex="14" type="submit" class="btn btn-secondary" style="width: 100%;" th:value="#{register}">Register</button>
                     </div>
                     </div>
                     <div class="clearfix"></div>
@@ -270,13 +322,6 @@
         </div>
     </div>
 </div>
-<script th:src="'/js/messages/messages.' + #{locale} + '.js'" type="text/javascript"></script>
-<script type="text/javascript" th:src="#{direction} +'/jquery/dist/jquery.min.js'"></script>
-<script th:src="@{/js/lib/jquery.validate.min.js}" type="text/javascript"></script>
-<script type="text/javascript" th:src="#{direction} +'/bootstrap/dist/js/bootstrap.bundle.min.js'"></script>
-<script type="text/javascript" th:src="#{direction} +'/fastclick/lib/fastclick.js'"></script>
-<script type="text/javascript" th:src="#{direction} +'/build/js/custom.min.js'"></script>
-
 
 
 <script type="text/javascript">
@@ -302,19 +347,15 @@
                 password: resources.pleaseEnter.format(resources.password)
             },
             highlight: function (element) {
-                $(element).addClass('is-invalid').closest('.col-xs-12').addClass('bad');
+                $(element).addClass('is-invalid').closest('div').addClass('bad');
             },
             unhighlight: function (element) {
-                $(element).removeClass('is-invalid').closest('.col-xs-12').removeClass('bad');
+                $(element).removeClass('is-invalid').closest('div').removeClass('bad');
             },
             errorElement: 'span',
             errorClass: 'invalid-feedback',
             errorPlacement: function (error, element) {
-                if (element.parent('.input-group').length) {
-                    error.insertAfter(element.parent());
-                } else {
-                    error.insertAfter(element);
-                }
+                error.insertAfter(element);
             },
             submitHandler: function (form) {
                 form.submit();
@@ -334,19 +375,15 @@
                 }
             },
             highlight: function (element) {
-                $(element).addClass('is-invalid').closest('.col-xs-12').addClass('bad');
+                $(element).addClass('is-invalid').closest('div').addClass('bad');
             },
             unhighlight: function (element) {
-                $(element).removeClass('is-invalid').closest('.col-xs-12').removeClass('bad');
+                $(element).removeClass('is-invalid').closest('div').removeClass('bad');
             },
             errorElement: 'span',
             errorClass: 'invalid-feedback',
             errorPlacement: function (error, element) {
-                if (element.parent('.input-group').length) {
-                    error.insertAfter(element.parent());
-                } else {
-                    error.insertAfter(element);
-                }
+                error.insertAfter(element);
             },
             submitHandler: function (form) {
                 form.submit();
@@ -354,7 +391,7 @@
         });
 
         $('#register-form').validate({
-            // ignore: '.skip',
+            ignore: '.skip',
             rules: {
                 userName: "required",
                 email: {
@@ -363,6 +400,8 @@
                 },
                 firstName: "required",
                 lastName: "required",
+                countrySelect2: "required",
+                referralCode: "required",
                 password: {
                     required: true,
                     minlength: 5
@@ -381,6 +420,8 @@
                 },
                 firstName: resources.pleaseEnter.format(resources.name),
                 lastName: resources.pleaseEnter.format(resources.lastName),
+                countrySelect2: resources.pleaseSelect.format(resources.country),
+                referralCode: resources.pleaseEnter.format(resources.referralCode),
                 password: {
                     required: resources.pleaseEnter.format(resources.password),
                     minlength: resources.mustBeMoreThan.format(resources.password, 5, resources.character)
@@ -392,25 +433,116 @@
                 }
             },
             highlight: function (element) {
-                $(element).addClass('is-invalid').closest('.col-xs-12').addClass('bad');
+                $(element).addClass('is-invalid').closest('div').addClass('bad');
             },
             unhighlight: function (element) {
-                $(element).removeClass('is-invalid').closest('.col-xs-12').removeClass('bad');
+                $(element).removeClass('is-invalid').closest('div').removeClass('bad');
             },
             errorElement: 'span',
             errorClass: 'invalid-feedback',
             errorPlacement: function (error, element) {
-                if (element.parent('.input-group').length) {
-                    error.insertAfter(element.parent());
+                if (element.hasClass('select2-hidden-accessible')) {
+                    element.parent().append(error);
                 } else {
                     error.insertAfter(element);
                 }
             },
             submitHandler: function (form) {
-                form.submit();
+                $.ajax({
+                    type: "POST",
+                    url: "/api/v1/user/register",
+                    dataType: "json",
+                    contentType: "application/json;charset=utf-8",
+                    data: JSON.stringify({country:{id: $("#countrySelect2").val()}, userName:$("#userName").val(),email:$("#email").val(), password:$("#password").val(),firstName: $("#firstName").val(),lastName: $("#lastName").val(),referralCode: $("#referralCode").val() }),
+                    success: function (data) {
+                        if (data.error == null) {
+                            clearAll();
+                            new PNotify({
+                                title: 'Success',
+                                text: 'your information successfully registered.',
+                                type: 'success',
+                                styling: 'bootstrap3'
+                            });
+                            window.location.href = "#signin";
+                        } else {
+                            new PNotify({
+                                title: 'Oh No!',
+                                text: data.error,
+                                type: 'error',
+                                hide: false,
+                                styling: 'bootstrap3'
+                            });
+                        }
+                    },
+                    error: function (header, status, error) {
+                        if(isNullOrEmpty(get(() => header.responseJSON)))
+                            new PNotify({
+                                title: 'Oh No!',
+                                text: 'ajax answer post returned error: ' + header.responseText,
+                                type: 'error',
+                                hide: false,
+                                styling: 'bootstrap3'
+                            });
+                        else new PNotify({
+                            title: 'Oh No!',
+                            text: header.responseJSON.error + ' (' + header.responseJSON.status + ') <br>' + header.responseJSON.message,
+                            type: 'error',
+                            hide: false,
+                            styling: 'bootstrap3'
+                        });
+                    }
+                });
             }
         });
     });
+
+    function isNullOrEmpty(param) {
+        if (param == null)
+            return true;
+        if (param == "null")
+            return true;
+        if (param == undefined)
+            return true;
+        if (param == "undefined")
+            return true;
+        if ((param + "").trim() == "")
+            return true;
+        return false;
+    }
+
+    function flattenObject(obj, prefix = '') {
+        const result = {};
+        for (const key in obj) {
+            if (obj.hasOwnProperty(key)) {
+                const value = obj[key];
+                const newKey = prefix ? `${prefix}.${key}` : key;
+                if (value && typeof value === 'object' && !Array.isArray(value)) {
+                    Object.assign(result, flattenObject(value, newKey));
+                } else if (!isNullOrEmpty(value)) {
+                    // Only include non-null values
+                    result[newKey] = value;
+                }
+            }
+        }
+        return result;
+    }
+    function jsonToUrlSearchParams(json) {
+        const flattened = flattenObject(json);
+        const params = new URLSearchParams();
+        for (const key in flattened) {
+            if (flattened.hasOwnProperty(key)) {
+                params.append(key, flattened[key]);
+            }
+        }
+        return params.toString();
+    }
+    function clearAll(){
+        $('form').each(function (index, frm) {
+            frm.reset();
+        });
+        $('form input:hidden:not(#myModal form input:hidden)').val('');
+        $("select.select2-hidden-accessible").val('').trigger('change');
+    }
 </script>
 </body>
 </html>

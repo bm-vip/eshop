@@ -32,16 +32,16 @@ messages = {
 columns = [{
     data: 'amount',
     render: function (data) { return addPeriod(data) }
-}, {
+},{
     data: 'currency'
-}, {
+},{
     data: 'transactionHash'
 },{
     data: 'address'
 },{
     data: 'active',
-    render: function (data) { return data ? resources.active : resources.inactive; }
-}, {
+    render: function (data) { return data ? `<span class='grteen'>${resources.active}</span>` :  `<span class='red'>${resources.inactive}</span>`}
+},{
     data: 'modifiedDate',
     render: function (data) { return toLocalizingDateString(data, true) }
 }];

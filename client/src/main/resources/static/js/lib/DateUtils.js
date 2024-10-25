@@ -99,3 +99,33 @@ function dateSpliter(dateString) {
         second: 0
     }
 }
+function toTimeString(inputDate) {
+    const date = new Date(inputDate);
+    if (isNaN(date)) {
+        throw new Error('Invalid date');
+    }
+    // Define options for time and date formatting
+    const optionsTime = { hour: 'numeric', minute: 'numeric', hour12: true };
+    // Extract time (e.g., "8:02 PM")
+    const timeString = date.toLocaleTimeString('en-US', optionsTime);
+
+    return `${timeString}`;
+}
+function toDateTimeString(inputDate) {
+    const date = new Date(inputDate);
+    if (isNaN(date)) {
+        throw new Error('Invalid date');
+    }
+    // Define options for time and date formatting
+    const optionsTime = { hour: 'numeric', minute: 'numeric', hour12: true };
+    const optionsDate = { day: 'numeric', month: 'short', year: 'numeric' };
+
+    // Extract time (e.g., "8:02 PM")
+    const timeString = date.toLocaleTimeString('en-US', optionsTime);
+
+    // Extract date (e.g., "12 Feb 2014")
+    const dateString = date.toLocaleDateString('en-GB', optionsDate).toUpperCase();
+
+    // Combine and format (e.g., "8:02 PM 12 FEB 2014")
+    return `${timeString} ${dateString}`;
+}

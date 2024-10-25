@@ -164,15 +164,15 @@ public class SubscriptionServiceImpl extends BaseServiceImpl<SubscriptionFilter,
 
     private void addBonus(SubscriptionEntity entity) {
         var walletAddressValue = parameterService.findByCode(walletAddress).getValue();
-        var selfReferralBonus = entity.getSubscriptionPackage().getSelfReferralBonus();
-        WalletEntity selfWallet = new WalletEntity();
-        selfWallet.setActive(true);
-        selfWallet.setAmount(new BigDecimal(selfReferralBonus));
-        selfWallet.setUser(entity.getUser());
-        selfWallet.setCurrency(entity.getSubscriptionPackage().getCurrency());
-        selfWallet.setTransactionType(TransactionType.BONUS);
-        selfWallet.setAddress(walletAddressValue);
-        walletRepository.save(selfWallet);
+//        var selfReferralBonus = entity.getSubscriptionPackage().getSelfReferralBonus();
+//        WalletEntity selfWallet = new WalletEntity();
+//        selfWallet.setActive(true);
+//        selfWallet.setAmount(new BigDecimal(selfReferralBonus));
+//        selfWallet.setUser(entity.getUser());
+//        selfWallet.setCurrency(entity.getSubscriptionPackage().getCurrency());
+//        selfWallet.setTransactionType(TransactionType.BONUS);
+//        selfWallet.setAddress(walletAddressValue);
+//        walletRepository.save(selfWallet);
 
         if(entity.getUser().getParent() != null) {
             var parentReferralBonus = entity.getSubscriptionPackage().getParentReferralBonus();

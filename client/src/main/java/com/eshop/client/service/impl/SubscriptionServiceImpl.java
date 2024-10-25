@@ -2,7 +2,6 @@ package com.eshop.client.service.impl;
 
 import com.eshop.client.entity.QSubscriptionEntity;
 import com.eshop.client.entity.SubscriptionEntity;
-import com.eshop.client.entity.UserEntity;
 import com.eshop.client.entity.WalletEntity;
 import com.eshop.client.enums.EntityStatusType;
 import com.eshop.client.enums.RoleType;
@@ -93,7 +92,7 @@ public class SubscriptionServiceImpl extends BaseServiceImpl<SubscriptionFilter,
         }
         entity.setFinalPrice(calculatePrice(subscriptionPackage.getPrice(), model.getDiscountPercentage()));
         if(model.getStatus().equals(EntityStatusType.Active)) {
-            var balanceList = walletRepository.findBalanceGroupedByCurrency(entity.getUser().getId());
+            var balanceList = walletRepository.totalBalanceGroupedByCurrency(entity.getUser().getId());
             var balance = balanceList.stream().filter(x->x.getCurrency().equals(subscriptionPackage.getCurrency())).findFirst();
             if(balance.isEmpty())
                 throw new PaymentRequiredException();
@@ -132,7 +131,7 @@ public class SubscriptionServiceImpl extends BaseServiceImpl<SubscriptionFilter,
             entity.setStatus(EntityStatusType.Passive);
         }
         if(model.getStatus().equals(EntityStatusType.Active)) {
-            var balanceList = walletRepository.findBalanceGroupedByCurrency(entity.getUser().getId());
+            var balanceList = walletRepository.totalBalanceGroupedByCurrency(entity.getUser().getId());
             var balance = balanceList.stream().filter(x->x.getCurrency().equals(entity.getSubscriptionPackage().getCurrency())).findFirst();
             if(balance.isEmpty())
                 throw new PaymentRequiredException();
@@ -166,15 +165,15 @@ public class SubscriptionServiceImpl extends BaseServiceImpl<SubscriptionFilter,
     }
 
     private void addBonus(SubscriptionEntity entity) {
-        var selfReferralBonus = entity.getSubscriptionPackage().getSelfReferralBonus();
-        WalletEntity selfWallet = new WalletEntity();
-        selfWallet.setActive(true);
-        selfWallet.setAmount(new BigDecimal(selfReferralBonus));
-        selfWallet.setUser(entity.getUser());
-        selfWallet.setCurrency(entity.getSubscriptionPackage().getCurrency());
-        selfWallet.setTransactionType(TransactionType.BONUS);
-        selfWallet.setAddress(walletAddressValue);
-        walletRepository.save(selfWallet);
+//        var selfReferralBonus = entity.getSubscriptionPackage().getSelfReferralBonus();
+//        WalletEntity selfWallet = new WalletEntity();
+//        selfWallet.setActive(true);
+//        selfWallet.setAmount(new BigDecimal(selfReferralBonus));
+//        selfWallet.setUser(entity.getUser());
+//        selfWallet.setCurrency(entity.getSubscriptionPackage().getCurrency());
+//        selfWallet.setTransactionType(TransactionType.BONUS);
+//        selfWallet.setAddress(walletAddressValue);
+//        walletRepository.save(selfWallet);
 
         if(entity.getUser().getParent() != null) {
             var parentReferralBonus = entity.getSubscriptionPackage().getParentReferralBonus();

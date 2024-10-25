@@ -12,7 +12,7 @@
         }
     </style>
     <script type="text/javascript" th:src="@{/js/lib/select2.min.js}"></script>
-    <script type="text/javascript" th:src="@{/js/messages/select2.fa.js}"></script>
+    <script type="text/javascript" th:src="'/js/messages/select2.' + #{locale} + '.js'"></script>
 </th:block>
 <th:block layout:fragment="content">
     <input type="hidden" value="/api/v1/user" id="requestMapping"/>
@@ -71,18 +71,29 @@
                             <div class="col-md-6 form-group">
                                 <label th:text="#{role}"></label>
                                 <th:block
-                                        th:replace="fragments/select2 :: select2('8',#{role}, 'role', 'api/v1/role/findAllSelect','{title:params.term}',true)"></th:block>
+                                        th:replace="fragments/select2 :: select2('8',#{role}, 'role', 'api/v1/role/findAllSelect','{title:params.term}',true,null)"></th:block>
                             </div>
                             <div class="col-md-6 form-group">
                                 <label th:text="#{parent}"></label>
                                 <th:block
-                                        th:replace="fragments/select2 :: select2('9',#{parent}, 'parent', 'api/v1/user/findAllSelect','{title:params.term}',false)"></th:block>
+                                        th:replace="fragments/select2 :: select2('9',#{parent}, 'parent', 'api/v1/user/findAllSelect','{title:params.term}',false,null)"></th:block>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 form-group">
+                                <label th:text="#{imageUrl}"></label>
+                                <input class="form-control" tabindex="10" type="text" th:placeholder="#{imageUrl}"
+                                       th:title="#{imageUrl}" id="profileImageUrl"/>
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <label th:text="#{country}"></label>
+                                <th:block th:replace="fragments/select2 :: select2('11',#{country}, 'country', 'api/v1/country/findAllSelect','{name:params.term}',false,null)"></th:block>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-md-6 form-group">
                                 <label th:text="#{status}"></label>
-                                <select class="form-control " tabindex="10" id="status" th:title="#{status}">
+                                <select class="form-control " tabindex="12" id="status" th:title="#{status}">
                                     <option value="" selected th:text="#{status}"></option>
                                     <option value="true" th:text="#{active}"></option>
                                     <option value="false" th:text="#{inactive}"></option>
@@ -90,18 +101,18 @@
                             </div>
                             <div class="col-md-6 form-group">
                                 <label th:text="#{wallet}"></label>
-                                <input class="form-control" tabindex="11" type="text" th:placeholder="#{wallet}"
+                                <input class="form-control" tabindex="13" type="text" th:placeholder="#{wallet}"
                                        th:title="#{wallet}" id="walletAddress"/>
                             </div>
                         </div>
                         <div class="ln_solid"></div>
                         <div class="row">
                             <div class="col-md-12">
-                                <button tabindex="10" type="submit" class="btn btn-primary"><i
+                                <button tabindex="14" type="submit" class="btn btn-primary"><i
                                         class="fa fa-save"></i>&nbsp;<span th:text="#{save}"></span></button>
-                                <button tabindex="11" type="button" class="btn btn-default" onclick="clearAll();"><i
+                                <button tabindex="15" type="button" class="btn btn-default" onclick="clearAll();"><i
                                         class="fa fa-eraser"></i>&nbsp;<span th:text="#{clean}"></span></button>
-                                <button tabindex="12" type="button" class="btn btn-info"
+                                <button tabindex="16" type="button" class="btn btn-info"
                                         onclick="$.publish('reloadTable')">
                                     <i class="fa fa-search"></i>&nbsp;<span th:text="#{search}"></span></button>
                             </div>
@@ -126,6 +137,7 @@
                     <table class="table table-striped table-bordered table-hover table-condensed dt-responsive nowrap" width="100%">
                         <thead>
                         <tr>
+                            <th th:text="#{avatar}"></th>
                             <th th:text="#{email}"></th>
                             <th th:text="#{wallet}"></th>
                             <th th:text="#{name}"></th>
@@ -133,11 +145,13 @@
                             <th th:text="#{status}"></th>
                             <th th:text="#{modifyDate}"></th>
                             <th th:text="#{treePath}"></th>
+                            <th th:text="#{country}"></th>
                             <th><i class="fa fa-wrench"></i></th>
                         </tr>
                         </thead>
                         <tfoot>
                         <tr>
+                            <th th:text="#{avatar}"></th>
                             <th th:text="#{email}"></th>
                             <th th:text="#{wallet}"></th>
                             <th th:text="#{name}"></th>
@@ -145,6 +159,7 @@
                             <th th:text="#{status}"></th>
                             <th th:text="#{modifyDate}"></th>
                             <th th:text="#{treePath}"></th>
+                            <th th:text="#{country}"></th>
                             <th><i class="fa fa-wrench"></i></th>
                         </tr>
                         </tfoot>
