@@ -150,28 +150,17 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter,WalletModel,
                         throw new NotAcceptableException("Withdrawal is allowed only after " + withdrawalDate.toString());
                 }
                 if(model.getTransactionType().equals(TransactionType.DEPOSIT) && !walletRepository.existsByUserIdAndTransactionTypeAndCurrencyAndActiveTrue(model.getUser().getId(),TransactionType.DEPOSIT,balanceModel.getCurrency())) {
-                    BigDecimal referralDepositBonus = referralDepositBonus(model.getAmount());
                     String walletAddress = parameterService.findByCode("WALLET_ADDRESS").getValue();
                     var user = userService.findById(model.getUser().getId());
                     if (get(() -> user.getParent()) != null) {
                         WalletModel bonus1 = new WalletModel();
                         bonus1.setActive(true);
                         bonus1.setUser(user.getParent());
-                        bonus1.setAmount(referralDepositBonus.multiply(new BigDecimal("0.18")).setScale(4, RoundingMode.HALF_UP));
+                        bonus1.setAmount(referralDepositBonus(model.getAmount()));
                         bonus1.setAddress(walletAddress);
                         bonus1.setCurrency(balanceModel.getCurrency());
                         bonus1.setTransactionType(TransactionType.BONUS);
                         create(bonus1);
-                    }
-                    if (user.getParents().size() >= 2) {
-                        WalletModel bonus2 = new WalletModel();
-                        bonus2.setActive(true);
-                        bonus2.setUser(new UserModel().setUserId(user.getParents().get(1)));
-                        bonus2.setAmount(referralDepositBonus.multiply(new BigDecimal("0.08")).setScale(4, RoundingMode.HALF_UP));
-                        bonus2.setAddress(walletAddress);
-                        bonus2.setCurrency(balanceModel.getCurrency());
-                        bonus2.setTransactionType(TransactionType.BONUS);
-                        create(bonus2);
                     }
                 }
             }
