@@ -18,7 +18,7 @@ public class NumberUtil {
         BigDecimal scaled = randomBigDecimal.multiply(range).add(min);
 
         // Set scale if needed (e.g., 2 decimal places)
-        return scaled.setScale(2, RoundingMode.HALF_UP); // Set to 2 decimal places
+        return scaled.setScale(6, RoundingMode.HALF_UP); // Set to 2 decimal places
     }
     public static BigDecimal findClosest(List<BigDecimal> numbers, BigDecimal target) {
         return numbers.stream()
