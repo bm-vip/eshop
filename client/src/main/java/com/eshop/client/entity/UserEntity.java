@@ -40,7 +40,7 @@ public class UserEntity extends BaseEntity<Long> {
 	private String uid;
 	@Column(name = "active_flag", nullable = false)
 	private boolean active;
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "parent_id")
 	private UserEntity parent;
 	@Column(name = "tree_path")

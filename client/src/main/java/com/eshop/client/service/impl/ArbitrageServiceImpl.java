@@ -26,6 +26,8 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Date;
 
+import static com.eshop.client.util.MapperHelper.get;
+
 
 @Service
 public class ArbitrageServiceImpl extends BaseServiceImpl<ArbitrageFilter, ArbitrageModel, ArbitrageEntity, Long> implements ArbitrageService {
@@ -98,25 +100,28 @@ public class ArbitrageServiceImpl extends BaseServiceImpl<ArbitrageFilter, Arbit
             model.setCurrency(subscription.getSubscriptionPackage().getCurrency());
 
             //parent reward
-            WalletEntity buyRewardParent = new WalletEntity();
-            buyRewardParent.setActive(true);
-            buyRewardParent.setAmount(reward.multiply(new BigDecimal("0.18")).setScale(6, RoundingMode.HALF_UP));
-            buyRewardParent.setUser(user.getParent());
-            buyRewardParent.setCurrency(subscription.getSubscriptionPackage().getCurrency());
-            buyRewardParent.setTransactionType(TransactionType.REWARD);
-            buyRewardParent.setAddress(walletAddressValue);
-            walletRepository.save(buyRewardParent);
+            if(user.getParent()!=null){
+                WalletEntity buyRewardParent = new WalletEntity();
+                buyRewardParent.setActive(true);
+                buyRewardParent.setAmount(reward.multiply(new BigDecimal("0.18")).setScale(6, RoundingMode.HALF_UP));
+                buyRewardParent.setUser(user.getParent());
+                buyRewardParent.setCurrency(subscription.getSubscriptionPackage().getCurrency());
+                buyRewardParent.setTransactionType(TransactionType.REWARD);
+                buyRewardParent.setAddress(walletAddressValue);
+                walletRepository.save(buyRewardParent);
+            }
 
             //grand parent reward
-            WalletEntity buyRewardGrandParent = new WalletEntity();
-            buyRewardGrandParent.setActive(true);
-            buyRewardGrandParent.setAmount(reward.multiply(new BigDecimal("0.08")).setScale(6, RoundingMode.HALF_UP));
-            buyRewardGrandParent.setUser(user.getParent().getParent());
-            buyRewardGrandParent.setCurrency(subscription.getSubscriptionPackage().getCurrency());
-            buyRewardGrandParent.setTransactionType(TransactionType.REWARD);
-            buyRewardGrandParent.setAddress(walletAddressValue);
-            walletRepository.save(buyRewardGrandParent);
-
+            if(get(()->user.getParent().getParent())!=null) {
+                WalletEntity buyRewardGrandParent = new WalletEntity();
+                buyRewardGrandParent.setActive(true);
+                buyRewardGrandParent.setAmount(reward.multiply(new BigDecimal("0.08")).setScale(6, RoundingMode.HALF_UP));
+                buyRewardGrandParent.setUser(user.getParent().getParent());
+                buyRewardGrandParent.setCurrency(subscription.getSubscriptionPackage().getCurrency());
+                buyRewardGrandParent.setTransactionType(TransactionType.REWARD);
+                buyRewardGrandParent.setAddress(walletAddressValue);
+                walletRepository.save(buyRewardGrandParent);
+            }
             return super.create(model);
         }
         throw new NotAcceptableException("Your profit is equal to zero, please contact support.");
