@@ -24,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 import static com.eshop.client.util.MapperHelper.get;
@@ -32,6 +33,7 @@ import static com.eshop.client.util.MapperHelper.get;
 @Service
 public class ArbitrageServiceImpl extends BaseServiceImpl<ArbitrageFilter, ArbitrageModel, ArbitrageEntity, Long> implements ArbitrageService {
 
+    private final ArbitrageRepository arbitrageRepository;
     private ArbitrageRepository repository;
     private ArbitrageMapper mapper;
     private final SubscriptionPackageRepository subscriptionPackageRepository;
@@ -42,7 +44,7 @@ public class ArbitrageServiceImpl extends BaseServiceImpl<ArbitrageFilter, Arbit
     private final String walletAddressValue;
 
     @Autowired
-    public ArbitrageServiceImpl(ArbitrageRepository repository, ArbitrageMapper mapper, SubscriptionPackageRepository subscriptionPackageRepository, SubscriptionRepository subscriptionRepository, ParameterService parameterService, WalletRepository walletRepository, UserRepository userRepository) {
+    public ArbitrageServiceImpl(ArbitrageRepository repository, ArbitrageMapper mapper, SubscriptionPackageRepository subscriptionPackageRepository, SubscriptionRepository subscriptionRepository, ParameterService parameterService, WalletRepository walletRepository, UserRepository userRepository, ArbitrageRepository arbitrageRepository) {
         super(repository, mapper);
         this.repository = repository;
         this.mapper = mapper;
@@ -52,6 +54,7 @@ public class ArbitrageServiceImpl extends BaseServiceImpl<ArbitrageFilter, Arbit
         this.walletAddressValue = parameterService.findByCode(ParameterService.walletAddress).getValue();
         this.walletRepository = walletRepository;
         this.userRepository = userRepository;
+        this.arbitrageRepository = arbitrageRepository;
     }
 
     @Override
@@ -78,8 +81,9 @@ public class ArbitrageServiceImpl extends BaseServiceImpl<ArbitrageFilter, Arbit
     @Override
     @Transactional
     public ArbitrageModel create(ArbitrageModel model) {
-        if(dailyLimitPurchase(model.getUser().getId()))
-            throw new NotAcceptableException("You have reached the daily purchase limitation, please try tomorrow.");
+        var allowedDate = dailyLimitPurchase(model.getUser().getId());
+        if(allowedDate != null)
+            throw new NotAcceptableException("You have reached the daily purchase limitation, please try after " + allowedDate);
 
         var subscription = subscriptionRepository.findByUserIdAndStatus(model.getUser().getId(), EntityStatusType.Active);
         var balanceList = walletRepository.totalBalanceGroupedByCurrency(model.getUser().getId());
@@ -133,8 +137,16 @@ public class ArbitrageServiceImpl extends BaseServiceImpl<ArbitrageFilter, Arbit
     }
     @Override
     @Transactional(readOnly = true)
-    public boolean dailyLimitPurchase(long userId){
+    public LocalDateTime dailyLimitPurchase(long userId){
         var subscription = subscriptionRepository.findByUserIdAndStatus(userId, EntityStatusType.Active);
-        return countAll(new ArbitrageFilter().setCreatedDate(DateUtil.truncate(new Date())).setSubscriptionId(subscription.getId()).setUserId(userId)) >= subscription.getSubscriptionPackage().getOrderCount();
+        var lastArbitrage = arbitrageRepository.findTopByUserIdAndSubscriptionIdOrderByCreatedDateDesc(userId, subscription.getId());
+        if(lastArbitrage.isPresent())
+            return null;
+        var allowedDate = DateUtil.toLocalDateTime(lastArbitrage.get().getCreatedDate()).plusHours(2L);
+        if(allowedDate.isAfter(LocalDateTime.now()))
+            return allowedDate;
+        if(countAll(new ArbitrageFilter().setCreatedDate(DateUtil.truncate(new Date())).setSubscriptionId(subscription.getId()).setUserId(userId)) > 30L * subscription.getSubscriptionPackage().getOrderCount())
+            return allowedDate;
+        return null;
     }
 }

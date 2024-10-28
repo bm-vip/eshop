@@ -42,8 +42,8 @@ $(function () {
 });
 async function trade() {
     let dailyLimitPurchase = await (await fetch("/api/v1/arbitrage/daily-limit-purchase/" + currentUser.id)).json();
-    if(dailyLimitPurchase) {
-        show_warning("You have reached the daily purchase limitation, please try tomorrow.");
+    if(dailyLimitPurchase != null) {
+        show_warning(`You have reached the daily purchase limitation, please try after ${new Date(dailyLimitPurchase).toLocaleString()}.`);
         return;
     }
 
@@ -102,10 +102,11 @@ function buy(index, exchangeId, coinId, subscriptionId) {
         onStop:function (from, to) {
             console.log('Animation complete. Final percentage: ' + to);
             $.postJSON("/api/v1/arbitrage",{user:{id:currentUser.id}, exchange:{id:exchangeId}, coin:{id: coinId}, subscription:{id:subscriptionId}}, function (data) {
-                $("#buy-btn-" + index).after(`<p>You received ${data.reward} profit from this purchase!</p>`);
+                $("#buy-btn-" + index).after(`<p>You received ${data.reward} profit from this purchase!</p><p>${new Date(data.createdDate).toLocaleString()}</p>`);
             },function (error) {
                 if(isNullOrEmpty(get(() => error.responseJSON)))
                     show_error('ajax answer post returned error: ' + header.responseText);
+                else if(header.responseJSON.status == 400) show_warning(header.responseJSON.error + ' (' + header.responseJSON.status + ') <br>' + header.responseJSON.message);
                 else show_error(error.responseJSON.error + ' (' + error.responseJSON.status + ') <br>' + error.responseJSON.message);
             });
         },

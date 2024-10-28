@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDateTime;
+
 @RestController
 @Tag(name = "Arbitrage Rest Service v1")
 @RequestMapping(value = "/api/v1/arbitrage")
@@ -25,7 +27,7 @@ public class ArbitrageRestController extends BaseRestControllerImpl<ArbitrageFil
         return arbitrageService.countAllByUserId(userId);
     }
     @GetMapping("daily-limit-purchase/{userId}")
-    public boolean dailyLimitPurchase(@PathVariable long userId) {
+    public LocalDateTime dailyLimitPurchase(@PathVariable long userId) {
         return arbitrageService.dailyLimitPurchase(userId);
     }
 }
