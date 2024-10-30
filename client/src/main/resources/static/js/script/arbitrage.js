@@ -44,7 +44,7 @@ async function trade() {
     let dailyLimitPurchase = await (await fetch("/api/v1/arbitrage/daily-limit-purchase/" + currentUser.id)).text();
     if(!isNullOrEmpty(dailyLimitPurchase)) {
         let dateTime = new Date(JSON.parse(dailyLimitPurchase)).toLocaleString();
-        show_warning(`You have reached the daily purchase limitation, please try after ${dateTime}.`);
+        show_warning(`You have reached the hourly purchase limitation, please try after ${dateTime}.`);
         return;
     }
 

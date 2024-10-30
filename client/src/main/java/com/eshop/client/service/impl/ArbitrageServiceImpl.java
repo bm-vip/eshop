@@ -88,7 +88,7 @@ public class ArbitrageServiceImpl extends BaseServiceImpl<ArbitrageFilter, Arbit
     public ArbitrageModel create(ArbitrageModel model) {
         var allowedDate = dailyLimitPurchase(model.getUser().getId());
         if(allowedDate != null)
-            throw new NotAcceptableException("You have reached the daily purchase limitation, please try after " + allowedDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+            throw new NotAcceptableException("You have reached the hourly purchase limitation, please try after " + allowedDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
 
         var subscription = subscriptionRepository.findByUserIdAndStatus(model.getUser().getId(), EntityStatusType.Active);
         var balanceList = walletRepository.totalBalanceGroupedByCurrency(model.getUser().getId());
