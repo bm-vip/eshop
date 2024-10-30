@@ -106,9 +106,9 @@
     };
 
     if ($("#chart_01").length) {
-        $.getJSON("/api/v1/wallet/get-date-range/" + new Date(2024,6,1).getTime() +"/"+ new Date(2024,6,30).getTime()+"/DEPOSIT", function (data) {
+        $.getJSON("/api/v1/wallet/get-date-range/" + addDays(new Date(),-7).getTime() +"/"+ new Date().getTime() + "/DEPOSIT", function (data) {
             const depositArray = Object.entries(data).map(([key, value]) => [key, value]);
-            $.getJSON("/api/v1/wallet/get-date-range/" + new Date(2024,6,1).getTime() +"/"+ new Date(2024,6,30).getTime()+"/BONUS", function (data) {
+            $.getJSON("/api/v1/wallet/get-date-range/" + addDays(new Date(),-7).getTime() +"/"+ new Date().getTime() + "/BONUS", function (data) {
                 const bonusArray = Object.entries(data).map(([key, value]) => [key, value]);
                 $.plot($("#chart_01"), [depositArray, bonusArray], chart_01_settings);
             });

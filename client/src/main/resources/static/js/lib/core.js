@@ -119,8 +119,8 @@ function submitFormData(formData) {
         },
         error: function (header, status, error) {
             if(isNullOrEmpty(get(()=>header.responseJSON)))
-                show_error('ajax answer post returned error: ' + header.responseText);
-            else if(header.responseJSON.status >= 400 && header.responseJSON.status < 500 show_warning(header.responseJSON.error + ' (' + header.responseJSON.status + ') <br>' + header.responseJSON.message);
+                show_error('ajax answer post returned error: ' + error.responseText);
+            else if(header.responseJSON.status >= 400 && header.responseJSON.status < 500) show_warning(header.responseJSON.error + ' (' + header.responseJSON.status + ') <br>' + header.responseJSON.message);
             else show_error(header.responseJSON.error + ' (' + header.responseJSON.status + ') <br>' + header.responseJSON.message);
         }
     });
@@ -152,7 +152,7 @@ function submitEntity(entity) {
         error: function (header, status, error) {
             if(isNullOrEmpty(get(() => header.responseJSON)))
                 show_error('ajax answer post returned error: ' + error.responseText);
-            else if(header.responseJSON.status >= 400 && header.responseJSON.status < 500 show_warning(header.responseJSON.error + ' (' + header.responseJSON.status + ') <br>' + header.responseJSON.message);
+            else if(header.responseJSON.status >= 400 && header.responseJSON.status < 500) show_warning(header.responseJSON.error + ' (' + header.responseJSON.status + ') <br>' + header.responseJSON.message);
             else show_error(header.responseJSON.error + ' (' + header.responseJSON.status + ') <br>' + header.responseJSON.message);
         }
     });

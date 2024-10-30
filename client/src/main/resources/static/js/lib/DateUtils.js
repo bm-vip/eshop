@@ -129,3 +129,8 @@ function toDateTimeString(inputDate) {
     // Combine and format (e.g., "8:02 PM 12 FEB 2014")
     return `${timeString} ${dateString}`;
 }
+function addDays(date, days) {
+    var result = new Date(date);
+    result.setDate(result.getDate() + days);
+    return result;
+}
