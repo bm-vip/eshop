@@ -186,8 +186,7 @@ function show_error(mes) {
         text: mes,
         type: 'error',
         hide: false,
-        styling: 'bootstrap3',
-        nonblock: {nonblock: !0}
+        styling: 'bootstrap3'
     });
 
 }

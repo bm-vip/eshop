@@ -478,7 +478,7 @@
                         if(isNullOrEmpty(get(() => header.responseJSON)))
                             new PNotify({
                                 title: 'Oh No!',
-                                text: 'ajax answer post returned error: ' + header.responseText,
+                                text: 'ajax answer post returned error: ' + error.responseText,
                                 type: 'error',
                                 hide: false,
                                 styling: 'bootstrap3'

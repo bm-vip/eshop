@@ -19,13 +19,18 @@ import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.DateTemplate;
 import com.querydsl.core.types.dsl.Expressions;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.web.format.DateTimeFormatters;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
+import java.util.stream.Collectors;
 
 import static com.eshop.client.util.MapperHelper.get;
 
@@ -83,7 +88,7 @@ public class ArbitrageServiceImpl extends BaseServiceImpl<ArbitrageFilter, Arbit
     public ArbitrageModel create(ArbitrageModel model) {
         var allowedDate = dailyLimitPurchase(model.getUser().getId());
         if(allowedDate != null)
-            throw new NotAcceptableException("You have reached the daily purchase limitation, please try after " + allowedDate);
+            throw new NotAcceptableException("You have reached the daily purchase limitation, please try after " + allowedDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
 
         var subscription = subscriptionRepository.findByUserIdAndStatus(model.getUser().getId(), EntityStatusType.Active);
         var balanceList = walletRepository.totalBalanceGroupedByCurrency(model.getUser().getId());
@@ -137,15 +142,18 @@ public class ArbitrageServiceImpl extends BaseServiceImpl<ArbitrageFilter, Arbit
     }
     @Override
     @Transactional(readOnly = true)
-    public LocalDateTime dailyLimitPurchase(long userId){
+    public LocalDateTime dailyLimitPurchase(long userId) {
         var subscription = subscriptionRepository.findByUserIdAndStatus(userId, EntityStatusType.Active);
-        var lastArbitrage = arbitrageRepository.findTopByUserIdAndSubscriptionIdOrderByCreatedDateDesc(userId, subscription.getId());
-        if(lastArbitrage.isPresent())
+        if(subscription == null)
+            throw new NotFoundException("subscription not found");
+        var todayArbitrages = arbitrageRepository.findByUserIdAndSubscriptionIdAndCreatedDateOrderByCreatedDateDesc(userId, subscription.getId(), DateUtil.truncate(new Date()));
+        if(CollectionUtils.isEmpty(todayArbitrages))
             return null;
-        var allowedDate = DateUtil.toLocalDateTime(lastArbitrage.get().getCreatedDate()).plusHours(2L);
-        if(allowedDate.isAfter(LocalDateTime.now()))
+        var allowedDate = DateUtil.toLocalDateTime(todayArbitrages.get(0).getCreatedDate()).plusHours(2L);
+        if(todayArbitrages.size() > 30L * subscription.getSubscriptionPackage().getOrderCount())
             return allowedDate;
-        if(countAll(new ArbitrageFilter().setCreatedDate(DateUtil.truncate(new Date())).setSubscriptionId(subscription.getId()).setUserId(userId)) > 30L * subscription.getSubscriptionPackage().getOrderCount())
+        var last2Hours = todayArbitrages.stream().filter(x->x.getCreatedDate().after(DateUtil.toDate(LocalDateTime.now().minusHours(2)))).collect(Collectors.toList());
+        if(last2Hours.size() >= subscription.getSubscriptionPackage().getOrderCount())
             return allowedDate;
         return null;
     }

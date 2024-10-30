@@ -1,12 +1,15 @@
 package com.eshop.client.repository;
 
 import com.eshop.client.entity.ArbitrageEntity;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import java.util.Optional;
+import java.util.Date;
+import java.util.List;
 
 @Repository
 public interface ArbitrageRepository extends BaseRepository<ArbitrageEntity, Long> {
     long countAllByUserId(long userId);
-    Optional<ArbitrageEntity> findTopByUserIdAndSubscriptionIdOrderByCreatedDateDesc(Long userId, Long subscriptionId);
+    @Query("select a from ArbitrageEntity a where a.user.id=:userId and a.subscription.id=:subscriptionId and DATE(a.createdDate) =:createdDate order by a.createdDate desc")
+    List<ArbitrageEntity> findByUserIdAndSubscriptionIdAndCreatedDateOrderByCreatedDateDesc(Long userId, Long subscriptionId, Date createdDate);
 }

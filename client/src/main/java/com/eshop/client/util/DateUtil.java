@@ -23,6 +23,9 @@ public class DateUtil {
     public static Date toDate(LocalDate date){
         return Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant());
     }
+    public static Date toDate(LocalDateTime date){
+        return Date.from(date.atZone(ZoneId.systemDefault()).toInstant());
+    }
 
     public static String addZero(int value) {
         if (value < 10)

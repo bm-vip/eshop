@@ -152,7 +152,8 @@ function show_info(mes) {
         title: 'New Thing',
         text: mes,
         type: 'info',
-        styling: 'bootstrap3'
+        styling: 'bootstrap3',
+        nonblock: {nonblock: !0},
     });
 }
 
@@ -163,7 +164,8 @@ function show_success(mes) {
         title: 'Success',
         text: mes,
         type: 'success',
-        styling: 'bootstrap3'
+        styling: 'bootstrap3',
+        nonblock: {nonblock: !0},
     });
 }
 
