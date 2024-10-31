@@ -1,6 +1,7 @@
 package com.eshop.client.service.impl;
 
 import com.eshop.client.entity.ArbitrageEntity;
+import com.eshop.client.entity.CoinEntity;
 import com.eshop.client.entity.QArbitrageEntity;
 import com.eshop.client.entity.WalletEntity;
 import com.eshop.client.enums.EntityStatusType;
@@ -8,6 +9,7 @@ import com.eshop.client.enums.TransactionType;
 import com.eshop.client.filter.ArbitrageFilter;
 import com.eshop.client.mapping.ArbitrageMapper;
 import com.eshop.client.model.ArbitrageModel;
+import com.eshop.client.model.CoinUsageDTO;
 import com.eshop.client.repository.*;
 import com.eshop.client.service.ArbitrageService;
 import com.eshop.client.service.ParameterService;
@@ -20,6 +22,7 @@ import com.querydsl.core.types.dsl.DateTemplate;
 import com.querydsl.core.types.dsl.Expressions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.web.format.DateTimeFormatters;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,6 +33,7 @@ import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.eshop.client.util.MapperHelper.get;
@@ -139,6 +143,14 @@ public class ArbitrageServiceImpl extends BaseServiceImpl<ArbitrageFilter, Arbit
     @Override
     public long countAllByUserId(long userId) {
         return repository.countAllByUserId(userId);
+    }
+    @Override
+    public Page<CoinUsageDTO> findMostUsedCoins(int pageSize) {
+        long count = repository.count();
+        return repository.findMostUsedCoins(PageRequest.ofSize(pageSize)).map(m->{
+            m.setUsagePercentage(m.getUsageCount()*100L/count);
+            return m;
+        });
     }
     @Override
     @Transactional(readOnly = true)

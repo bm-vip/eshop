@@ -2,8 +2,11 @@ package com.eshop.client.controller.impl;
 
 import com.eshop.client.filter.ArbitrageFilter;
 import com.eshop.client.model.ArbitrageModel;
+import com.eshop.client.model.CoinUsageDTO;
 import com.eshop.client.service.ArbitrageService;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,11 +26,15 @@ public class ArbitrageRestController extends BaseRestControllerImpl<ArbitrageFil
         this.arbitrageService = service;
     }
     @GetMapping("count-all-by-user/{userId}")
-    public long countAllByUserId(@PathVariable long userId) {
-        return arbitrageService.countAllByUserId(userId);
+    public ResponseEntity<Long> countAllByUserId(@PathVariable long userId) {
+        return ResponseEntity.ok(arbitrageService.countAllByUserId(userId));
+    }
+    @GetMapping("find-top-coins/{pageSize}")
+    public ResponseEntity<Page<CoinUsageDTO>> findMostUsedCoins(@PathVariable int pageSize) {
+        return ResponseEntity.ok(arbitrageService.findMostUsedCoins(pageSize));
     }
     @GetMapping("daily-limit-purchase/{userId}")
-    public LocalDateTime dailyLimitPurchase(@PathVariable long userId) {
-        return arbitrageService.dailyLimitPurchase(userId);
+    public ResponseEntity<LocalDateTime> dailyLimitPurchase(@PathVariable long userId) {
+        return ResponseEntity.ok(arbitrageService.dailyLimitPurchase(userId));
     }
 }
