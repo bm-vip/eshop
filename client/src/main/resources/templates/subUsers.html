@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{fragments/master}">
+
+<th:block layout:fragment="header">
+    <link rel="stylesheet" type="text/css" th:href="#{direction} +'/select2/dist/css/select2.min.css'">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/lib/select2-bootstrap.css}"/>
+    <link rel="stylesheet" type="text/css" th:href="#{direction} +'/datatables.net-bs/css/dataTables.bootstrap.min.css'"/>
+    <link rel="stylesheet" type="text/css" th:href="#{direction} +'/datatables.net-responsive-bs/css/responsive.bootstrap.min.css'"/>
+    <link rel="stylesheet" type="text/css" th:href="#{direction} +'/datatables.net-scroller-bs/css/scroller.bootstrap.min.css'"/>
+    <style>
+        #profile-image-url {
+            width: 140px;
+        }
+        .label p{
+            font-size: 17px;
+        }
+        .form-control-feedback.right {
+            margin-top: 33px;
+        }
+    </style>
+    <script type="text/javascript" th:src="#{direction} +'/select2/dist/js/select2.full.min.js'"></script>
+</th:block>
+<div layout:fragment="content">
+    <div class="page-title">
+        <div class="title_left">
+            <h3>Sub users</h3>
+        </div>
+    </div>
+
+    <div class="clearfix"></div>
+    <div class="row">
+        <div class="col-md-12 col-sm-12 ">
+            <div class="x_panel">
+                <div class="x_title">
+                    <h2>Search panel</h2>
+                    <ul class="nav navbar-right panel_toolbox">
+                        <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                        </li>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                <a class="dropdown-item" href="#">Settings 1</a>
+                                <a class="dropdown-item" href="#">Settings 2</a>
+                            </div>
+                        </li>
+                        <li><a class="close-link"><i class="fa fa-close"></i></a>
+                        </li>
+                    </ul>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="x_content">
+                    <div class="row">
+                        <div class="col-md-6 form-group has-feedback">
+                            <label th:text="#{userName}"></label>
+                            <input type="text" class="form-control" id="userName" name="userName" tabindex="1">
+                            <span class="fa fa-user form-control-feedback right" aria-hidden="true"></span>
+                        </div>
+                        <div class="col-md-6 form-group has-feedback">
+                            <label th:text="#{email}"></label>
+                            <input type="text" class="form-control" id="email" name="email" tabindex="2">
+                            <span class="fa fa-envelope form-control-feedback right" aria-hidden="true"></span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 form-group has-feedback">
+                            <label th:text="#{name}"></label>
+                            <input type="text" class="form-control" id="name" name="name" tabindex="3">
+                            <span class="fa fa-user form-control-feedback right" aria-hidden="true"></span>
+                        </div>
+                        <div class="col-md-6 form-group has-feedback">
+                            <label th:text="#{lastName}"></label>
+                            <input type="text" class="form-control" id="lastName" name="lastName" tabindex="4">
+                            <span class="fa fa-user form-control-feedback right" aria-hidden="true"></span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 form-group has-feedback">
+                            <label th:text="#{country}"></label>
+                            <th:block th:replace="fragments/select2 :: select2('5', #{country}, 'country', 'api/v1/country/findAllSelect','{name:params.term}',false,null)"></th:block>
+                        </div>
+                    </div>
+                    <div class="ln_solid"></div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <button tabindex="6" type="button" class="btn btn-default" onclick="clearAll();"><i
+                                    class="fa fa-eraser"></i>&nbsp;<span th:text="#{clean}"></span></button>
+                            <button tabindex="7" type="button" class="btn btn-info"
+                                    onclick="$.publish('reloadReferral1Table');$.publish('reloadReferral2Table')">
+                                <i class="fa fa-search"></i>&nbsp;<span th:text="#{search}"></span></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12 col-sm-12 ">
+            <div class="x_panel">
+                <div class="x_title">
+                    <h2>User Referrals</h2>
+                    <ul class="nav navbar-right panel_toolbox">
+                        <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                        </li>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                <a class="dropdown-item" href="#">Settings 1</a>
+                                <a class="dropdown-item" href="#">Settings 2</a>
+                            </div>
+                        </li>
+                        <li><a class="close-link"><i class="fa fa-close"></i></a>
+                        </li>
+                    </ul>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="x_content">
+                    <div class="" role="tabpanel" data-example-id="togglable-tabs">
+                        <ul id="myTab" class="nav nav-tabs bar_tabs" role="tablist">
+                            <li role="presentation" class=""><a href="#tab_content_1" role="tab" id="referral1-tab" data-toggle="tab" aria-expanded="true">Referral Level 1</a>
+                            </li>
+                            <li role="presentation" class=""><a href="#tab_content_2" role="tab" id="referral2-tab" data-toggle="tab" aria-expanded="false">Referral Level 2</a>
+                            </li>
+                        </ul>
+                        <div id="myTabContent" class="tab-content">
+
+                            <div role="tabpanel" class="tab-pane active" id="tab_content_1" aria-labelledby="profile-tab">
+                                <table id="referral-table-1" class="table table-striped table-bordered table-hover table-condensed dt-responsive nowrap" width="100%">
+                                    <thead>
+                                    <tr>
+                                        <th th:text="#{profile} + ' ' + #{image}"></th>
+                                        <th th:text="#{fullName}"></th>
+                                        <th th:text="#{userName}"></th>
+                                        <th th:text="#{email}"></th>
+                                        <th th:text="#{referralCode}"></th>
+                                        <th th:text="#{country}"></th>
+                                        <th th:text="#{modifyDate}"></th>
+                                    </tr>
+                                    </thead>
+                                    <tfoot>
+                                    <tr>
+                                        <th th:text="#{profile} + ' ' + #{image}"></th>
+                                        <th th:text="#{fullName}"></th>
+                                        <th th:text="#{userName}"></th>
+                                        <th th:text="#{email}"></th>
+                                        <th th:text="#{referralCode}"></th>
+                                        <th th:text="#{country}"></th>
+                                        <th th:text="#{modifyDate}"></th>
+                                    </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                            <div role="tabpanel" class="tab-pane fade" id="tab_content_2" aria-labelledby="profile-tab">
+                                <table id="referral-table-2" class="table table-striped table-bordered table-hover table-condensed dt-responsive nowrap" width="100%">
+                                    <thead>
+                                    <tr>
+                                        <th th:text="#{profile} + ' ' + #{image}"></th>
+                                        <th th:text="#{fullName}"></th>
+                                        <th th:text="#{userName}"></th>
+                                        <th th:text="#{email}"></th>
+                                        <th th:text="#{referralCode}"></th>
+                                        <th th:text="#{country}"></th>
+                                        <th th:text="#{modifyDate}"></th>
+                                    </tr>
+                                    </thead>
+                                    <tfoot>
+                                    <tr>
+                                        <th th:text="#{profile} + ' ' + #{image}"></th>
+                                        <th th:text="#{fullName}"></th>
+                                        <th th:text="#{userName}"></th>
+                                        <th th:text="#{email}"></th>
+                                        <th th:text="#{referralCode}"></th>
+                                        <th th:text="#{country}"></th>
+                                        <th th:text="#{modifyDate}"></th>
+                                    </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+    <th:block layout:fragment="footer">
+        <script type="text/javascript" th:src="@{/js/lib/jquery.validate.min.js}" ></script>
+        <script type="text/javascript" th:src="@{/js/lib/jquery.validate.additional-methods.js}" ></script>
+        <script type="text/javascript" th:src="#{direction} +'/datatables.net/js/jquery.dataTables.1.10.16.js'"></script>
+        <script type="text/javascript" th:src="#{direction} +'/datatables.net-bs/js/dataTables.bootstrap.min.js'"></script>
+        <script type="text/javascript" th:src="#{direction} +'/datatables.net-responsive/js/dataTables.responsive.min.js'"></script>
+        <script type="text/javascript" th:src="@{/js/script/subUsers.js}"></script>
+    </th:block>
+</html>
