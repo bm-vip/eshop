@@ -9,8 +9,8 @@ spring:
     name: client
     version: 0.0.1-SNAPSHOT
   queries:
-    users-query: select user_name, password, active_flag from tbl_user where user_name=?
-    roles-query: select u.user_name, r.role from tbl_user u inner join tbl_user_role ur on (u.id=ur.user_id) inner join tbl_role r on (ur.role_id=r.id) where u.user_name=?
+    users-query: select user_name, password, active_flag from tbl_user where user_name=? or email=?
+    roles-query: select u.user_name, r.role from tbl_user u inner join tbl_user_role ur on (u.id=ur.user_id) inner join tbl_role r on (ur.role_id=r.id) where u.user_name=? or u.email=?
   tomcat:
     uri-encoding: UTF-8
   messages:

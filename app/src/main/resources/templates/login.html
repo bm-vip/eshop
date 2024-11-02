@@ -58,7 +58,7 @@
                         </div>
                     </div>
                     <div class="col-xs-12 form-group has-feedback">
-                        <input type="text" class="form-control" th:placeholder="#{userName}" name="userName" autofocus
+                        <input type="text" class="form-control" th:placeholder="#{usernameOrEmail}" name="login" autofocus
                                tabindex="1">
                         <span class="fa fa-user form-control-feedback right" aria-hidden="true"></span>
                     </div>
@@ -115,11 +115,11 @@
     $(function () {
         $('#login-form').validate({
             rules: {
-                userName: "required",
+                login: "required",
                 password: "required"
             },
             messages: {
-                userName: resources.pleaseEnter.format(resources.userName),
+                login: resources.pleaseEnter.format(resources.usernameOrEmail),
                 password: resources.pleaseEnter.format(resources.password)
             },
             highlight: function (element) {

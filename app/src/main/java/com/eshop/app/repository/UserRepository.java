@@ -1,7 +1,7 @@
 package com.eshop.app.repository;
 
-import org.springframework.stereotype.Repository;
 import com.eshop.app.entity.UserEntity;
+import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 

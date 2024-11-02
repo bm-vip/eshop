@@ -63,7 +63,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and().csrf().disable().formLogin()
                 .loginPage("/login").failureUrl("/login?errorMsg=invalidUserNameOrPassword")
                 .successHandler(successLoginConfig)
-                .usernameParameter("userName")
+                .usernameParameter("login") // This will accept either email or username
                 .passwordParameter("password")
                 .and().logout()
                 .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))

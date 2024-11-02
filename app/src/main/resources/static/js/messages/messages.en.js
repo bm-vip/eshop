@@ -173,6 +173,7 @@ var resources = {
     'userManagement': 'User Management',
     'public': 'public',
     'userName': 'userName',
+    'usernameOrEmail': 'Username or Email',
     'userOnline': 'User On line',
     'video': 'video',
     'videos': 'videos',

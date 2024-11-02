@@ -175,6 +175,7 @@ var resources = {
     'userManagement': 'مدیریت کاربران',
     'public': 'عمومی',
     'userName': 'شناسه کاربری',
+    'usernameOrEmail': 'نام کاربری یا امیل',
     'userOnline': 'کاربران حاضر',
     'video': 'ویدئو',
     'videos': 'ویدئوها',
