@@ -34,6 +34,14 @@ function loadTable() {
     },{
         data: 'country.name'
     },{
+        data: 'deposit'
+    },{
+        data: 'withdrawal'
+    },{
+        data: 'bonus'
+    },{
+        data: 'reward'
+    },{
         data: 'modifiedDate',
         render: function (data) { return toLocalizingDateString(data, true) }
     }], "/api/v1/user", "loadSearchReferralEntity1ByInput");
@@ -55,6 +63,14 @@ function loadTable() {
         data: 'uid'
     },{
         data: 'country.name'
+    },{
+        data: 'deposit'
+    },{
+        data: 'withdrawal'
+    },{
+        data: 'bonus'
+    },{
+        data: 'reward'
     },{
         data: 'modifiedDate',
         render: function (data) { return toLocalizingDateString(data, true) }

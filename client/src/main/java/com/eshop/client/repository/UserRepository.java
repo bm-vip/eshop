@@ -13,6 +13,7 @@ public interface UserRepository extends BaseRepository<UserEntity, Long> {
 	 Optional<UserEntity> findByEmail(String email);
 	 boolean existsByUid(String uid);
 	Optional<UserEntity> findByUid(String uid);
+	Optional<UserEntity> findByUserNameOrEmail(String userName, String email);
 
 	@Query("SELECT u.country.name AS country,"
 			+ " COUNT(u) AS count,"

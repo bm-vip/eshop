@@ -49,7 +49,7 @@ public abstract class BaseRestControllerImpl<F,M extends BaseModel<ID>, ID exten
 
     @SneakyThrows
     @Override
-    public ResponseEntity<PageModel> findAllTable(F filter, Pageable pageable) {
+    public ResponseEntity<PageModel<M>> findAllTable(F filter, Pageable pageable) {
         log.debug("call BaseRestImpl.findAllTable {}, for class {}", filter, clazz.getName());
         return ResponseEntity.ok(service.findAllTable(filter, pageable));
     }

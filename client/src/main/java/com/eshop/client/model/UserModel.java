@@ -7,6 +7,7 @@ import lombok.Data;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Set;
 
@@ -37,6 +38,10 @@ public class UserModel extends BaseModel<Long> {
     private String profileImageUrl;
     private CountryModel country;
     private Set<RoleModel> roles;
+    private BigDecimal deposit;
+    private BigDecimal withdrawal;
+    private BigDecimal bonus;
+    private BigDecimal reward;
 
     public UserModel setUserId(Long id) {
         setId(id);

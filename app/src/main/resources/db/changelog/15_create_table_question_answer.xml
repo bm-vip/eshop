@@ -30,20 +30,44 @@
             <column name="answer_type" type="varchar(50)">
                 <constraints nullable="false"/>
             </column>
-            <column name="question_id" type="bigint">
+            <column name="user_id" type="bigint">
                 <constraints nullable="false"/>
             </column>
-            <column name="deleted" type="boolean" defaultValue="false">
+            <column name="active" type="boolean" defaultValue="true">
                 <constraints nullable="false"/>
             </column>
         </createTable>
     </changeSet>
     <changeSet id="15-3" author="administrator">
-        <addForeignKeyConstraint baseColumnNames="sender" baseTableName="tbl_question"
-                                 constraintName="fk_tbl_question_on_sender" referencedColumnNames="id"
+        <createTable tableName="tbl_answer">
+            <column name="id" type="bigint">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_question"/>
+            </column>
+            <column name="created_by" type="VARCHAR(255)"/>
+            <column name="created_date" type="DATETIME"/>
+            <column name="modified_by" type="VARCHAR(255)"/>
+            <column name="modified_date" type="DATETIME"/>
+            <column defaultValueNumeric="0" name="version" type="integer"/>
+            <column name="title" type="text">
+                <constraints nullable="false"/>
+            </column>
+            <column name="display_order" type="int" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="question_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="active" type="boolean" defaultValue="true">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet id="15-4" author="administrator">
+        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="tbl_question"
+                                 constraintName="fk_tbl_question_on_user_id" referencedColumnNames="id"
                                  referencedTableName="tbl_user"/>
-        <addForeignKeyConstraint baseColumnNames="recipient" baseTableName="tbl_question"
-                                 constraintName="fk_tbl_question_on_recipient" referencedColumnNames="id"
-                                 referencedTableName="tbl_user"/>
+        <addForeignKeyConstraint baseColumnNames="question_id" baseTableName="tbl_answer"
+                                 constraintName="fk_tbl_answer_on_question_id" referencedColumnNames="id"
+                                 referencedTableName="tbl_question"/>
     </changeSet>
 </databaseChangeLog>

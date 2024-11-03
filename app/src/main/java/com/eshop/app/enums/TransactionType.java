@@ -14,8 +14,8 @@ import java.util.stream.Collectors;
 public enum TransactionType {
     DEPOSIT("deposit"),
     WITHDRAWAL("withdrawal"),
-    BONUS("bonus"),
-    REWARD("reward"),
+    BONUS("bonus"),//referrals
+    REWARD("reward"),//arbitrage
     ;
 
 

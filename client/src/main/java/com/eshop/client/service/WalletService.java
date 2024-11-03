@@ -14,6 +14,7 @@ public interface WalletService extends BaseService<WalletFilter, WalletModel, Lo
     List<BalanceModel> totalDepositGroupedByCurrency(long userId);
     List<BalanceModel> totalWithdrawalGroupedByCurrency(long userId);
     List<BalanceModel> totalBonusGroupedByCurrency(long userId);
+    List<BalanceModel> totalRewardGroupedByCurrency(long userId);
     List<BalanceModel> totalProfitGroupedByCurrency(long userId);
     Map<Long, BigDecimal> findAllWithinDateRange(long startDate, long endDate, TransactionType transactionType);
 }

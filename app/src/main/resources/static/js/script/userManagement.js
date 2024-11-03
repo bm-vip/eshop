@@ -98,6 +98,14 @@ columns = [{
     data: 'treePath'
 },{
     data: 'country.name'
+},{
+    data: 'deposit'
+},{
+    data: 'withdrawal'
+},{
+    data: 'bonus'
+},{
+    data: 'reward'
 }, {
     data: 'id',
     searchable: false,

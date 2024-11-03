@@ -150,6 +150,10 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter,WalletModel,
     public List<BalanceModel> totalBonusGroupedByCurrency(long userId) {
         return walletRepository.totalBonusGroupedByCurrency(userId);
     }
+    @Override
+    public List<BalanceModel> totalRewardGroupedByCurrency(long userId) {
+        return walletRepository.totalRewardGroupedByCurrency(userId);
+    }
 
     @Override
     public List<BalanceModel> totalProfitGroupedByCurrency(long userId) {

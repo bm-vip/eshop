@@ -161,8 +161,8 @@ public class ArbitrageServiceImpl extends BaseServiceImpl<ArbitrageFilter, Arbit
         var todayArbitrages = arbitrageRepository.findByUserIdAndSubscriptionIdAndCreatedDateOrderByCreatedDateDesc(userId, subscription.getId(), DateUtil.truncate(new Date()));
         if(CollectionUtils.isEmpty(todayArbitrages))
             return null;
-        var allowedDate = DateUtil.toLocalDateTime(todayArbitrages.get(0).getCreatedDate()).plusHours(2L);
-        if(todayArbitrages.size() > 30L * subscription.getSubscriptionPackage().getOrderCount())
+        var allowedDate = DateUtil.toLocalDateTime(todayArbitrages.get(0).getCreatedDate()).plusMinutes(20L);
+        if(todayArbitrages.size() > 30L)
             return allowedDate;
         var last2Hours = todayArbitrages.stream().filter(x->x.getCreatedDate().after(DateUtil.toDate(LocalDateTime.now().minusHours(2)))).collect(Collectors.toList());
         if(last2Hours.size() >= subscription.getSubscriptionPackage().getOrderCount())

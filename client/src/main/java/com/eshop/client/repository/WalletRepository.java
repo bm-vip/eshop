@@ -50,5 +50,5 @@ public interface WalletRepository extends BaseRepository<WalletEntity, Long> {
 			+ "FROM WalletEntity w WHERE w.transactionType = com.eshop.client.enums.TransactionType.REWARD "
 			+ "AND (:userId is null or w.user.id = :userId) AND w.active is true "
 			+ "GROUP BY w.currency")
-	List<BalanceModel> findRewardGroupedByCurrency(Long userId);
+	List<BalanceModel> totalRewardGroupedByCurrency(Long userId);
 }

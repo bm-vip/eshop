@@ -3,13 +3,13 @@ package com.eshop.app.service.impl;
 import com.eshop.app.config.MessageConfig;
 import com.eshop.app.entity.QUserEntity;
 import com.eshop.app.entity.UserEntity;
+import com.eshop.app.enums.CurrencyType;
 import com.eshop.app.enums.RoleType;
 import com.eshop.app.filter.UserFilter;
 import com.eshop.app.mapping.UserMapper;
-import com.eshop.app.model.NotificationModel;
-import com.eshop.app.model.RoleModel;
-import com.eshop.app.model.UserModel;
+import com.eshop.app.model.*;
 import com.eshop.app.repository.UserRepository;
+import com.eshop.app.repository.WalletRepository;
 import com.eshop.app.service.NotificationService;
 import com.eshop.app.service.RoleService;
 import com.eshop.app.service.UserService;
@@ -21,11 +21,15 @@ import com.querydsl.core.types.Predicate;
 import lombok.SneakyThrows;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
+import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
@@ -42,8 +46,9 @@ public class UserServiceImpl extends BaseServiceImpl<UserFilter,UserModel, UserE
     private final MessageConfig messages;
     private final ResourceLoader resourceLoader;
     private final NotificationService notificationService;
+    private final WalletRepository walletRepository;
 
-    public UserServiceImpl(UserRepository userRepository, UserMapper userMapper, RoleService roleService, BCryptPasswordEncoder bCryptPasswordEncoder, MessageConfig messages, ResourceLoader resourceLoader, NotificationService notificationService) {
+    public UserServiceImpl(UserRepository userRepository, UserMapper userMapper, RoleService roleService, BCryptPasswordEncoder bCryptPasswordEncoder, MessageConfig messages, ResourceLoader resourceLoader, NotificationService notificationService, WalletRepository walletRepository) {
         super(userRepository, userMapper);
         this.userRepository = userRepository;
         this.roleService = roleService;
@@ -51,11 +56,37 @@ public class UserServiceImpl extends BaseServiceImpl<UserFilter,UserModel, UserE
         this.messages = messages;
         this.resourceLoader = resourceLoader;
         this.notificationService = notificationService;
+        this.walletRepository = walletRepository;
     }
 
     @Override
     public UserModel findByUserName(String userName) {
         return mapper.toModel(userRepository.findByUserName(userName).orElseThrow(() -> new NotFoundException("userName: " + userName)));
+    }
+
+    @Override
+    public Page<UserModel> findAll(UserFilter filter, Pageable pageable) {
+        return super.findAll(filter, pageable).map(m->{
+            m.setDeposit(walletRepository.totalDepositGroupedByCurrency(m.getId()).stream().filter(f->f.getCurrency().equals(CurrencyType.USDT)).map(BalanceModel::getTotalAmount).findFirst().orElse(BigDecimal.ZERO));
+            m.setWithdrawal(walletRepository.totalWithdrawalGroupedByCurrency(m.getId()).stream().filter(f->f.getCurrency().equals(CurrencyType.USDT)).map(BalanceModel::getTotalAmount).findFirst().orElse(BigDecimal.ZERO));
+            m.setBonus(walletRepository.totalBonusGroupedByCurrency(m.getId()).stream().filter(f->f.getCurrency().equals(CurrencyType.USDT)).map(BalanceModel::getTotalAmount).findFirst().orElse(BigDecimal.ZERO));
+            m.setReward(walletRepository.totalRewardGroupedByCurrency(m.getId()).stream().filter(f->f.getCurrency().equals(CurrencyType.USDT)).map(BalanceModel::getTotalAmount).findFirst().orElse(BigDecimal.ZERO));
+            return m;
+        });
+    }
+
+    @Override
+    public PageModel<UserModel> findAllTable(UserFilter filter, Pageable pageable) {
+        var data = super.findAllTable(filter, pageable);
+        if(!CollectionUtils.isEmpty(data.getData())) {
+            for (UserModel m : data.getData()) {
+                m.setDeposit(walletRepository.totalDepositGroupedByCurrency(m.getId()).stream().filter(f->f.getCurrency().equals(CurrencyType.USDT)).map(BalanceModel::getTotalAmount).findFirst().orElse(BigDecimal.ZERO));
+                m.setWithdrawal(walletRepository.totalWithdrawalGroupedByCurrency(m.getId()).stream().filter(f->f.getCurrency().equals(CurrencyType.USDT)).map(BalanceModel::getTotalAmount).findFirst().orElse(BigDecimal.ZERO));
+                m.setBonus(walletRepository.totalBonusGroupedByCurrency(m.getId()).stream().filter(f->f.getCurrency().equals(CurrencyType.USDT)).map(BalanceModel::getTotalAmount).findFirst().orElse(BigDecimal.ZERO));
+                m.setReward(walletRepository.totalRewardGroupedByCurrency(m.getId()).stream().filter(f->f.getCurrency().equals(CurrencyType.USDT)).map(BalanceModel::getTotalAmount).findFirst().orElse(BigDecimal.ZERO));
+            }
+        }
+        return data;
     }
 
     @Override

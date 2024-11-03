@@ -2,6 +2,7 @@ package com.eshop.app.service.impl;
 
 import com.eshop.app.entity.QWalletEntity;
 import com.eshop.app.entity.WalletEntity;
+import com.eshop.app.enums.CurrencyType;
 import com.eshop.app.enums.EntityStatusType;
 import com.eshop.app.enums.RoleType;
 import com.eshop.app.enums.TransactionType;
@@ -26,6 +27,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.eshop.app.util.MapperHelper.get;
 import static com.eshop.app.util.MapperHelper.getOrDefault;
@@ -74,7 +76,7 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter,WalletModel,
     @Override
     @Transactional
     public WalletModel create(WalletModel model) {
-        var balance = walletRepository.findBalanceGroupedByCurrency(model.getUser().getId());
+        var balance = walletRepository.totalBalanceGroupedByCurrency(model.getUser().getId());
         if(model.getTransactionType().equals(TransactionType.WITHDRAWAL)) {
             for (BalanceModel balanceModel : balance) {
                 if(model.getCurrency().equals(balanceModel.getCurrency())) {
@@ -85,7 +87,7 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter,WalletModel,
         }
         var result =  super.create(model);
         if(model.isActive()) {
-            balance = walletRepository.findBalanceGroupedByCurrency(model.getUser().getId());
+            balance = walletRepository.totalBalanceGroupedByCurrency(model.getUser().getId());
             for (BalanceModel balanceModel : balance) {
                 var currentSubscription = subscriptionService.findByUserAndActivePackage(model.getUser().getId());
                 var subscriptionPackage = subscriptionPackageService.findMatchedPackageByAmountAndCurrency(balanceModel.getTotalAmount(),balanceModel.getCurrency());
@@ -134,7 +136,7 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter,WalletModel,
     public WalletModel update(WalletModel model) {
         var result =  super.update(model);
         if(model.isActive()) {
-            var balance = walletRepository.findBalanceGroupedByCurrency(model.getUser().getId());
+            var balance = walletRepository.totalBalanceGroupedByCurrency(model.getUser().getId());
             var subscriptionModel = subscriptionService.findByUserAndActivePackage(model.getUser().getId());
             for (BalanceModel balanceModel : balance) {
                 var subscriptionPackage = subscriptionPackageService.findMatchedPackageByAmountAndCurrency(balanceModel.getTotalAmount(),balanceModel.getCurrency());
@@ -173,7 +175,7 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter,WalletModel,
     public void deleteById(Long id) {
         WalletEntity entity = repository.findById(id).orElseThrow(() -> new NotFoundException("id: " + id));
 
-        var balance = walletRepository.findBalanceGroupedByCurrency(entity.getUser().getId());
+        var balance = walletRepository.totalBalanceGroupedByCurrency(entity.getUser().getId());
         var subscriptionModel = subscriptionService.findByUserAndActivePackage(entity.getUser().getId());
         for (BalanceModel balanceModel : balance) {
             if(subscriptionModel.getSubscriptionPackage().getCurrency().equals(balanceModel.getCurrency()) && subscriptionModel.getSubscriptionPackage().getPrice().compareTo(balanceModel.getTotalAmount()) > 0) {
@@ -195,5 +197,34 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter,WalletModel,
             }
         }
         return BigDecimal.ZERO;
+    }
+
+    @Override
+    public List<BalanceModel> totalBalanceGroupedByCurrency(long userId) {
+        return walletRepository.totalBalanceGroupedByCurrency(userId);
+    }
+    @Override
+    public List<BalanceModel> totalDepositGroupedByCurrency(long userId) {
+        return walletRepository.totalDepositGroupedByCurrency(userId);
+    }
+    @Override
+    public List<BalanceModel> totalWithdrawalGroupedByCurrency(long userId) {
+        return walletRepository.totalWithdrawalGroupedByCurrency(userId);
+    }
+    @Override
+    public List<BalanceModel> totalBonusGroupedByCurrency(long userId) {
+        return walletRepository.totalBonusGroupedByCurrency(userId);
+    }
+    @Override
+    public List<BalanceModel> totalRewardGroupedByCurrency(long userId) {
+        return walletRepository.totalRewardGroupedByCurrency(userId);
+    }
+
+    @Override
+    public List<BalanceModel> totalProfitGroupedByCurrency(long userId) {
+        var result = walletRepository.totalProfitGroupedByCurrency(userId);
+        return result.stream()
+                .map(obj -> new BalanceModel(CurrencyType.valueOf((String) obj[0]),(BigDecimal) obj[1]))
+                .collect(Collectors.toList());
     }
 }

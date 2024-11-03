@@ -88,7 +88,7 @@ function afterSubmitForm(entity) {
     $("#deposit-alert").remove();
     let infoElement = `<div id="deposit-alert" class="alert alert-info">
     <button onclick="$('#deposit-alert').hide()" class="close">&times;</button>
-    <div class="alert-content">${resources.depositAlert}</div>
+    <div class="alert-content"><i class="fa fa-info-circle" style="font-size:20px"></i>&nbsp;${resources.depositAlert}</div>
 </div>`;
     $(".btn-primary").after(infoElement);
 }

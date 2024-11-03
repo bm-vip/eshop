@@ -27,7 +27,7 @@ public interface BaseRestController<F, M, ID extends Serializable> {
 
     @GetMapping(value = {"/findAllTable"})
     @Operation(summary = "${api.baseRest.findAllTable}", description = "${api.baseRest.findAll.desc}")
-    ResponseEntity<PageModel> findAllTable(F filter, @PageableDefault Pageable pageable);
+    ResponseEntity<PageModel<M>> findAllTable(F filter, @PageableDefault Pageable pageable);
 
     @GetMapping(value = {"/findAllSelect"})
     @Operation(summary = "${api.baseRest.findAllSelect}", description = "${api.baseRest.findAll.desc}")

@@ -1,8 +1,10 @@
 package com.eshop.client.model;
 
 
-public class PageModel {
-    public PageModel(long recordsTotal, long recordsFiltered, Object data)
+import java.util.List;
+
+public class PageModel<M> {
+    public PageModel(long recordsTotal, long recordsFiltered, List<M> data)
     {
         this.draw = 0;
         this.recordsTotal = recordsTotal;
@@ -12,7 +14,7 @@ public class PageModel {
     private int draw;
     private long recordsTotal;
     private long recordsFiltered;
-    private Object data;
+    private List<M> data;
 
     public int getDraw() {
         return draw;
@@ -38,11 +40,11 @@ public class PageModel {
         this.recordsFiltered = recordsFiltered;
     }
 
-    public Object getData() {
+    public List<M> getData() {
         return data;
     }
 
-    public void setData(Object data) {
+    public void setData(List<M> data) {
         this.data = data;
     }
 }

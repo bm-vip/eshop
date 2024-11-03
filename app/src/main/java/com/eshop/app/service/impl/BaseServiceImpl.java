@@ -1,21 +1,20 @@
 package com.eshop.app.service.impl;
 
+import com.eshop.app.entity.BaseEntity;
+import com.eshop.app.mapping.BaseMapper;
+import com.eshop.app.model.BaseModel;
+import com.eshop.app.model.PageModel;
 import com.eshop.app.model.Select2Model;
 import com.eshop.app.repository.BaseRepository;
+import com.eshop.app.service.BaseService;
 import com.eshop.exception.common.NotFoundException;
 import com.querydsl.core.types.Predicate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
-import com.eshop.app.entity.BaseEntity;
-import com.eshop.app.mapping.BaseMapper;
-import com.eshop.app.model.BaseModel;
-import com.eshop.app.model.PageModel;
-import com.eshop.app.service.BaseService;
 
 import java.io.Serializable;
-import java.util.Objects;
 @RequiredArgsConstructor
 public abstract class BaseServiceImpl<F, M extends BaseModel<ID>, E extends BaseEntity<ID>, ID extends Serializable> implements BaseService<F, M, ID> {
 
@@ -32,11 +31,11 @@ public abstract class BaseServiceImpl<F, M extends BaseModel<ID>, E extends Base
 
     @Override
     @Transactional(readOnly = true)
-    public PageModel findAllTable(F filter, Pageable pageable) {
+    public PageModel<M> findAllTable(F filter, Pageable pageable) {
         Predicate predicate = queryBuilder(filter);
         Page<E> page = repository.findAll(predicate, pageable);
 
-        return new PageModel(repository.count(), page.getTotalElements(), mapper.toModel(page.getContent()));
+        return new PageModel<>(repository.count(), page.getTotalElements(), mapper.toModel(page.getContent()));
     }
 
     @Override

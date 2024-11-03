@@ -32,11 +32,11 @@ public abstract class BaseServiceImpl<F, M extends BaseModel<ID>, E extends Base
 
     @Override
     @Transactional(readOnly = true)
-    public PageModel findAllTable(F filter, Pageable pageable) {
+    public PageModel<M> findAllTable(F filter, Pageable pageable) {
         Predicate predicate = queryBuilder(filter);
         var page = repository.findAll(predicate, pageable);
 
-        return new PageModel(repository.count(), page.getTotalElements(), mapper.toModel(page.getContent()));
+        return new PageModel<>(repository.count(), page.getTotalElements(), mapper.toModel(page.getContent()));
     }
 
     @Override
