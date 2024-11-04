@@ -97,7 +97,7 @@ function loadLabelByEntity(id) {
         $("#wallet-label").html(`${isNullOrEmpty(entity.walletAddress)? '<strong><i class="fa fa-wallet"></i> Wallet:</strong> ---': '<strong><i class="fa fa-wallet"></i> Wallet:</strong> ' + entity.walletAddress}`);
         const referralLink = resources.siteUrl + `/login?referralCode=${entity.uid}#signup`;
         $("#referral-code").attr("href", referralLink);
-        $("#referral-code").html(referralLink);
+        $("#referral-code").html(`${entity.uid}`);
     });
 }
 function loadSaveEntityByInput() {
@@ -194,5 +194,21 @@ function onLoad() {
                 });
             });
         }
+    });
+}
+function copyLink() {
+    const link = $('#referral-code').attr('href');
+
+    // Copy the link to the clipboard
+    navigator.clipboard.writeText(link).then(() => {
+        // Show the "Copied!" message
+        $('#copiedMessage').addClass('visible');
+
+        // Hide the message after 2 seconds
+        setTimeout(() => {
+            $('#copiedMessage').removeClass('visible');
+        }, 2000);
+    }).catch((err) => {
+        console.error("Failed to copy: ", err);
     });
 }

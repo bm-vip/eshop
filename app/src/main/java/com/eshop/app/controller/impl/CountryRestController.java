@@ -15,7 +15,7 @@ public class CountryRestController extends BaseRestControllerImpl<CountryFilter,
     private CountryService countryService;
 
     public CountryRestController(CountryService service) {
-        super(service, CountryFilter.class);
+        super(service);
         this.countryService = service;
     }
 }

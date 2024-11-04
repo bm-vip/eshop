@@ -1,8 +1,8 @@
-package com.eshop.app.controller.impl;
+package com.eshop.client.controller.impl;
 
-import com.eshop.app.filter.AnswerFilter;
-import com.eshop.app.model.AnswerModel;
-import com.eshop.app.service.AnswerService;
+import com.eshop.client.filter.AnswerFilter;
+import com.eshop.client.model.AnswerModel;
+import com.eshop.client.service.AnswerService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;

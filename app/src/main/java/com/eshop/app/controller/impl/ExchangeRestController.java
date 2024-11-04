@@ -15,7 +15,7 @@ public class ExchangeRestController extends BaseRestControllerImpl<ExchangeFilte
     private ExchangeService exchangeService;
 
     public ExchangeRestController(ExchangeService service) {
-        super(service, ExchangeFilter.class);
+        super(service);
         this.exchangeService = service;
     }
 }

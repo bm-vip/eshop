@@ -22,7 +22,7 @@ public class ArbitrageRestController extends BaseRestControllerImpl<ArbitrageFil
     private ArbitrageService arbitrageService;
 
     public ArbitrageRestController(ArbitrageService service) {
-        super(service, ArbitrageFilter.class);
+        super(service);
         this.arbitrageService = service;
     }
     @GetMapping("count-all-by-user/{userId}")

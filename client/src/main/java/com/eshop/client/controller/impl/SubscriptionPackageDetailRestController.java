@@ -15,7 +15,7 @@ public class SubscriptionPackageDetailRestController extends BaseRestControllerI
     private SubscriptionPackageDetailService service;
 
     public SubscriptionPackageDetailRestController(SubscriptionPackageDetailService service) {
-        super(service, SubscriptionPackageDetailFilter.class);
+        super(service);
         this.service = service;
     }
 }

@@ -15,7 +15,7 @@ public class CoinRestController extends BaseRestControllerImpl<CoinFilter, CoinM
     private CoinService coinService;
 
     public CoinRestController(CoinService service) {
-        super(service, CoinFilter.class);
+        super(service);
         this.coinService = service;
     }
 }

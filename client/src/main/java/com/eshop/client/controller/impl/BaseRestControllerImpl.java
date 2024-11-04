@@ -24,11 +24,10 @@ import java.io.Serializable;
 @PropertySource("classpath:i18n/messages.properties")
 public abstract class BaseRestControllerImpl<F,M extends BaseModel<ID>, ID extends Serializable> implements BaseRestController<F, M, ID> {
     protected BaseService<F, M, ID> service;
-    protected Class<F> clazz;
     protected ObjectMapper objectMapper;
 
-    public BaseRestControllerImpl(BaseService<F, M, ID> service, Class<F> clazz) {
-        this.clazz = clazz;
+    public BaseRestControllerImpl(BaseService<F, M, ID> service) {
+
         this.service = service;
         this.objectMapper = new ObjectMapper();
         this.objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
@@ -36,21 +35,21 @@ public abstract class BaseRestControllerImpl<F,M extends BaseModel<ID>, ID exten
 
     @Override
     public ResponseEntity<M> findById(ID id) {
-        log.debug("call BaseRestImpl.findById {}, for class {}", id, clazz.getName());
+        log.debug("call BaseRestImpl.findById {}, for class {}", id, service.getClass().getName());
         return ResponseEntity.ok(service.findById(id));
     }
 
     @SneakyThrows
     @Override
     public ResponseEntity<Page<M>> findAll(F filter, Pageable pageable) {
-        log.debug("call BaseRestImpl.findAll {}, for class {}", filter, clazz.getName());
+        log.debug("call BaseRestImpl.findAll {}, for class {}", filter, service.getClass().getName());
         return ResponseEntity.ok(service.findAll(filter, pageable));
     }
 
     @SneakyThrows
     @Override
     public ResponseEntity<PageModel<M>> findAllTable(F filter, Pageable pageable) {
-        log.debug("call BaseRestImpl.findAllTable {}, for class {}", filter, clazz.getName());
+        log.debug("call BaseRestImpl.findAllTable {}, for class {}", filter, service.getClass().getName());
         return ResponseEntity.ok(service.findAllTable(filter, pageable));
     }
 
@@ -64,20 +63,20 @@ public abstract class BaseRestControllerImpl<F,M extends BaseModel<ID>, ID exten
     @SneakyThrows
     @Override
     public ResponseEntity<Long> countAll(F filter) {
-        log.debug("call BaseRestImpl.countAll {}, for class {}", filter, clazz.getName());
+        log.debug("call BaseRestImpl.countAll {}, for class {}", filter, service.getClass().getName());
         return ResponseEntity.ok(service.countAll(filter));
     }
 
     @SneakyThrows
     @Override
     public ResponseEntity<Boolean> exists(F filter) {
-        log.debug("call BaseRestImpl.exists {}, for class {}", filter, clazz.getName());
+        log.debug("call BaseRestImpl.exists {}, for class {}", filter, service.getClass().getName());
         return ResponseEntity.ok(service.exists(filter));
     }
 
     @Override
     public ResponseEntity<Void> deleteById(ID id) {
-        log.debug("call BaseRestImpl.deleteById {}, for class {}", id, clazz.getName());
+        log.debug("call BaseRestImpl.deleteById {}, for class {}", id, service.getClass().getName());
         service.deleteById(id);
         return ResponseEntity.noContent().build();
 

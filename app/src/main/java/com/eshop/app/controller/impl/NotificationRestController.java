@@ -23,7 +23,7 @@ public class NotificationRestController extends BaseRestControllerImpl<Notificat
     private NotificationService notificationService;
 
     public NotificationRestController(NotificationService service) {
-        super(service, NotificationFilter.class);
+        super(service);
         this.notificationService = service;
     }
     @Override

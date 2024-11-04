@@ -24,7 +24,7 @@ public class WalletRestController extends BaseRestControllerImpl<WalletFilter, W
     private WalletService walletService;
 
     public WalletRestController(WalletService service) {
-        super(service, WalletFilter.class);
+        super(service);
         this.walletService = service;
     }
     @GetMapping("/total-balance/{userId}")

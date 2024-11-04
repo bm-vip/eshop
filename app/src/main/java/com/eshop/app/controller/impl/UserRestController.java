@@ -20,7 +20,7 @@ public class UserRestController extends BaseRestControllerImpl<UserFilter, UserM
     private UserService userService;
 
     public UserRestController(UserService service) {
-        super(service, UserFilter.class);
+        super(service);
         this.userService = service;
     }
 

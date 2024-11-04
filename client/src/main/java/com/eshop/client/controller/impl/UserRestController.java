@@ -21,7 +21,7 @@ public class UserRestController extends BaseRestControllerImpl<UserFilter, UserM
     private final SessionRegistry sessionRegistry;
 
     public UserRestController(UserService service, SessionRegistry sessionRegistry) {
-        super(service, UserFilter.class);
+        super(service);
         this.userService = service;
         this.sessionRegistry = sessionRegistry;
     }

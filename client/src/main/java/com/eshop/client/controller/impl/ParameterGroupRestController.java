@@ -17,7 +17,7 @@ public class ParameterGroupRestController extends BaseRestControllerImpl<Paramet
     private ParameterGroupService parameterGroupService;
 
     public ParameterGroupRestController(ParameterGroupService service) {
-        super(service, ParameterGroupFilter.class);
+        super(service);
         this.parameterGroupService = service;
     }
     @Override

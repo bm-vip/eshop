@@ -20,7 +20,7 @@ public class ParameterRestController extends BaseRestControllerImpl<ParameterFil
     private ParameterService parameterService;
 
     public ParameterRestController(ParameterService service) {
-        super(service, ParameterFilter.class);
+        super(service);
         this.parameterService = service;
     }
     @Override

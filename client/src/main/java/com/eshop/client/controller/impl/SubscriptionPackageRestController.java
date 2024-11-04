@@ -15,7 +15,7 @@ public class SubscriptionPackageRestController extends BaseRestControllerImpl<Su
     private SubscriptionPackageService subscriptionPackageService;
 
     public SubscriptionPackageRestController(SubscriptionPackageService service) {
-        super(service, SubscriptionPackageFilter.class);
+        super(service);
         this.subscriptionPackageService = service;
     }
 }

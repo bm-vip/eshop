@@ -16,7 +16,7 @@ public class RoleRestController extends BaseRestControllerImpl<RoleFilter, RoleM
     private RoleService roleService;
 
     public RoleRestController(RoleService service) {
-        super(service, RoleFilter.class);
+        super(service);
         this.roleService = service;
     }
 }
