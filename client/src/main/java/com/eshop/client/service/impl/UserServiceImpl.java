@@ -8,10 +8,7 @@ import com.eshop.client.enums.RoleType;
 import com.eshop.client.filter.UserFilter;
 import com.eshop.client.mapping.UserMapper;
 import com.eshop.client.model.*;
-import com.eshop.client.repository.CountryRepository;
-import com.eshop.client.repository.CountryUsers;
-import com.eshop.client.repository.UserRepository;
-import com.eshop.client.repository.WalletRepository;
+import com.eshop.client.repository.*;
 import com.eshop.client.service.NotificationService;
 import com.eshop.client.service.RoleService;
 import com.eshop.client.service.UserService;
@@ -39,24 +36,24 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
-import static com.eshop.app.util.MapperHelper.get;
+import static com.eshop.client.util.MapperHelper.get;
 
 
 @Service
 public class UserServiceImpl extends BaseServiceImpl<UserFilter,UserModel, UserEntity, Long> implements UserService {
 
     private final UserRepository userRepository;
-    private final RoleService roleService;
+    private final RoleRepository roleRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final MessageConfig messages;
     private final ResourceLoader resourceLoader;
     private final NotificationService notificationService;
     private final WalletRepository walletRepository;
 
-    public UserServiceImpl(UserRepository userRepository, UserMapper userMapper, RoleService roleService, BCryptPasswordEncoder bCryptPasswordEncoder, MessageConfig messages, ResourceLoader resourceLoader, NotificationService notificationService, CountryRepository countryRepository, WalletRepository walletRepository) {
+    public UserServiceImpl(UserRepository userRepository, UserMapper userMapper, RoleRepository roleRepository, BCryptPasswordEncoder bCryptPasswordEncoder, MessageConfig messages, ResourceLoader resourceLoader, NotificationService notificationService, CountryRepository countryRepository, WalletRepository walletRepository) {
         super(userRepository, userMapper);
         this.userRepository = userRepository;
-        this.roleService = roleService;
+        this.roleRepository = roleRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.messages = messages;
         this.resourceLoader = resourceLoader;
@@ -109,15 +106,17 @@ public class UserServiceImpl extends BaseServiceImpl<UserFilter,UserModel, UserE
         if (optionalUserEntity.isPresent())
             throw new BadRequestException("userName is already taken!");
 
-        if (StringUtils.hasLength(model.getPassword()))
-            model.setPassword(bCryptPasswordEncoder.encode(model.getPassword()));
-        model.setActive(true);
-        RoleModel roleModel = roleService.findByRole(RoleType.USER);
-        model.setRoles(new HashSet<>(Arrays.asList(roleModel)));
-        if (StringUtils.hasLength(model.getReferralCode())) {
-            userRepository.findByUid(model.getReferralCode()).ifPresent(p -> model.setParent(mapper.toModel(p)));
-        }
         var entity = mapper.toEntity(model);
+        if (StringUtils.hasLength(model.getPassword()))
+            entity.setPassword(bCryptPasswordEncoder.encode(model.getPassword()));
+        else
+            entity.setPassword(bCryptPasswordEncoder.encode("12345"));
+        entity.setActive(true);
+        var role = roleRepository.findByRole(RoleType.USER).get();
+        entity.setRoles(new HashSet<>(Arrays.asList(role)));
+        if (StringUtils.hasLength(model.getReferralCode())) {
+            userRepository.findByUid(model.getReferralCode()).ifPresent(p -> entity.setParent(p));
+        }
         entity.setUid(getUid());
         var createdUser = mapper.toModel(repository.save(entity));
         sendWelcomeNotification(createdUser.getId());
@@ -134,28 +133,29 @@ public class UserServiceImpl extends BaseServiceImpl<UserFilter,UserModel, UserE
     @Override
     @Transactional
     public UserModel update(UserModel model) {
-        if (StringUtils.hasLength(model.getPassword()))
-            model.setPassword(bCryptPasswordEncoder.encode(model.getPassword()));
+        var entity = repository.findById(model.getId()).orElseThrow(() -> new NotFoundException("id: " + model.getId()));
+        mapper.updateEntity(model, entity);
 
-        UserEntity entity = repository.findById(model.getId()).orElseThrow(() -> new NotFoundException("id: " + model.getId()));
-        if(entity.getPassword() == null || entity.getPassword().trim().isEmpty())
-            entity.setPassword(bCryptPasswordEncoder.encode("12345"));
+        if (StringUtils.hasLength(model.getPassword()))
+            entity.setPassword(bCryptPasswordEncoder.encode(model.getPassword()));
         if(get(()->model.getCountry().getId())!=null)
             entity.setCountry(entityManager.getReference(entity.getCountry().getClass(), model.getCountry().getId()));
         if(get(()->model.getParent().getId())!=null)
             entity.setParent(entityManager.getReference(entity.getParent().getClass(), model.getParent().getId()));
-        return mapper.toModel(repository.save(mapper.updateEntity(model, entity)));
+        return mapper.toModel(repository.save(entity));
     }
 
     @Override
     @Transactional
     public UserModel create(UserModel model) {
         var entity = mapper.toEntity(model);
+
         if (StringUtils.hasLength(model.getPassword()))
             entity.setPassword(bCryptPasswordEncoder.encode(model.getPassword()));
-        entity.setUid(getUid());
-        if(entity.getPassword() == null || entity.getPassword().trim().isEmpty())
+        else
             entity.setPassword(bCryptPasswordEncoder.encode("12345"));
+
+        entity.setUid(getUid());
         var createdUser = mapper.toModel(repository.save(entity));
         sendWelcomeNotification(createdUser.getId());
         return createdUser;

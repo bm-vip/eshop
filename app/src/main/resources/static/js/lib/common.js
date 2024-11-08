@@ -171,10 +171,11 @@ function show_warning(mes, fixStatus) {
         title: 'Notice',
         text: mes,
         styling: 'bootstrap3',
-        nonblock: {nonblock: !0},
-        before_close: function (e) {
-            return e.update({title: e.options.title + " - Enjoy your Stay", before_close: null}), e.queueRemove(), !1
-        }
+        // nonblock: {nonblock: !0},
+        // before_close: function (e) {
+        //     return e.update({title: e.options.title + " - Enjoy your Stay", before_close: null}), e.queueRemove(), !1
+        // },
+        hide: false
     });
 }
 

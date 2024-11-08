@@ -406,5 +406,12 @@ var resources = {
     'maxProfit': 'Max profit',
     'withdrawalDurationPerDay':'Withdrawal duration per day',
     'userProfitPercentage':'user profit percentage',
-    'siteProfitPercentage':'site profit percentage'
+    'siteProfitPercentage':'site profit percentage',
+    'displayOrder':'Display order',
+    'answerType':'Answer type',
+    'answers':'Answers',
+    'sender': 'sender',
+    'recipient': 'recipient',
+    'subject': 'subject',
+    'body': 'body'
 };

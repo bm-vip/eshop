@@ -7,6 +7,7 @@
 
     <changeSet id="15-1" author="administrator">
         <createSequence incrementBy="1" sequenceName="seq_question" startValue="1"/>
+        <createSequence incrementBy="1" sequenceName="seq_answer" startValue="1"/>
     </changeSet>
     <changeSet id="15-2" author="administrator">
         <createTable tableName="tbl_question">
@@ -41,7 +42,7 @@
     <changeSet id="15-3" author="administrator">
         <createTable tableName="tbl_answer">
             <column name="id" type="bigint">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_question"/>
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_answer"/>
             </column>
             <column name="created_by" type="VARCHAR(255)"/>
             <column name="created_date" type="DATETIME"/>

@@ -22,7 +22,8 @@ public class CommonRestController {
         List<Select2Model> list = (List<Select2Model>) ReflectionUtil.invokeMethod("com.eshop.app.enums.".concat(name), "getAll");
         return ResponseEntity.ok(list);
     }
-    @GetMapping(value = {"/get-html-file/{name}"})
+    @GetMapping(value = {"/get-html" +
+            "-file/{name}"})
     public ModelAndView getHtml(@PathVariable String name, @RequestParam("params") String json) throws IOException {
         Map<String, String> map = new ObjectMapper().readValue(json, Map.class);
         ModelAndView modelAndView = new ModelAndView();

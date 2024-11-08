@@ -543,6 +543,13 @@
         $('form input:hidden:not(#myModal form input:hidden)').val('');
         $("select.select2-hidden-accessible").val('').trigger('change');
     }
+    function get(lambdaExpr, defaultValue) {// () => supplier expr
+        try {
+            return lambdaExpr();
+        } catch (e) {
+            return isNullOrEmpty(defaultValue) ? '' : defaultValue;
+        }
+    }
 </script>
 </body>
 </html>

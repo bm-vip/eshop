@@ -3,27 +3,40 @@ package com.eshop.app.service.impl;
 import com.eshop.app.entity.QuestionEntity;
 import com.eshop.app.entity.QQuestionEntity;
 import com.eshop.app.filter.QuestionFilter;
+import com.eshop.app.mapping.AnswerMapper;
 import com.eshop.app.mapping.QuestionMapper;
+import com.eshop.app.model.AnswerModel;
 import com.eshop.app.model.QuestionModel;
+import com.eshop.app.repository.AnswerRepository;
 import com.eshop.app.repository.QuestionRepository;
 import com.eshop.app.service.QuestionService;
+import com.eshop.app.validation.Validation;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 
 @Service
 public class QuestionServiceImpl extends BaseServiceImpl<QuestionFilter, QuestionModel, QuestionEntity, Long> implements QuestionService {
 
-    private QuestionRepository repository;
-    private QuestionMapper mapper;
+    private final QuestionRepository questionRepository;
+    private final QuestionMapper questionMapper;
+    private final AnswerMapper answerMapper;
+    private final AnswerRepository answerRepository;
+    private final List<Validation<AnswerModel>> validations;
 
     @Autowired
-    public QuestionServiceImpl(QuestionRepository repository, QuestionMapper mapper) {
-        super(repository, mapper);
-        this.repository = repository;
-        this.mapper = mapper;
+    public QuestionServiceImpl(QuestionRepository questionRepository, QuestionMapper questionMapper, AnswerMapper answerMapper, AnswerRepository answerRepository, List<Validation<AnswerModel>> validations) {
+        super(questionRepository, questionMapper);
+        this.questionRepository = questionRepository;
+        this.questionMapper = questionMapper;
+        this.answerMapper = answerMapper;
+        this.answerRepository = answerRepository;
+        this.validations = validations;
     }
 
     @Override
@@ -39,5 +52,14 @@ public class QuestionServiceImpl extends BaseServiceImpl<QuestionFilter, Questio
         filter.getAnswerId().ifPresent(v->builder.and(p.answers.any().id.eq(v)));
 
         return builder;
+    }
+
+    @Override
+    @Transactional
+    public QuestionModel update(QuestionModel model) {
+        var updatedQuestion = super.update(model);
+        var answers = answerRepository.findAllByQuestionId(model.getId());
+        answers.forEach(answerEntity-> validations.forEach(v->v.validate(answerMapper.toModel(answerEntity))));
+        return updatedQuestion;
     }
 }

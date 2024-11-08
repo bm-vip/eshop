@@ -424,5 +424,12 @@ var resources = {
     'maxProfit':'حداکثر سود',
     'withdrawalDurationPerDay':'مدت زمان برداشت سپرده اصلی',
     'userProfitPercentage':'درصد سود کاربر',
-    'siteProfitPercentage':'درصد سود سایت'
+    'siteProfitPercentage':'درصد سود سایت',
+    'displayOrder':'ترتیب نمایش',
+    'answerType':'نوع پاسخ',
+    'answers':'پاسخ ها',
+    'sender': 'ارسال کننده',
+    'recipient': 'دریافت کننده',
+    'subject': 'موضوع',
+    'body': 'بدنه'
 };
