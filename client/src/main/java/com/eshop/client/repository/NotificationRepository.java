@@ -8,5 +8,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface NotificationRepository extends BaseRepository<NotificationEntity, Long> {
     Page<NotificationEntity> findAllByRecipientIdOrderByCreatedDateDesc(Long recipientId, Pageable pageable);
+    Page<NotificationEntity> findAllBySenderIdOrderByCreatedDateDesc(Long senderId, Pageable pageable);
     Page<NotificationEntity> findAllByRecipientIdAndReadIsFalseOrderByCreatedDateDesc(Long recipientId, Pageable pageable);
 }

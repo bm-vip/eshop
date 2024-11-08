@@ -8,6 +8,7 @@ import com.eshop.client.mapping.NotificationMapper;
 import com.eshop.client.model.NotificationModel;
 import com.eshop.client.repository.NotificationRepository;
 import com.eshop.client.service.NotificationService;
+import com.eshop.client.util.SessionHolder;
 import com.eshop.exception.common.NotFoundException;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
@@ -21,11 +22,13 @@ import org.springframework.transaction.annotation.Transactional;
 public class NotificationServiceImpl extends BaseServiceImpl<NotificationFilter, NotificationModel, NotificationEntity, Long> implements NotificationService {
     private final NotificationRepository repository;
     private final NotificationMapper mapper;
+    private final SessionHolder sessionHolder;
 
-    public NotificationServiceImpl(NotificationRepository repository, NotificationMapper mapper) {
+    public NotificationServiceImpl(NotificationRepository repository, NotificationMapper mapper, SessionHolder sessionHolder) {
         super(repository, mapper);
         this.repository = repository;
         this.mapper = mapper;
+        this.sessionHolder = sessionHolder;
     }
 
     @Override
@@ -36,7 +39,8 @@ public class NotificationServiceImpl extends BaseServiceImpl<NotificationFilter,
     @Override
     public NotificationModel findById(Long id) {
         var entity = repository.findById(id).orElseThrow(() -> new NotFoundException("id: " + id));
-        entity.setRead(true);
+        if(entity.getRecipient().getId().equals(sessionHolder.getCurrentUser().getId()))
+            entity.setRead(true);
         repository.save(entity);
         return mapper.toModel(entity);
     }
@@ -46,6 +50,12 @@ public class NotificationServiceImpl extends BaseServiceImpl<NotificationFilter,
     public Page<NotificationModel> findAllByRecipientId(Long recipientId, Pageable pageable) {
         return repository.findAllByRecipientIdOrderByCreatedDateDesc(recipientId, pageable).map(mapper::toModel);
     }
+
+    @Override
+    public Page<NotificationModel> findAllBySenderId(Long senderId, Pageable pageable) {
+        return repository.findAllBySenderIdOrderByCreatedDateDesc(senderId, pageable).map(mapper::toModel);
+    }
+
     @Override
     @Transactional(readOnly = true)
     public Page<NotificationModel> findAllByRecipientIdAndNotRead(Long recipientId, Pageable pageable) {

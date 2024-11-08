@@ -8,6 +8,8 @@ import com.eshop.app.mapping.NotificationMapper;
 import com.eshop.app.model.NotificationModel;
 import com.eshop.app.repository.NotificationRepository;
 import com.eshop.app.service.NotificationService;
+import com.eshop.app.util.SessionHolder;
+import com.eshop.exception.common.NotFoundException;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
 import org.springframework.data.domain.Page;
@@ -19,11 +21,13 @@ import org.springframework.stereotype.Service;
 public class NotificationServiceImpl extends BaseServiceImpl<NotificationFilter, NotificationModel, NotificationEntity, Long> implements NotificationService {
     private final NotificationRepository repository;
     private final NotificationMapper mapper;
+    private final SessionHolder sessionHolder;
 
-    public NotificationServiceImpl(NotificationRepository repository, NotificationMapper mapper) {
+    public NotificationServiceImpl(NotificationRepository repository, NotificationMapper mapper, SessionHolder sessionHolder) {
         super(repository, mapper);
         this.repository = repository;
         this.mapper = mapper;
+        this.sessionHolder = sessionHolder;
     }
 
     @Override
@@ -34,6 +38,14 @@ public class NotificationServiceImpl extends BaseServiceImpl<NotificationFilter,
     @Override
     public Page<NotificationModel> findAllUnreadByRecipientId(Long recipientId, Pageable pageable) {
         return repository.findAllByRecipientIdAndReadIsFalse(recipientId, pageable).map(mapper::toModel);
+    }
+    @Override
+    public NotificationModel findById(Long id) {
+        var entity = repository.findById(id).orElseThrow(() -> new NotFoundException("id: " + id));
+        if(entity.getRecipient().getId().equals(sessionHolder.getCurrentUser().getId()))
+            entity.setRead(true);
+        repository.save(entity);
+        return mapper.toModel(entity);
     }
 
     @Override
