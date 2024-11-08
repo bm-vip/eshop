@@ -14,12 +14,16 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.io.Serializable;
 @RequiredArgsConstructor
 public abstract class BaseServiceImpl<F, M extends BaseModel<ID>, E extends BaseEntity<ID>, ID extends Serializable> implements BaseService<F, M, ID> {
 
-    public final BaseRepository<E, ID> repository;
-    public final BaseMapper<M, E> mapper;
+    protected final BaseRepository<E, ID> repository;
+    protected final BaseMapper<M, E> mapper;
+    @PersistenceContext
+    protected EntityManager entityManager;
 
     public abstract Predicate queryBuilder(F filter);
 

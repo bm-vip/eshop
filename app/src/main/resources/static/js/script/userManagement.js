@@ -6,7 +6,6 @@ rules = {
     countrySelect2: "required",
     status: "required",
     password: {
-        required: true,
         minlength: 5
     },
     email: {
@@ -14,7 +13,6 @@ rules = {
         email: true
     },
     repeatPassword: {
-        required: true,
         minlength: 5,
         equalTo: "#password"
     }
@@ -27,7 +25,6 @@ messages = {
     countrySelect2: resources.pleaseSelect.format(resources.country),
     status: resources.pleaseSelect.format(resources.status),
     password: {
-        required: resources.pleaseEnter.format(resources.password),
         minlength: resources.mustBeMoreThan.format(resources.password, 5, resources.character)
     },
     email: {
@@ -35,7 +32,6 @@ messages = {
         email: resources.invalidFormat.format(resources.email)
     },
     repeatPassword: {
-        required: resources.pleaseEnter.format(resources.repeatPassword),
         minlength: resources.mustBeMoreThan.format(resources.password, 5, resources.character),
         equalTo: resources.confirmPasswordDoesNotMach
     }
@@ -69,8 +65,10 @@ function loadInputByEntity(entity) {
     entity.roles.forEach(role => $("#roleSelect2").append("<option value='" + role.id + "'>" + role.title + "</option>").trigger('change'));
     $("#roleSelect2").val(entity.roles.map(r => r.id)).trigger('change');
     $('#status').val(entity.active + '');
-    $("#parentSelect2").html("<option value='" + get(() => model.parent.id) + "' selected>" + get(() => model.parent.name) + "</option>").trigger('change');
-    $("#parentSelect2").val(get(() => model.parent.id)).trigger('change');
+    $("#parentSelect2").html("<option value='" + get(() => entity.parent.id) + "' selected>" + get(() => entity.parent.name) + "</option>").trigger('change');
+    $("#parentSelect2").val(get(() => entity.parent.id)).trigger('change');
+    $("#countrySelect2").html("<option value='" + get(() => entity.country.id) + "' selected>" + get(() => entity.country.name) + "</option>").trigger('change');
+    $("#countrySelect2").val(get(() => entity.country.id)).trigger('change');
     $('#walletAddress').val(entity.walletAddress);
     $('#profileImageUrl').val(entity.profileImageUrl);
 }

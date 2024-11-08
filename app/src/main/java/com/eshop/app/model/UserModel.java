@@ -18,8 +18,6 @@ public class UserModel extends BaseModel<Long> {
     private String userName;
     @Email
     private String email;
-    @NotNull
-    @NotBlank
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
     @NotNull

@@ -8,6 +8,7 @@ import com.eshop.app.enums.RoleType;
 import com.eshop.app.filter.UserFilter;
 import com.eshop.app.mapping.UserMapper;
 import com.eshop.app.model.*;
+import com.eshop.app.repository.CountryRepository;
 import com.eshop.app.repository.UserRepository;
 import com.eshop.app.repository.WalletRepository;
 import com.eshop.app.service.NotificationService;
@@ -29,12 +30,16 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Optional;
+
+import static com.eshop.app.util.MapperHelper.get;
 
 
 @Service
@@ -126,6 +131,12 @@ public class UserServiceImpl extends BaseServiceImpl<UserFilter,UserModel, UserE
             model.setPassword(bCryptPasswordEncoder.encode(model.getPassword()));
 
         UserEntity entity = repository.findById(model.getId()).orElseThrow(() -> new NotFoundException("id: " + model.getId()));
+        if(entity.getPassword() == null || entity.getPassword().trim().isEmpty())
+            entity.setPassword(bCryptPasswordEncoder.encode("12345"));
+        if(get(()->model.getCountry().getId())!=null)
+            entity.setCountry(entityManager.getReference(entity.getCountry().getClass(), model.getCountry().getId()));
+        if(get(()->model.getParent().getId())!=null)
+            entity.setParent(entityManager.getReference(entity.getParent().getClass(), model.getParent().getId()));
         return mapper.toModel(repository.save(mapper.updateEntity(model, entity)));
     }
 
@@ -136,6 +147,8 @@ public class UserServiceImpl extends BaseServiceImpl<UserFilter,UserModel, UserE
         if (StringUtils.hasLength(model.getPassword()))
             entity.setPassword(bCryptPasswordEncoder.encode(model.getPassword()));
         entity.setUid(getUid());
+        if(entity.getPassword() == null || entity.getPassword().trim().isEmpty())
+            entity.setPassword(bCryptPasswordEncoder.encode("12345"));
         var createdUser = mapper.toModel(repository.save(entity));
         sendWelcomeNotification(createdUser.getId());
         return createdUser;

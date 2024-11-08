@@ -4,7 +4,7 @@ import com.eshop.app.entity.UserEntity;
 import com.eshop.app.model.UserModel;
 import org.mapstruct.*;
 
-@Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = "spring", uses = {RoleMapper.class},
+@Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = "spring", uses = {RoleMapper.class, CountryMapper.class},
         nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS)
 public interface UserMapper extends BaseMapper<UserModel, UserEntity> {
 

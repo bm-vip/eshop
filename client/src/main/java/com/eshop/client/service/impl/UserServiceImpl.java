@@ -39,6 +39,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
+import static com.eshop.app.util.MapperHelper.get;
+
 
 @Service
 public class UserServiceImpl extends BaseServiceImpl<UserFilter,UserModel, UserEntity, Long> implements UserService {
@@ -136,8 +138,13 @@ public class UserServiceImpl extends BaseServiceImpl<UserFilter,UserModel, UserE
             model.setPassword(bCryptPasswordEncoder.encode(model.getPassword()));
 
         UserEntity entity = repository.findById(model.getId()).orElseThrow(() -> new NotFoundException("id: " + model.getId()));
-        entity = mapper.updateEntity(model, entity);
-        return mapper.toModel(repository.save(entity));
+        if(entity.getPassword() == null || entity.getPassword().trim().isEmpty())
+            entity.setPassword(bCryptPasswordEncoder.encode("12345"));
+        if(get(()->model.getCountry().getId())!=null)
+            entity.setCountry(entityManager.getReference(entity.getCountry().getClass(), model.getCountry().getId()));
+        if(get(()->model.getParent().getId())!=null)
+            entity.setParent(entityManager.getReference(entity.getParent().getClass(), model.getParent().getId()));
+        return mapper.toModel(repository.save(mapper.updateEntity(model, entity)));
     }
 
     @Override
@@ -147,6 +154,8 @@ public class UserServiceImpl extends BaseServiceImpl<UserFilter,UserModel, UserE
         if (StringUtils.hasLength(model.getPassword()))
             entity.setPassword(bCryptPasswordEncoder.encode(model.getPassword()));
         entity.setUid(getUid());
+        if(entity.getPassword() == null || entity.getPassword().trim().isEmpty())
+            entity.setPassword(bCryptPasswordEncoder.encode("12345"));
         var createdUser = mapper.toModel(repository.save(entity));
         sendWelcomeNotification(createdUser.getId());
         return createdUser;
