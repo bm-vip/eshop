@@ -13,11 +13,11 @@
     });
 
     $.getJSON("/api/v1/wallet/total-bonus/" + currentUser.id, function (data) {
-        $("#totalProfit").text(get(() => data[0].totalAmount, 0));
+        $("#totalBonus").text(get(() => data[0].totalAmount, 0));
     });
 
     $.getJSON("/api/v1/wallet/total-profit/" + currentUser.id, function (data) {
-        $("#totalBonus").text(get(() => data[0].totalAmount, 0));
+        $("#totalProfit").text(get(() => data[0].totalAmount, 0));
     });
 
     $.getJSON("/api/v1/wallet/total-withdrawal/" + currentUser.id, function (data) {
