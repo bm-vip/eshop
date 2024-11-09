@@ -1,10 +1,10 @@
 #!/bin/bash
 
 # Replace these variables with your actual values
-HOST="192.236.198.244"
+HOST="5.34.197.125"
 
 # Connect via SSH, run sudo su, and execute additional Docker commands
-sudo ssh -T "root@$HOST" <<EOF
+sudo ssh -T "ubuntu@$HOST" <<EOF
   cd /root/eshop
   git pull
   mvn clean package verify -DskipTests
