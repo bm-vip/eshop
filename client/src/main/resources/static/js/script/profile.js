@@ -199,16 +199,35 @@ function onLoad() {
 function copyLink() {
     const link = $('#referral-code').attr('href');
 
-    // Copy the link to the clipboard
-    navigator.clipboard.writeText(link).then(() => {
-        // Show the "Copied!" message
-        $('#copiedMessage').addClass('visible');
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        // Use clipboard API if available
+        navigator.clipboard.writeText(link).then(() => {
+            // Show the "Copied!" message
+            $('#copiedMessage').addClass('visible');
 
-        // Hide the message after 2 seconds
-        setTimeout(() => {
-            $('#copiedMessage').removeClass('visible');
-        }, 2000);
-    }).catch((err) => {
-        console.error("Failed to copy: ", err);
-    });
+            // Hide the message after 2 seconds
+            setTimeout(() => {
+                $('#copiedMessage').removeClass('visible');
+            }, 2000);
+        }).catch((err) => {
+            console.error("Failed to copy: ", err);
+        });
+    } else {
+        // Fallback for older browsers
+        const tempInput = document.createElement("input");
+        tempInput.value = link;
+        document.body.appendChild(tempInput);
+        tempInput.select();
+        try {
+            document.execCommand("copy");
+            $('#copiedMessage').addClass('visible');
+            setTimeout(() => {
+                $('#copiedMessage').removeClass('visible');
+            }, 2000);
+        } catch (err) {
+            console.error("Fallback copy failed: ", err);
+        }
+        document.body.removeChild(tempInput);
+    }
+
 }
