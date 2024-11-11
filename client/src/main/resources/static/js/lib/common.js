@@ -44,8 +44,17 @@ if(!isNullOrEmpty(currentUser.country))
     userOccupied+=10;
 if(!isNullOrEmpty(currentUser.walletAddress))
     userOccupied+=10;
+$.get(`api/v1/wallet/exists?userId=${currentUser.id}&transactionType=DEPOSIT`,function(anyWallet){
+    if(anyWallet)
+        userOccupied+=10;
+    $.get(`api/v1/arbitrage/exists?userId=${currentUser.id}`,function(anyArbitrage){
+        if(anyArbitrage)
+            userOccupied+=10;
+        $("#userOccupied").text(`${userOccupied}%`);
+    });
 
-$("#userOccupied").text(`${userOccupied}%`);
+})
+
 if(!isNullOrEmpty(currentUser.profileImageUrl))
     $("#avatar-image-url").attr('src',currentUser.profileImageUrl);
 

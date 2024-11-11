@@ -93,15 +93,15 @@
             $("#top-referrals").append(topReferralElement);
         });
     });
-    $.getJSON("/api/v1/user/count-by-country", function (data) {
-        data.forEach(function (value) {
-            const countryElement = `<tr>
-                                        <td>${value.country}</td>
-                                        <td class="fs15 fw700 text-right">${value.percent}%</td>
-                                    </tr>`;
-            $(".countries_list").append(countryElement);
-        });
-    });
+    // $.getJSON("/api/v1/user/count-by-country", function (data) {
+    //     data.forEach(function (value) {
+    //         const countryElement = `<tr>
+    //                                     <td>${value.country}</td>
+    //                                     <td class="fs15 fw700 text-right">${value.percent}%</td>
+    //                                 </tr>`;
+    //         $(".countries_list").append(countryElement);
+    //     });
+    // });
 
     //chart
     if ($("#chart_01").length) {

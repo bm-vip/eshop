@@ -38,7 +38,7 @@ public class FileRestController {
             }
 
             // Save the file to the file system
-            String fileName = UUID.randomUUID().toString() + file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."));
+            String fileName = file.getOriginalFilename();
             Path filePath = Paths.get(UPLOAD_DIR, fileName);
             Files.write(filePath, file.getBytes());
 

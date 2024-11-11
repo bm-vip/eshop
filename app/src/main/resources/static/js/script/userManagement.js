@@ -80,6 +80,8 @@ columns = [{
 },{
     data: 'email'
 },{
+    data: 'uid'
+},{
     data: 'walletAddress'
 },{
     data: 'firstName',

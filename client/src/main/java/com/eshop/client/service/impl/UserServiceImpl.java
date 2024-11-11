@@ -28,13 +28,12 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
+import java.io.InputStream;
 import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static com.eshop.client.util.MapperHelper.get;
 
@@ -191,12 +190,21 @@ public class UserServiceImpl extends BaseServiceImpl<UserFilter,UserModel, UserE
         var recipient = findById(recipientId);
         String siteName = messages.getMessage("siteName");
         String siteUrl = messages.getMessage("siteUrl");
-        Resource emailTemplateResource = resourceLoader.getResource("classpath:templates/welcome-email.html");
-        String emailContent = new String(Files.readAllBytes(Paths.get(emailTemplateResource.getURI())));
-        emailContent = emailContent.replace("[user_first_name]", recipient.getFirstName());
-        emailContent = emailContent.replace("[YourAppName]", siteName);
-        emailContent = emailContent.replace("[YourSiteUrl]", siteUrl);
 
+        // Load the email template as a stream
+        Resource emailTemplateResource = resourceLoader.getResource("classpath:templates/welcome-email.html");
+        String emailContent;
+        try (InputStream inputStream = emailTemplateResource.getInputStream();
+             Scanner scanner = new Scanner(inputStream, StandardCharsets.UTF_8.name())) {
+            emailContent = scanner.useDelimiter("\\A").next(); // Read the entire file into a String
+        }
+
+        // Replace placeholders with actual values
+        emailContent = emailContent.replace("[user_first_name]", recipient.getFirstName())
+                .replace("[YourAppName]", siteName)
+                .replace("[YourSiteUrl]", siteUrl);
+
+        // Send the notification
         notificationService.create(new NotificationModel()
                 .setSubject(String.format("Welcome to %s!", siteName))
                 .setBody(emailContent)
