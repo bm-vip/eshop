@@ -95,7 +95,7 @@ function loadLabelByEntity(id) {
         $("#email-label").html(`<strong><i class="fa fa-envelope"></i> Email:</strong> ${entity.email}`);
         $("#user-name").html(`<strong><i class="fa fa-id-card"></i> UserName:</strong> ${entity.userName}`);
         $("#wallet-label").html(`${isNullOrEmpty(entity.walletAddress)? '<strong><i class="fa fa-wallet"></i> Wallet:</strong> ---': '<strong><i class="fa fa-wallet"></i> Wallet:</strong> ' + entity.walletAddress}`);
-        const referralLink = resources.siteUrl + `/login?referralCode=${entity.uid}#signup`;
+        const referralLink = window.location.origin + `/login?referralCode=${entity.uid}#signup`;
         $("#referral-code").attr("href", referralLink);
         $("#referral-code").html(`${entity.uid}`);
     });
