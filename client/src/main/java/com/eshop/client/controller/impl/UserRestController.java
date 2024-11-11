@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Random;
 
 @RestController
 @Tag(name = "User Rest Service v1")
@@ -36,7 +37,8 @@ public class UserRestController extends BaseRestControllerImpl<UserFilter, UserM
     }
     @GetMapping("/total-online")
     public ResponseEntity<Integer> totalOnline(){
-        return ResponseEntity.ok(sessionRegistry.getAllPrincipals().size() + 480000);
+//        return ResponseEntity.ok(sessionRegistry.getAllPrincipals().size());
+        return ResponseEntity.ok(new Random().nextInt(480000 - 200000 + 1) + 200000);
     }
     @GetMapping("/count-by-country")
     public ResponseEntity<List<CountryUsers>> findAllUserCountByCountry(){
