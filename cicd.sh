@@ -5,7 +5,7 @@ HOST="5.34.197.125"
 
 # Connect via SSH, run sudo su, and execute additional Docker commands
 sudo ssh -T "ubuntu@$HOST" <<EOF
-  cd /root/eshop
+  cd /home/ubuntu/eshop
   git pull
   mvn clean package verify -DskipTests
 
