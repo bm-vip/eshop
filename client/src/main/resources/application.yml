@@ -30,7 +30,7 @@ spring:
   datasource:
     driver-class-name: org.postgresql.Driver
     url: ${DB_URL:jdbc:postgresql://dbpostgresql:5432/eshop}
-    username: ${DB_USER:dml_user}
+    username: ${DB_USER:eshop_user}
     password: ${DB_PASS:xmrtuKNbeE7O1kU}
   # JPA properties
   jpa:
