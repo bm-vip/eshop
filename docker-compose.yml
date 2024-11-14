@@ -27,8 +27,8 @@ services:
       - uploads_volume:/app/uploads
     environment:
       DB_URL: jdbc:postgresql://dbpostgresql:5432/eshop
-      DB_USER: eshop_user
-      DB_PASS: xmrtuKNbeE7O1kU
+      DB_USER: postgres
+      DB_PASS: 7nd2M487dMM7kLD4
     depends_on:
       - dbpostgresql
       - app
