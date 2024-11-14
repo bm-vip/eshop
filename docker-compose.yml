@@ -22,7 +22,7 @@ services:
       context: ./client/
       dockerfile: Dockerfile
     ports:
-      - "80:80"
+      - "443:443"
     volumes:
       - uploads_volume:/app/uploads
     environment:
