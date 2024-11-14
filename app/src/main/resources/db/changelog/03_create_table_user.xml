@@ -124,7 +124,7 @@
             pi BIGINT;
             BEGIN
             -- Disable triggers temporarily to avoid recursion
-            --PERFORM set_config('session_replication_role', 'replica', true);
+            PERFORM set_config('session_replication_role', 'replica', true);
             -- Update child_count for the parent user
             FOR pi IN SELECT unnest(string_to_array(NEW.tree_path, ','))::BIGINT LOOP
             -- Increment child_count for each parent
@@ -133,7 +133,7 @@
             WHERE u.id = pi;
             END LOOP;
             -- Re-enable triggers after the update
-            --PERFORM set_config('session_replication_role', 'origin', true);
+            PERFORM set_config('session_replication_role', 'origin', true);
             RETURN NEW;
             END;
             $$ LANGUAGE plpgsql;/
