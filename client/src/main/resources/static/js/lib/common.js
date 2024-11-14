@@ -63,8 +63,9 @@ $.get(`api/v1/wallet/exists?userId=${currentUser.id}&transactionType=DEPOSIT`,fu
 
 });
 const referralLink = window.location.origin + `/login?referralCode=${currentUser.uid}#signup`;
-$(".referral-code").attr("href", referralLink);
+$(".referral-code,.referral-code-menu").attr("href", referralLink);
 $(".referral-code").html(`${currentUser.uid}`);
+$(".referral-code-menu").html(`${currentUser.uid} <a class="copy-referral-code fas fa-copy pull-right"></a><span  class="copiedMessage copied-message ">Copied!</span>`);
 
 if(!isNullOrEmpty(currentUser.profileImageUrl))
     $(".avatar-image-url").attr('src', currentUser.profileImageUrl);
