@@ -12,8 +12,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.time.LocalDateTime;
-
 @RestController
 @Tag(name = "Arbitrage Rest Service v1")
 @RequestMapping(value = "/api/v1/arbitrage")
@@ -33,8 +31,8 @@ public class ArbitrageRestController extends BaseRestControllerImpl<ArbitrageFil
     public ResponseEntity<Page<CoinUsageDTO>> findMostUsedCoins(@PathVariable int pageSize) {
         return ResponseEntity.ok(arbitrageService.findMostUsedCoins(pageSize));
     }
-    @GetMapping("daily-limit-purchase/{userId}")
-    public ResponseEntity<LocalDateTime> dailyLimitPurchase(@PathVariable long userId) {
-        return ResponseEntity.ok(arbitrageService.dailyLimitPurchase(userId));
+    @GetMapping("purchase-limit/{userId}")
+    public ResponseEntity<String> purchaseLimit(@PathVariable long userId) {
+        return ResponseEntity.ok(arbitrageService.purchaseLimit(userId));
     }
 }

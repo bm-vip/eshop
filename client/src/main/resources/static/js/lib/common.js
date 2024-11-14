@@ -50,13 +50,24 @@ $.get(`api/v1/wallet/exists?userId=${currentUser.id}&transactionType=DEPOSIT`,fu
     $.get(`api/v1/arbitrage/exists?userId=${currentUser.id}`,function(anyArbitrage){
         if(anyArbitrage)
             userOccupied+=10;
-        $("#userOccupied").text(`${userOccupied}%`);
+        $.get(`api/v1/user/${currentUser.id}`,function(userData){
+            if(userData.childCount > 0)
+                userOccupied+=20;
+            $("#userOccupied").text(`${userOccupied}%`);
+            if(userOccupied > 50 && userOccupied < 100)
+                $("#userOccupied").removeClass("bg-red").addClass("bg-orange");
+            if(userOccupied == 100)
+                $("#userOccupied").removeClass("bg-red").addClass("bg-green");
+        });
     });
 
-})
+});
+const referralLink = window.location.origin + `/login?referralCode=${currentUser.uid}#signup`;
+$(".referral-code").attr("href", referralLink);
+$(".referral-code").html(`${currentUser.uid}`);
 
 if(!isNullOrEmpty(currentUser.profileImageUrl))
-    $("#avatar-image-url").attr('src',currentUser.profileImageUrl);
+    $(".avatar-image-url").attr('src', currentUser.profileImageUrl);
 
 $(function () {
     $('.date input').keydown(function (event) {
@@ -511,3 +522,52 @@ function jsonToUrlSearchParams(json) {
     return params.toString();
 }
 
+function copyLink() {
+    const link = $('.referral-code').attr('href');
+    async () => {
+        if (navigator.share) {
+            try {
+                await navigator.share({
+                    title: 'Check this out!',
+                    text: 'Here’s referral code to share.',
+                    url: window.location.origin
+                });
+                console.log('Successfully shared');
+            } catch (error) {
+                console.error('Error sharing:', error);
+            }
+        } else {
+            alert('Web Share API not supported on this browser.');
+        }
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        // Use clipboard API if available
+        navigator.clipboard.writeText(link).then(() => {
+            // Show the "Copied!" message
+            $('.copiedMessage').addClass('visible');
+
+            // Hide the message after 2 seconds
+            setTimeout(() => {
+                $('.copiedMessage').removeClass('visible');
+            }, 2000);
+        }).catch((err) => {
+            console.error("Failed to copy: ", err);
+        });
+    } else {
+        // Fallback for older browsers
+        const tempInput = document.createElement("input");
+        tempInput.value = link;
+        document.body.appendChild(tempInput);
+        tempInput.select();
+        try {
+            document.execCommand("copy");
+            $('.copiedMessage').addClass('visible');
+            setTimeout(() => {
+                $('.copiedMessage').removeClass('visible');
+            }, 2000);
+        } catch (err) {
+            console.error("Fallback copy failed: ", err);
+        }
+        document.body.removeChild(tempInput);
+    }
+}

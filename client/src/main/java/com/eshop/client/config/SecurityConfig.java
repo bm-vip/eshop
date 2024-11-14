@@ -39,7 +39,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests()
                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                 .antMatchers("/ltr/**","/logout","/notfound","/login","/registration","/send-OTP","/api/v1/country/findAllSelect*","/api/v1/user/register*","/actuator/**").permitAll()
-                .antMatchers(HttpMethod.GET,  "/dashboard","/subUsers","/deposit","/profile","/withdrawal","/notification","/arbitrage","/api/v1/files/**", "/api/v1/common/**","/api/v1/wallet/**","/api/v1/coin/**","/api/v1/exchange/**","/api/v1/parameter/**","/api/v1/subscription/**","/api/v1/subscription-package/**","/api/v1/user/**","/api/v1/role/**","/api/v1/arbitrage/**","/api/v1/notification/**").hasAnyRole(RoleType.name(RoleType.ADMIN),RoleType.name(RoleType.SUPER_WISER), RoleType.name(RoleType.USER))
+                .antMatchers(HttpMethod.GET,  "/dashboard","/subUsers","about","/deposit","/profile","/withdrawal","/notification","/arbitrage","/api/v1/files/**", "/api/v1/common/**","/api/v1/wallet/**","/api/v1/coin/**","/api/v1/exchange/**","/api/v1/parameter/**","/api/v1/subscription/**","/api/v1/subscription-package/**","/api/v1/user/**","/api/v1/role/**","/api/v1/arbitrage/**","/api/v1/notification/**").hasAnyRole(RoleType.name(RoleType.ADMIN),RoleType.name(RoleType.SUPER_WISER), RoleType.name(RoleType.USER))
                 .antMatchers(HttpMethod.POST, "/api/v1/wallet","/api/v1/arbitrage","/api/v1/notification").hasAnyRole(RoleType.name(RoleType.ADMIN),RoleType.name(RoleType.SUPER_WISER), RoleType.name(RoleType.USER))
                 .antMatchers("/**").hasRole(RoleType.name(RoleType.ADMIN))
                 .anyRequest().authenticated()

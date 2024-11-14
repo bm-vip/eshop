@@ -88,7 +88,7 @@
                 <!-- menu profile quick info -->
                 <div class="profile clearfix">
                     <div class="profile_pic">
-                        <img id="avatar-image-url" th:src="@{/images/find_user.png}" alt="..." class="img-circle profile_img">
+                        <img th:src="@{/images/find_user.png}" alt="..." class="avatar-image-url img-circle profile_img">
                     </div>
                     <div class="profile_info">
                         <span th:text="#{welcome}"></span>:
@@ -121,7 +121,7 @@
                             </li>
                             <li><a th:href="@{/arbitrage}"><i class="fa fa-money-bill-trend-up"></i> <th:block th:text="#{arbitrageBot}"></th:block></a></li>
                             <li><a th:href="@{/support}"><i class="fa fa-headset"></i> <th:block th:text="#{support}"></th:block></a></li>
-                            <li><a th:href="@{/subUsers}"><i class="fa fa-sitemap"></i> <th:block th:text="#{subUsers}"></th:block></a></li>
+                            <li><a th:href="@{/profile}"><i class="fa fa-user"></i> <th:block th:text="#{profile}"></th:block></a></li>
                             <li><a th:href="@{/about}"><i class="fa fa-info-circle"></i> <th:block th:text="#{about}"></th:block></a></li>
                         </ul>
                     </div>
@@ -129,7 +129,7 @@
                 <!-- /sidebar menu -->
                 <!-- /menu footer buttons -->
                 <div class="sidebar-footer hidden-small">
-                    <a data-toggle="tooltip" data-placement="top" th:title="#{settings}" th:href="@{/userManagement}">
+                    <a data-toggle="tooltip" data-placement="top" th:title="#{settings}" th:href="@{/profile}">
                         <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
                     </a>
                     <a data-toggle="tooltip" data-placement="top" th:title="#{fullscreen}">
@@ -155,7 +155,7 @@
                         <ul class=" navbar-right">
                             <li class="nav-item dropdown open" style="padding-left: 15px;">
                                 <a href="javascript:;" class="user-profile dropdown-toggle" aria-haspopup="true" id="navbarDropdown" data-toggle="dropdown" aria-expanded="false">
-                                    <img th:src="@{/images/find_user.png}" alt=""><th:block th:text="${fullName}"></th:block>
+                                    <img  class="avatar-image-url" th:src="@{/images/find_user.png}" alt=""><th:block th:text="${fullName}"></th:block>
                                 </a>
                                 <div class="dropdown-menu dropdown-usermenu pull-right" aria-labelledby="navbarDropdown">
                                     <a class="dropdown-item" th:href="@{/profile}">
@@ -198,6 +198,9 @@
                                         </div>
                                     </li>
                                 </ul>
+                            </li>
+                            <li class="nav-item" style="padding-right: 10px;">
+                                <a class="referral-code" title="Referral code"></a> <a class="copy-referral-code fas fa-copy" href="javascript:copyLink()"></a><span  class="copiedMessage copied-message ">Copied!</span>
                             </li>
                         </ul>
                     </nav>

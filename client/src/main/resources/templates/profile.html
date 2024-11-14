@@ -23,16 +23,6 @@
             border: 1px solid rgba(0,0,0,0.2);
             padding: 0;
         }
-        .copied-message {
-            color: green;
-            font-size: 14px;
-            margin-left: 10px;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-        .copied-message.visible {
-            opacity: 1;
-        }
     </style>
     <script type="text/javascript" th:src="#{direction} +'/select2/dist/js/select2.full.min.js'"></script>
 </th:block>
@@ -84,7 +74,7 @@
                             <div class="col-md-12"><p id="email-label"></p></div>
                             <div class="col-md-12"><p id="country-label"></p></div>
                             <div class="col-md-12"><p id="wallet-label"></p></div>
-                            <div class="col-md-12"><p><strong><i class="fa fa-external-link"></i> Referral code:</strong> <a id="referral-code"></a> <a id="copy-referral-code" class="fas fa-copy" href="javascript:copyLink()"></a><span id="copiedMessage" class="copied-message ">Copied!</span></p></div>
+                            <div class="col-md-12"><p><strong><i class="fa fa-external-link"></i> Referral code:</strong> <a class="referral-code"></a> <a class="copy-referral-code fas fa-copy" href="javascript:copyLink()"></a><span class="copiedMessage copied-message ">Copied!</span></p></div>
                         </div>
                         <div class="col-md-12">
                             <p><button type="button" class="btn btn-success" data-toggle="modal" data-target=".bs-example-modal-lg" onclick="loadInputByEntity(currentUser.id)">Edit Profile</button></p>

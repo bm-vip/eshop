@@ -2317,7 +2317,7 @@ span.right {
   .tile_count .tile_stats_count span {
     font-size: 13px; } }
 
-.tile_count .tile_stats_count .count_bottom i {
+.tile_count .tile_stats_count .count_bottom i , .reverse_timer{
   width: 12px; }
 
 /** /top tiles **/
@@ -4992,3 +4992,14 @@ ul.notifications {
 
 .pull-right{float: right;}
 .pull-left{float: left;}
+
+.copied-message {
+  color: green;
+  font-size: 14px;
+  margin-left: 10px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.copied-message.visible {
+  opacity: 1;
+}

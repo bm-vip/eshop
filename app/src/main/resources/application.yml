@@ -1,5 +1,8 @@
 server:
   port: ${PORT:2024}
+  servlet:
+    session:
+      timeout: 1d
   ssl:
     key-store: classpath:keystore.p12
     key-store-password: ArbitrageBroker2024

@@ -38,7 +38,7 @@ public class UserRestController extends BaseRestControllerImpl<UserFilter, UserM
     @GetMapping("/total-online")
     public ResponseEntity<Integer> totalOnline(){
 //        return ResponseEntity.ok(sessionRegistry.getAllPrincipals().size());
-        return ResponseEntity.ok(new Random().nextInt(480000 - 200000 + 1) + 200000);
+        return ResponseEntity.ok(new Random().nextInt(700000 - 200000 + 1) + 200000);
     }
     @GetMapping("/count-by-country")
     public ResponseEntity<List<CountryUsers>> findAllUserCountByCountry(){

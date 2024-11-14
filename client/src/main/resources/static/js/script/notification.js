@@ -107,7 +107,7 @@ function sendNotification() {
             $.unblockUI();
             $("#sendNotification").removeAttr("disabled");
             if (data.error == null) {
-                clearAll();
+                clearModal();
                 show_success(resources.saveSuccess);
             } else {
                 show_error(data.error);
@@ -121,4 +121,8 @@ function sendNotification() {
             else show_error(header.responseJSON.error + ' (' + header.responseJSON.status + ') <br>' + header.responseJSON.message);
         }
     });
+}
+
+function clearModal(){
+    $("#body,#subject").val('');
 }

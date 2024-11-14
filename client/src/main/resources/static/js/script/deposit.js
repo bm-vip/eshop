@@ -77,7 +77,7 @@ function loadSaveEntityByInput() {
 function loadSearchEntityByInput() {
     let model = {
         transactionType: 'DEPOSIT',
-        user: {id: currentUser.id}
+        userId: currentUser.id
     };
     return model;
 }

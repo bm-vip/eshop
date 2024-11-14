@@ -6,7 +6,7 @@ $(function () {
                 const active = get(()=>value.id,0) == get(()=>subscription.subscriptionPackage.id,0);
                 // Create the entire price element
                 const priceElement = `
-                <div class="col-md-3 col-sm-6">
+                <div class="col-md-3 col-sm-6" id="subscription-package-item-${value.id}">
                     <div class="pricing">
                         <div class="title">
                             <h2>${value.name}</h2>
@@ -27,7 +27,7 @@ $(function () {
                                 </div>
                             </div>
                             <div class="pricing_footer">
-                                <a href="javascript:trade();" class="btn btn-success btn-block ${!active ? 'disabled' : ''}" aria-disabled="${!active}" role="button">Trade now!</a> 
+                                <a href="javascript:trade(${value.id});" class="btn btn-success btn-block ${!active ? 'disabled' : ''}" aria-disabled="${!active}" role="button">Trade now!</a> 
                                 <a href="javascript:loadPages('deposit?amount=${value.price}');" class="btn btn-primary btn-block ${active ? 'disabled' : ''}" aria-disabled="${active}" role="button">Purchase<span></span></a>                          
                             </div>
                         </div>
@@ -40,14 +40,17 @@ $(function () {
     });
 
 });
-async function trade() {
-    let dailyLimitPurchase = await (await fetch("/api/v1/arbitrage/daily-limit-purchase/" + currentUser.id)).text();
-    if(!isNullOrEmpty(dailyLimitPurchase)) {
-        let dateTime = new Date(JSON.parse(dailyLimitPurchase)).toLocaleString();
-        show_warning(`You have reached the hourly purchase limitation, please try after ${dateTime}.`);
+async function trade(id) {
+    let purchaseLimit = await (await fetch("/api/v1/arbitrage/purchase-limit/" + currentUser.id)).text();
+    if(!isNullOrEmpty(purchaseLimit)) {
+        show_warning(`You have reached the purchase limitation, please try ${purchaseLimit}`);
+        $(`#subscription-package-item-${id} .btn-success`).text('Trade ' + purchaseLimit);
         return;
+    } else {
+        $(`#subscription-package-item-${id} .btn-success`).text('Trade Now!');
     }
 
+    $("#subscription-package-content .collapse-link").click();
     $("#trading-content").show();
     goToByScroll("#trading-content");
     //create trading orders

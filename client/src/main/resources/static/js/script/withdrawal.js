@@ -58,7 +58,7 @@ function loadSaveEntityByInput() {
 function loadSearchEntityByInput() {
     let model = {
         transactionType: 'WITHDRAWAL',
-        user: {id: currentUser.id}
+        userId: currentUser.id
     };
     return model;
 }

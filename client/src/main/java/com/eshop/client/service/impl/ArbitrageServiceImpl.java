@@ -1,7 +1,6 @@
 package com.eshop.client.service.impl;
 
 import com.eshop.client.entity.ArbitrageEntity;
-import com.eshop.client.entity.CoinEntity;
 import com.eshop.client.entity.QArbitrageEntity;
 import com.eshop.client.entity.WalletEntity;
 import com.eshop.client.enums.EntityStatusType;
@@ -21,7 +20,6 @@ import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.DateTemplate;
 import com.querydsl.core.types.dsl.Expressions;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.web.format.DateTimeFormatters;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -31,9 +29,8 @@ import org.springframework.util.CollectionUtils;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
-import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.eshop.client.util.MapperHelper.get;
@@ -90,9 +87,9 @@ public class ArbitrageServiceImpl extends BaseServiceImpl<ArbitrageFilter, Arbit
     @Override
     @Transactional
     public ArbitrageModel create(ArbitrageModel model) {
-        var allowedDate = dailyLimitPurchase(model.getUser().getId());
-        if(allowedDate != null)
-            throw new NotAcceptableException("You have reached the hourly purchase limitation, please try after " + allowedDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+        var purchaseLimitResponse = purchaseLimit(model.getUser().getId());
+        if(purchaseLimitResponse != null)
+            throw new NotAcceptableException("You have reached purchase limitation, please try " + purchaseLimitResponse);
 
         var subscription = subscriptionRepository.findByUserIdAndStatus(model.getUser().getId(), EntityStatusType.Active);
         var balanceList = walletRepository.totalBalanceGroupedByCurrency(model.getUser().getId());
@@ -154,7 +151,7 @@ public class ArbitrageServiceImpl extends BaseServiceImpl<ArbitrageFilter, Arbit
     }
     @Override
     @Transactional(readOnly = true)
-    public LocalDateTime dailyLimitPurchase(long userId) {
+    public String purchaseLimit(long userId) {
         var subscription = subscriptionRepository.findByUserIdAndStatus(userId, EntityStatusType.Active);
         if(subscription == null)
             throw new NotFoundException("subscription not found");
@@ -162,11 +159,14 @@ public class ArbitrageServiceImpl extends BaseServiceImpl<ArbitrageFilter, Arbit
         if(CollectionUtils.isEmpty(todayArbitrages))
             return null;
         var allowedDate = DateUtil.toLocalDateTime(todayArbitrages.get(0).getCreatedDate()).plusMinutes(20L);
-        if(todayArbitrages.size() > 30L)
-            return allowedDate;
-        var last2Hours = todayArbitrages.stream().filter(x->x.getCreatedDate().after(DateUtil.toDate(LocalDateTime.now().minusHours(2)))).collect(Collectors.toList());
-        if(last2Hours.size() >= subscription.getSubscriptionPackage().getOrderCount())
-            return allowedDate;
+        if(todayArbitrages.size() > 30L) {
+            return "tomorrow";
+        }
+        var last21Minutes = todayArbitrages.stream().filter(x->x.getCreatedDate().after(DateUtil.toDate(LocalDateTime.now().minusMinutes(21)))).collect(Collectors.toList());
+        if(last21Minutes.size() >= subscription.getSubscriptionPackage().getOrderCount()) {
+            long minutesRemaining = ChronoUnit.MINUTES.between(LocalDateTime.now(), allowedDate);
+            return String.format("after %d minutes", minutesRemaining);
+        }
         return null;
     }
 }
