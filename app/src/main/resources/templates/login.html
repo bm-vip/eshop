@@ -65,7 +65,7 @@
                     <div class="col-xs-12 form-group has-feedback">
                         <input type="password" class="form-control" th:placeholder="#{password}" name="password"
                                tabindex="2">
-                        <span class="fa fa-lock form-control-feedback right" aria-hidden="true"></span>
+                        <span class="fa fa-eye-slash toggle-password form-control-feedback right" aria-hidden="true"></span>
                     </div>
                     <div class="col-xs-12">
                         <button tabindex="3" type="submit" class="btn btn-default submit btn-block"
@@ -113,6 +113,15 @@
         };
     }
     $(function () {
+        $(".toggle-password").click(function() {
+            $(this).toggleClass("fa-eye fa-eye-slash");
+            var input = $(this).prev('input');
+            if (input.attr("type") == "password") {
+                input.attr("type", "text");
+            } else {
+                input.attr("type", "password");
+            }
+        });
         $('#login-form').validate({
             rules: {
                 login: "required",

@@ -120,7 +120,7 @@
                     <div class="col-xs-12 form-group">
                         <input type="password" class="form-control" th:placeholder="#{password}" name="password"
                                tabindex="2">
-                        <span class="fa fa-lock form-control-feedback right" aria-hidden="true"></span>
+                        <span class="fa fa-eye-slash toggle-password form-control-feedback right" aria-hidden="true"></span>
                     </div>
                     </div>
                     <div class="row">
@@ -251,14 +251,14 @@
                     <div class="col-xs-12 form-group">
                         <input type="password" class="form-control" th:placeholder="#{password}" id="password"
                                name="password" tabindex="8">
-                        <span class="fa fa-lock form-control-feedback right" aria-hidden="true"></span>
+                        <span class="fa fa-eye-slash toggle-password form-control-feedback right" aria-hidden="true"></span>
                     </div>
                     </div>
                     <div class="row">
                     <div class="col-xs-12 form-group">
                         <input type="password" class="form-control" th:placeholder="#{repeatPassword}"
                                id="repeatPassword" name="repeatPassword" tabindex="9">
-                        <span class="fa fa-lock form-control-feedback right" aria-hidden="true"></span>
+                        <span class="fa fa-eye-slash toggle-password form-control-feedback right" aria-hidden="true"></span>
                     </div>
                     </div>
                     <div class="row">
@@ -336,7 +336,18 @@
             });
         };
     }
+
     $(function () {
+        $(".toggle-password").click(function() {
+            $(this).toggleClass("fa-eye fa-eye-slash");
+            var input = $(this).prev('input');
+            if (input.attr("type") == "password") {
+                input.attr("type", "text");
+            } else {
+                input.attr("type", "password");
+            }
+        });
+
         $('#login-form').validate({
             rules: {
                 login: "required",
