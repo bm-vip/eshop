@@ -18,7 +18,7 @@
         } else $("#totalDepositReverseTimer").val(JSON.parse(data).remainingWithdrawalPerDay);
     });
     $.getJSON("/api/v1/wallet/total-bonus/" + currentUser.id, function (data) {
-        $("#referralBonus").text(get(() => data[0].totalAmount, 0));
+        $("#totalBonus").text(get(() => data[0].totalAmount, 0));
     });
 
     $.getJSON("/api/v1/wallet/total-profit/" + currentUser.id, function (data) {
