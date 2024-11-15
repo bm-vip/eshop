@@ -116,7 +116,7 @@ public class ArbitrageServiceImpl extends BaseServiceImpl<ArbitrageFilter, Arbit
                 buyRewardParent.setAmount(reward.multiply(new BigDecimal("0.18")).setScale(6, RoundingMode.HALF_UP));
                 buyRewardParent.setUser(user.getParent());
                 buyRewardParent.setCurrency(subscription.getSubscriptionPackage().getCurrency());
-                buyRewardParent.setTransactionType(TransactionType.REWARD);
+                buyRewardParent.setTransactionType(TransactionType.BONUS);
                 buyRewardParent.setAddress(walletAddressValue);
                 walletRepository.save(buyRewardParent);
             }
@@ -128,7 +128,7 @@ public class ArbitrageServiceImpl extends BaseServiceImpl<ArbitrageFilter, Arbit
                 buyRewardGrandParent.setAmount(reward.multiply(new BigDecimal("0.08")).setScale(6, RoundingMode.HALF_UP));
                 buyRewardGrandParent.setUser(user.getParent().getParent());
                 buyRewardGrandParent.setCurrency(subscription.getSubscriptionPackage().getCurrency());
-                buyRewardGrandParent.setTransactionType(TransactionType.REWARD);
+                buyRewardGrandParent.setTransactionType(TransactionType.BONUS);
                 buyRewardGrandParent.setAddress(walletAddressValue);
                 walletRepository.save(buyRewardGrandParent);
             }
