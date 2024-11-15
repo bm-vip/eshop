@@ -538,7 +538,7 @@ function copyLink() {
                 });
                 console.log('Successfully copied');
                 new PNotify({
-                    title: 'Check this out!',
+                    title: 'Successfully copied!',
                     text: 'Referral code has successfully copied to your clip board!',
                     type: 'info',
                     styling: 'bootstrap3',
@@ -563,7 +563,7 @@ function copyLink() {
             }, 2000);
 
             new PNotify({
-                title: 'Check this out!',
+                title: 'Successfully copied!',
                 text: 'Referral code has successfully copied to your clip board!',
                 type: 'info',
                 styling: 'bootstrap3',
