@@ -561,6 +561,14 @@ function copyLink() {
             setTimeout(() => {
                 $('.copiedMessage').removeClass('visible');
             }, 2000);
+
+            new PNotify({
+                title: 'Check this out!',
+                text: 'Referral code has successfully copied to your clip board!',
+                type: 'info',
+                styling: 'bootstrap3',
+                nonblock: {nonblock: !0},
+            });
         }).catch((err) => {
             console.error("Failed to copy: ", err);
         });
