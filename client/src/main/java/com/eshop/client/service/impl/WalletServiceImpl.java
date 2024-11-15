@@ -1,9 +1,7 @@
 package com.eshop.client.service.impl;
 
-import com.eshop.client.entity.QArbitrageEntity;
 import com.eshop.client.entity.QWalletEntity;
 import com.eshop.client.entity.WalletEntity;
-import com.eshop.client.enums.CurrencyType;
 import com.eshop.client.enums.RoleType;
 import com.eshop.client.enums.TransactionType;
 import com.eshop.client.filter.WalletFilter;
@@ -11,18 +9,16 @@ import com.eshop.client.mapping.WalletMapper;
 import com.eshop.client.model.BalanceModel;
 import com.eshop.client.model.WalletModel;
 import com.eshop.client.repository.WalletRepository;
-import com.eshop.client.service.SubscriptionPackageService;
 import com.eshop.client.service.SubscriptionService;
 import com.eshop.client.service.WalletService;
 import com.eshop.client.util.DateUtil;
+import com.eshop.client.util.SessionHolder;
 import com.eshop.exception.common.NotFoundException;
 import com.eshop.exception.common.PaymentRequiredException;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
-import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.DateTemplate;
 import com.querydsl.core.types.dsl.Expressions;
-import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,7 +29,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static com.eshop.client.enums.TransactionType.BONUS;
 import static com.eshop.client.util.DateUtil.toLocalDate;
 
 @Service
@@ -42,12 +37,14 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter,WalletModel,
     private final WalletRepository walletRepository;
     private final SubscriptionService subscriptionService;
     private final JPAQueryFactory queryFactory;
+    private final SessionHolder sessionHolder;
 
-    public WalletServiceImpl(WalletRepository repository, WalletMapper mapper, SubscriptionService subscriptionService, JPAQueryFactory queryFactory) {
+    public WalletServiceImpl(WalletRepository repository, WalletMapper mapper, SubscriptionService subscriptionService, JPAQueryFactory queryFactory, SessionHolder sessionHolder) {
         super(repository, mapper);
         this.walletRepository = repository;
         this.subscriptionService = subscriptionService;
         this.queryFactory = queryFactory;
+        this.sessionHolder = sessionHolder;
     }
 
     @Override
@@ -171,6 +168,7 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter,WalletModel,
                 .from(path)
                 .where(path.createdDate.between(new Date(startDate),new Date(endDate)))
                 .where(path.transactionType.eq(transactionType))
+                .where(path.user.id.eq(sessionHolder.getCurrentUser().getId()))
                 .groupBy(truncatedDate)
                 .fetch();
         Map<Long, BigDecimal> map = results.stream()
