@@ -63,9 +63,10 @@ $.get(`api/v1/wallet/exists?userId=${currentUser.id}&transactionType=DEPOSIT`,fu
 
 });
 const referralLink = window.location.origin + `/login?referralCode=${currentUser.uid}#signup`;
-$(".referral-code,.referral-code-menu").attr("href", referralLink);
+$(".referral-code").attr("href", referralLink);
+$(".referral-code-menu").attr("link", referralLink);
 $(".referral-code").html(`${currentUser.uid}`);
-$(".referral-code-menu").html(`${currentUser.uid} <a class="copy-referral-code fas fa-copy pull-right"></a><span  class="copiedMessage copied-message ">Copied!</span>`);
+$(".referral-code-menu").html(`${currentUser.uid} <a class="copy-referral-code fas fa-copy pull-right"></a>`);
 
 if(!isNullOrEmpty(currentUser.profileImageUrl))
     $(".avatar-image-url").attr('src', currentUser.profileImageUrl);
@@ -524,7 +525,9 @@ function jsonToUrlSearchParams(json) {
 }
 
 function copyLink() {
-    const link = $('.referral-code').attr('href');
+    let link = $('.referral-code').attr('href');
+    if(isNullOrEmpty(link))
+        link = $('.referral-code-menu').attr('link');
     async () => {
         if (navigator.share) {
             try {
@@ -533,7 +536,14 @@ function copyLink() {
                     text: 'Here’s referral code to share.',
                     url: window.location.origin
                 });
-                console.log('Successfully shared');
+                console.log('Successfully copied');
+                new PNotify({
+                    title: 'Check this out!',
+                    text: 'Referral code has successfully copied to your clip board!',
+                    type: 'info',
+                    styling: 'bootstrap3',
+                    nonblock: {nonblock: !0},
+                });
             } catch (error) {
                 console.error('Error sharing:', error);
             }
