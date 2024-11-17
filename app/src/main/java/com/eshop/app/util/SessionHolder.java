@@ -2,6 +2,8 @@ package com.eshop.app.util;
 
 import com.eshop.app.model.UserModel;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.SneakyThrows;
 import org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestWrapper;
 import org.springframework.stereotype.Component;
@@ -18,6 +20,8 @@ public class SessionHolder {
     public SessionHolder(HttpServletRequest request) {
         this.request = request;
         this.objectMapper = new ObjectMapper();
+        this.objectMapper.registerModule(new JavaTimeModule());
+        this.objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
     }
 
     public UserModel getCurrentUser() {

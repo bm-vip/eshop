@@ -1,6 +1,7 @@
 package com.eshop.client.model;
 
 import com.eshop.client.validation.Update;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
@@ -14,8 +15,10 @@ public class BaseModel<ID extends Serializable> implements Serializable {
     @NotNull(groups = Update.class)
     private ID id;
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     protected LocalDateTime modifiedDate;
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     protected LocalDateTime createdDate;;
     protected int version;
     private String selectTitle;

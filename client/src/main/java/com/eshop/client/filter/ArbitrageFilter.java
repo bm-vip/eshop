@@ -1,6 +1,7 @@
 package com.eshop.client.filter;
 
 import com.eshop.client.enums.CurrencyType;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
@@ -14,8 +15,11 @@ import java.util.Optional;
 @Accessors(chain = true)
 public class ArbitrageFilter {
     private Long id;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdDate;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdDateFrom;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdDateTo;
     private Long userId;
     private Long exchangeId;

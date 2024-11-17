@@ -46,7 +46,11 @@ spring:
     init:
       mode: always
       schema-locations: classpath:db/schema.sql
-
+  jackson:
+    serialization:
+      WRITE_DATES_AS_TIMESTAMPS: false
+    date-format: "yyyy-MM-dd HH:mm:ss"
+    time-zone: "UTC"
 springdoc:
   api-docs:
     enabled: false
