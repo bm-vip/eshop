@@ -1,5 +1,6 @@
 package com.eshop.app.entity;
 
+import com.eshop.app.util.DateUtil;
 import lombok.Data;
 import org.hibernate.annotations.Where;
 
@@ -36,7 +37,7 @@ public class OneTimePasswordEntity extends BaseEntity<Long> implements LogicalDe
     public boolean isExpired() {
 
         long currentTimeInMillis = ZonedDateTime.now(ZoneOffset.UTC).toInstant().toEpochMilli();
-        long otpRequestedTimeInMillis = this.getCreatedDate().toInstant().toEpochMilli();
+        long otpRequestedTimeInMillis = DateUtil.toEpoch(getCreatedDate());
 
         if (otpRequestedTimeInMillis + OTP_VALID_DURATION < currentTimeInMillis) {
             // OTP expired

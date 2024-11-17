@@ -166,7 +166,7 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter,WalletModel,
         DateTemplate<Date> truncatedDate = Expressions.dateTemplate(Date.class, "date_trunc('day', {0})", path.createdDate);
         var results = queryFactory.select(truncatedDate, path.amount.sum())
                 .from(path)
-                .where(path.createdDate.between(new Date(startDate),new Date(endDate)))
+                .where(path.createdDate.between(DateUtil.toLocalDateTime(startDate),DateUtil.toLocalDateTime(endDate)))
                 .where(path.transactionType.eq(transactionType))
                 .where(path.user.id.eq(sessionHolder.getCurrentUser().getId()))
                 .groupBy(truncatedDate)

@@ -1,7 +1,6 @@
 package com.eshop.client.model;
 
 import com.eshop.client.enums.EntityStatusType;
-import com.eshop.client.util.DateUtil;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -25,7 +24,7 @@ public class SubscriptionModel extends BaseModel<Long> {
     public long getRemainingWithdrawalPerDay() {
         if(createdDate == null || subscriptionPackage == null)
             return 0L;
-        var endDate = DateUtil.toLocalDate(createdDate).plusDays(subscriptionPackage.getWithdrawalDurationPerDay());
+        var endDate = createdDate.plusDays(subscriptionPackage.getWithdrawalDurationPerDay());
         long daysRemaining = ChronoUnit.DAYS.between(LocalDate.now(), endDate);
         return daysRemaining > 0L ? daysRemaining :  0L;
     }

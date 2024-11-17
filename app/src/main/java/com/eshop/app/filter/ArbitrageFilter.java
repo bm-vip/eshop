@@ -6,7 +6,7 @@ import lombok.ToString;
 import lombok.experimental.Accessors;
 
 import java.math.BigDecimal;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Setter
@@ -14,8 +14,8 @@ import java.util.Optional;
 @Accessors(chain = true)
 public class ArbitrageFilter {
     private Long id;
-    private Date createdDateFrom;
-    private Date createdDateTo;
+    private LocalDateTime createdDateFrom;
+    private LocalDateTime createdDateTo;
     private Long userId;
     private Long exchangeId;
     private Long coinId;
@@ -32,19 +32,19 @@ public class ArbitrageFilter {
         this.id = id;
     }
 
-    public Optional<Date> getCreatedDateFrom() {
+    public Optional<LocalDateTime> getCreatedDateFrom() {
         return Optional.ofNullable(createdDateFrom);
     }
 
-    public void setCreatedDateFrom(Date createdDateFrom) {
+    public void setCreatedDateFrom(LocalDateTime createdDateFrom) {
         this.createdDateFrom = createdDateFrom;
     }
 
-    public Optional<Date> getCreatedDateTo() {
+    public Optional<LocalDateTime> getCreatedDateTo() {
         return Optional.ofNullable(createdDateTo);
     }
 
-    public void setCreatedDateTo(Date createdDateTo) {
+    public void setCreatedDateTo(LocalDateTime createdDateTo) {
         this.createdDateTo = createdDateTo;
     }
 

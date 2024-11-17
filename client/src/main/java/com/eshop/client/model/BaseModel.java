@@ -6,6 +6,7 @@ import lombok.Data;
 
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Data
@@ -13,9 +14,9 @@ public class BaseModel<ID extends Serializable> implements Serializable {
     @NotNull(groups = Update.class)
     private ID id;
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    protected Date modifiedDate;
+    protected LocalDateTime modifiedDate;
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    protected Date createdDate;;
+    protected LocalDateTime createdDate;;
     protected int version;
     private String selectTitle;
 }

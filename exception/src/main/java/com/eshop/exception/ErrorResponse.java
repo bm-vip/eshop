@@ -2,10 +2,10 @@ package com.eshop.exception;
 
 import org.springframework.http.HttpStatus;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 public class ErrorResponse {
-    private Date timestamp;
+    private LocalDateTime timestamp;
     private int status;
     private String error;
     private String path;
@@ -18,17 +18,17 @@ public class ErrorResponse {
         this.path = path;
         this.message = message;
         this.code = code;
-        this.timestamp = new Date();
+        this.timestamp = LocalDateTime.now();
     }
     public ErrorResponse(HttpStatus status, String path, Object message) {
         this.status = status.value();
         this.error = status.getReasonPhrase();
         this.path = path;
         this.message = message;
-        this.timestamp = new Date();
+        this.timestamp = LocalDateTime.now();
     }
 
-    public Date getTimestamp() {
+    public LocalDateTime getTimestamp() {
         return timestamp;
     }
 

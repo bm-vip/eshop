@@ -2,6 +2,7 @@ package com.eshop.app.controller.impl;
 
 import com.eshop.app.model.FileModel;
 import com.eshop.app.model.PageModel;
+import com.eshop.app.util.DateUtil;
 import com.eshop.exception.common.NotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -62,7 +63,7 @@ public class FileRestController {
 
         List<FileModel> list = Arrays.stream(files)
                 .filter(File::isFile) // Only include files, not directories
-                .map(file -> new FileModel(file.getName(), new Date(file.lastModified())))
+                .map(file -> new FileModel(file.getName(), DateUtil.toLocalDateTime(file.lastModified())))
                 .filter(f -> name.isEmpty() || f.getName().contains(name.get()))
                 .sorted(getFileModelComparator(pageable))
                 .collect(Collectors.toList());

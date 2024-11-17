@@ -67,7 +67,7 @@ public class ArbitrageServiceImpl extends BaseServiceImpl<ArbitrageFilter, Arbit
     public Predicate queryBuilder(ArbitrageFilter filter) {
         QArbitrageEntity p = QArbitrageEntity.arbitrageEntity;
         BooleanBuilder builder = new BooleanBuilder();
-        DateTemplate<Date> truncatedDate = Expressions.dateTemplate(Date.class, "date_trunc('day', {0})", p.createdDate);
+        DateTemplate<LocalDateTime> truncatedDate = Expressions.dateTemplate(LocalDateTime.class, "date_trunc('day', {0})", p.createdDate);
 
         filter.getId().ifPresent(v->builder.and(p.id.eq(v)));
         filter.getCreatedDate().ifPresent(v-> builder.and(truncatedDate.eq(v)));
@@ -158,11 +158,11 @@ public class ArbitrageServiceImpl extends BaseServiceImpl<ArbitrageFilter, Arbit
         var todayArbitrages = arbitrageRepository.findByUserIdAndSubscriptionIdAndCreatedDateOrderByCreatedDateDesc(userId, subscription.getId(), DateUtil.truncate(new Date()));
         if(CollectionUtils.isEmpty(todayArbitrages))
             return null;
-        var allowedDate = DateUtil.toLocalDateTime(todayArbitrages.get(0).getCreatedDate()).plusMinutes(20L);
+        var allowedDate = todayArbitrages.get(0).getCreatedDate().plusMinutes(20L);
         if(todayArbitrages.size() > 30L) {
             return "tomorrow";
         }
-        var last21Minutes = todayArbitrages.stream().filter(x->x.getCreatedDate().after(DateUtil.toDate(LocalDateTime.now().minusMinutes(21)))).collect(Collectors.toList());
+        var last21Minutes = todayArbitrages.stream().filter(x->x.getCreatedDate().isAfter(LocalDateTime.now().minusMinutes(21))).collect(Collectors.toList());
         if(last21Minutes.size() >= subscription.getSubscriptionPackage().getOrderCount()) {
             long minutesRemaining = ChronoUnit.MINUTES.between(LocalDateTime.now(), allowedDate);
             return String.format("after %d minutes", minutesRemaining);

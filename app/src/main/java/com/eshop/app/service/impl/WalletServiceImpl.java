@@ -26,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -97,8 +98,8 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter,WalletModel,
 
                 if(model.getTransactionType().equals(TransactionType.WITHDRAWAL) && getOrDefault(()-> model.getAmount().compareTo(currentSubscription.getSubscriptionPackage().getPrice()) >=0,false)){
                     var subscriptionPackageModel = currentSubscription.getSubscriptionPackage();
-                    var withdrawalDate = DateUtil.toLocalDate(subscriptionPackageModel.getCreatedDate()).plusDays(subscriptionPackageModel.getWithdrawalDurationPerDay());
-                    if(withdrawalDate.isAfter(LocalDate.now()))
+                    var withdrawalDate = subscriptionPackageModel.getCreatedDate().plusDays(subscriptionPackageModel.getWithdrawalDurationPerDay());
+                    if(withdrawalDate.isAfter(LocalDateTime.now()))
                         throw new NotAcceptableException("Withdrawal is allowed only after " + withdrawalDate.toString());
                 }
                 if(model.getTransactionType().equals(TransactionType.DEPOSIT) && !walletRepository.existsByUserIdAndTransactionTypeAndCurrencyAndActiveTrue(model.getUser().getId(),TransactionType.DEPOSIT,balanceModel.getCurrency())) {
@@ -109,21 +110,11 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter,WalletModel,
                         WalletModel bonus1 = new WalletModel();
                         bonus1.setActive(true);
                         bonus1.setUser(user.getParent());
-                        bonus1.setAmount(referralDepositBonus.multiply(new BigDecimal("0.18")).setScale(4, RoundingMode.HALF_UP));
+                        bonus1.setAmount(referralDepositBonus(model.getAmount()));
                         bonus1.setAddress(walletAddress);
                         bonus1.setCurrency(balanceModel.getCurrency());
                         bonus1.setTransactionType(TransactionType.BONUS);
                         create(bonus1);
-                    }
-                    if (user.getParents().size() >= 2) {
-                        WalletModel bonus2 = new WalletModel();
-                        bonus2.setActive(true);
-                        bonus2.setUser(new UserModel().setUserId(user.getParents().get(1)));
-                        bonus2.setAmount(referralDepositBonus.multiply(new BigDecimal("0.08")).setScale(4, RoundingMode.HALF_UP));
-                        bonus2.setAddress(walletAddress);
-                        bonus2.setCurrency(balanceModel.getCurrency());
-                        bonus2.setTransactionType(TransactionType.BONUS);
-                        create(bonus2);
                     }
                 }
             }
@@ -147,11 +138,12 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter,WalletModel,
                 }
                 if(model.getTransactionType().equals(TransactionType.WITHDRAWAL) && getOrDefault(()-> model.getAmount().compareTo(subscriptionModel.getSubscriptionPackage().getPrice()) >=0,false)){
                     var subscriptionPackageModel = subscriptionModel.getSubscriptionPackage();
-                    var withdrawalDate = DateUtil.toLocalDate(subscriptionPackageModel.getCreatedDate()).plusDays(subscriptionPackageModel.getWithdrawalDurationPerDay());
-                    if(withdrawalDate.isAfter(LocalDate.now()))
+                    var withdrawalDate = subscriptionPackageModel.getCreatedDate().plusDays(subscriptionPackageModel.getWithdrawalDurationPerDay());
+                    if(withdrawalDate.isAfter(LocalDateTime.now()))
                         throw new NotAcceptableException("Withdrawal is allowed only after " + withdrawalDate.toString());
                 }
                 if(model.getTransactionType().equals(TransactionType.DEPOSIT) && !walletRepository.existsByUserIdAndTransactionTypeAndCurrencyAndActiveTrue(model.getUser().getId(),TransactionType.DEPOSIT,balanceModel.getCurrency())) {
+                    BigDecimal referralDepositBonus = referralDepositBonus(model.getAmount());
                     String walletAddress = parameterService.findByCode("WALLET_ADDRESS").getValue();
                     var user = userService.findById(model.getUser().getId());
                     if (get(() -> user.getParent()) != null) {

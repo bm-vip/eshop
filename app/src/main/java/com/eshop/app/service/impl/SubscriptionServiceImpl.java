@@ -15,6 +15,7 @@ import com.eshop.app.repository.UserRepository;
 import com.eshop.app.repository.WalletRepository;
 import com.eshop.app.service.ParameterService;
 import com.eshop.app.service.SubscriptionService;
+import com.eshop.app.util.DateUtil;
 import com.eshop.exception.common.BadRequestException;
 import com.eshop.exception.common.NotFoundException;
 import com.eshop.exception.common.PaymentRequiredException;
@@ -25,8 +26,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.util.Calendar;
-import java.util.Date;
+import java.time.LocalDate;
 
 import static com.eshop.app.service.ParameterService.walletAddress;
 import static com.eshop.app.util.MapperHelper.get;
@@ -65,8 +65,8 @@ public class SubscriptionServiceImpl extends BaseServiceImpl<SubscriptionFilter,
         filter.getId().ifPresent(v -> builder.and(path.id.eq(v)));
         filter.getUserId().ifPresent(v -> builder.and(path.user.id.eq(v)));
         filter.getSubscriptionPackageId().ifPresent(v -> builder.and(path.subscriptionPackage.id.eq(v)));
-        filter.getExpireDateFrom().ifPresent(v -> builder.and(path.expireDate.goe(new Date(v))));
-        filter.getExpireDateTo().ifPresent(v -> builder.and(path.expireDate.loe(new Date(v))));
+        filter.getExpireDateFrom().ifPresent(v -> builder.and(path.expireDate.goe(DateUtil.toLocalDate(v))));
+        filter.getExpireDateTo().ifPresent(v -> builder.and(path.expireDate.loe(DateUtil.toLocalDate(v))));
         filter.getDiscountPercentage().ifPresent(v -> builder.and(path.discountPercentage.eq(v)));
         filter.getFinalPriceFrom().ifPresent(v -> builder.and(path.finalPrice.goe(v)));
         filter.getFinalPriceTo().ifPresent(v -> builder.and(path.finalPrice.loe(v)));
@@ -83,11 +83,9 @@ public class SubscriptionServiceImpl extends BaseServiceImpl<SubscriptionFilter,
 
         entity.setStatus(EntityStatusType.Pending);
         if(subscriptionPackage.getDuration() <= 0)
-            entity.setExpireDate(new Date(4102444800000L));
+            entity.setExpireDate(DateUtil.toLocalDate(4102444800000L));
         else {
-            Calendar calendar = Calendar.getInstance();
-            calendar.add(Calendar.DAY_OF_YEAR, subscriptionPackage.getDuration());
-            entity.setExpireDate(calendar.getTime());
+            entity.setExpireDate(LocalDate.now().plusDays(subscriptionPackage.getDuration()));
         }
         entity.setFinalPrice(calculatePrice(subscriptionPackage.getPrice(), model.getDiscountPercentage()));
         if(model.getStatus().equals(EntityStatusType.Active)) {
@@ -119,11 +117,9 @@ public class SubscriptionServiceImpl extends BaseServiceImpl<SubscriptionFilter,
             var subscriptionPackage = subscriptionPackageRepository.findById(model.getSubscriptionPackage().getId()).orElseThrow(()-> new NotFoundException("No such subscriptionPackage with " + model.getSubscriptionPackage().getId()));
             entity.setSubscriptionPackage(subscriptionPackage);
             if(entity.getSubscriptionPackage().getDuration() <= 0)
-                entity.setExpireDate(new Date(4102444800000L));
+                entity.setExpireDate(DateUtil.toLocalDate(4102444800000L));
             else {
-                Calendar calendar = Calendar.getInstance();
-                calendar.add(Calendar.DAY_OF_YEAR, entity.getSubscriptionPackage().getDuration());
-                entity.setExpireDate(calendar.getTime());//The remaining days of previous subscription will be burned
+                LocalDate.now().plusDays(entity.getSubscriptionPackage().getDuration());//The remaining days of previous subscription will be burned
             }
             BigDecimal finalPrice = calculatePrice(entity.getSubscriptionPackage().getPrice(), model.getDiscountPercentage());
             entity.setFinalPrice(finalPrice);

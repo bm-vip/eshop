@@ -16,8 +16,16 @@ public class DateUtil {
                 .atZone(ZoneId.systemDefault())
                 .toLocalDate();
     }
+    public static LocalDateTime toLocalDateTime(Long epochMilli){
+        return Instant.ofEpochMilli(epochMilli)
+                .atZone(ZoneId.systemDefault())
+                .toLocalDateTime();
+    }
     public static Long toEpoch(LocalDate date){
         return date.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli();
+    }
+    public static Long toEpoch(LocalDateTime date){
+        return date.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
     }
 
     public static Date toDate(LocalDate date){
@@ -34,8 +42,7 @@ public class DateUtil {
         return Date.from(toLocalDate(date).atStartOfDay(ZoneId.systemDefault()).toInstant());
     }
 
-    public static String timeAgo(Date date) {
-        LocalDateTime dateTime = toLocalDateTime(date);
+    public static String timeAgo(LocalDateTime dateTime) {
         LocalDateTime now = LocalDateTime.now();
         Duration duration = Duration.between(dateTime, now);
 
@@ -54,9 +61,5 @@ public class DateUtil {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM d, yyyy");
             return dateTime.format(formatter);
         }
-    }
-
-    public static void main(String[] args) {
-        System.out.println(timeAgo(new Date()));
     }
 }
