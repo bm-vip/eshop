@@ -14,6 +14,61 @@ messages = {
     }
 };
 $(function () {
+    $("#full-name").text(`${currentUser.selectTitle}`);
+    $("#country-label").html(`<strong><i class="fa fa-map-marker"></i> Country:</strong> ${currentUser.country.name}`);
+    $("#email-label").html(`<strong><i class="fa fa-envelope"></i> Email:</strong> ${currentUser.email}`);
+    $("#user-name").html(`<strong><i class="fa fa-id-card"></i> UserName:</strong> ${currentUser.userName}`);
+    $("#wallet-label").html(`${isNullOrEmpty(currentUser.walletAddress)? '<strong><i class="fa fa-wallet"></i> Wallet:</strong> ---': '<strong><i class="fa fa-wallet"></i> Wallet:</strong> ' + currentUser.walletAddress}`);
+    const referralLink = window.location.origin + `/login?referralCode=${currentUser.uid}#signup`;
+    $(".referral-code").attr("href", referralLink);
+    $(".referral-code").html(`${currentUser.uid}`);
+
+    $(".toggle-password").click(function() {
+        $(this).toggleClass("fa-eye fa-eye-slash");
+        var input = $(this).prev('input');
+        if (input.attr("type") == "password") {
+            input.attr("type", "text");
+        } else {
+            input.attr("type", "password");
+        }
+    });
+    $('#modal-body').validate({
+        messages: {
+            password: {
+                minlength: resources.mustBeMoreThan.format(resources.password, 5, resources.character)
+            },
+            email: {
+                email: resources.invalidFormat.format(resources.email)
+            },
+            repeatPassword: {
+                minlength: resources.mustBeMoreThan.format(resources.password, 5, resources.character),
+                equalTo: resources.confirmPasswordDoesNotMach
+            }
+        },
+        rules: {
+            password: {
+                minlength: 5
+            },
+            email: {
+                email: true
+            },
+            repeatPassword: {
+                minlength: 5,
+                equalTo: "#password"
+            }
+        },
+        highlight: function (element) {
+            $(element).addClass('is-invalid').closest('div').addClass('bad');
+        },
+        unhighlight: function (element) {
+            $(element).removeClass('is-invalid').closest('div').removeClass('bad');
+        },
+        errorElement: 'span',
+        errorClass: 'invalid-feedback',
+        errorPlacement: function (error, element) {
+            error.insertAfter(element);
+        }
+    });
     loadLabelByEntity(currentUser.id);
 });
 function loadTable() {
@@ -111,6 +166,7 @@ function loadSaveEntityByInput() {
         country: {id: $("#countrySelect2").val()},
         walletAddress: $("#walletAddress").val(),
         profileImageUrl: imageProfileUrl,
+        password: $("#password").val()
     };
     return model;
 }
@@ -124,35 +180,40 @@ function loadSearchReferralEntity2ByInput() {
         treePath: currentUser.id + ",%,%"
     };
 }
+
 function updateUser() {
-    let entity = loadSaveEntityByInput();
-    $.blockUI(blockUiOptions());
-    $("#updateUser").attr("disabled", 'disabled');
-    $.ajax({
-        type: "PATCH",
-        url: ajaxUrl,
-        dataType: "json",
-        contentType: "application/json;charset=utf-8",
-        data: JSON.stringify(entity),
-        success: function (data) {
-            $.unblockUI();
-            $("#updateUser").removeAttr("disabled");
-            if (data.error == null) {
-                clearAll();
-                show_success(resources.saveSuccess);
-                loadLabelByEntity(currentUser.id);
-            } else {
-                show_error(data.error);
+    if (!isNullOrEmpty($("#password").val()) && $("#password").val() == $("#repeatPassword").val()) {
+        let entity = loadSaveEntityByInput();
+        $.blockUI(blockUiOptions());
+        $("#updateUser").attr("disabled", 'disabled');
+        $.ajax({
+            type: "PATCH",
+            url: ajaxUrl,
+            dataType: "json",
+            contentType: "application/json;charset=utf-8",
+            data: JSON.stringify(entity),
+            success: function (data) {
+                $.unblockUI();
+                $("#updateUser").removeAttr("disabled");
+                if (data.error == null) {
+                    clearAll();
+                    show_success(resources.saveSuccess);
+                    loadLabelByEntity(currentUser.id);
+                } else {
+                    show_error(data.error);
+                }
+            },
+            error: function (header, status, error) {
+                $.unblockUI();
+                $("#updateUser").removeAttr("disabled");
+                if(isNullOrEmpty(get(() => header.responseJSON)))
+                    show_error('ajax answer post returned error: ' + error.responseText);
+                else show_error(header.responseJSON.error + ' (' + header.responseJSON.status + ') <br>' + header.responseJSON.message);
             }
-        },
-        error: function (header, status, error) {
-            $.unblockUI();
-            $("#updateUser").removeAttr("disabled");
-            if(isNullOrEmpty(get(() => header.responseJSON)))
-                show_error('ajax answer post returned error: ' + error.responseText);
-            else show_error(header.responseJSON.error + ' (' + header.responseJSON.status + ') <br>' + header.responseJSON.message);
-        }
-    });
+        });
+    } else {
+        alert("password is not equal to repeat password");
+    }
 }
 function clearAll_() {
     $("#walletAddress,#email").val('');

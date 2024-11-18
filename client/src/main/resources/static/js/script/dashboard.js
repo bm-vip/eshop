@@ -15,7 +15,7 @@
         if(isNullOrEmpty(data)) {
             $(".reverse_timer").remove();
             $("#totalDeposit").after(`<span class="currency">USDT</span>`);
-        } else $("#totalDepositReverseTimer").val(data.remainingWithdrawalPerDay);
+        } else $("#totalDepositReverseTimer").text(data.remainingWithdrawalPerDay);
     });
     $.getJSON("/api/v1/wallet/total-bonus/" + currentUser.id, function (data) {
         $("#referralBonus").text(get(() => data[0].totalAmount, 0));
