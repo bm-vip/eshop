@@ -14,14 +14,13 @@
     $.get("api/v1/subscription/find-active-by-user/" + currentUser.id, function (data) {
         if(isNullOrEmpty(data)) {
             $(".reverse_timer").remove();
-            $("#totalDeposit").after(`<span class="currency">USDT</span>`);
         } else $("#totalDepositReverseTimer").text(data.remainingWithdrawalPerDay);
     });
     $.getJSON("/api/v1/wallet/total-bonus/" + currentUser.id, function (data) {
         $("#referralBonus").text(get(() => data[0].totalAmount, 0));
     });
 
-    $.getJSON("/api/v1/wallet/total-profit/" + currentUser.id, function (data) {
+    $.getJSON("/api/v1/wallet/total-reward/" + currentUser.id, function (data) {
         $("#totalProfit").text(get(() => data[0].totalAmount, 0));
     });
 
@@ -31,6 +30,10 @@
 
     $.get("/api/v1/arbitrage/count-all-by-user/" + currentUser.id, function (data) {
         $("#totalArbitrage").text(data);
+    });
+    const today = new Date();
+    $.get(`/api/v1/arbitrage/count-all-by-user-and-date/${currentUser.id}/${new Date(today.getFullYear(), today.getMonth(), today.getDate()).getTime()}`, function (data) {
+        $("#dailyArbitrage").text(data);
     });
 
     $.get("/api/v1/arbitrage/find-top-coins/5", function (data) {

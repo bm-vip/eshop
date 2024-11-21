@@ -10,9 +10,9 @@
         <loadData file="db/data/tbl_role.csv" tableName = "tbl_role" >
             <column header="id" name="id" type="bigint" />
             <column header="created_by" name="created_by" type="VARCHAR(255)"/>
-            <column header="created_date" name="created_date" type="DATETIME"/>
+            <column header="created_date" name="created_date" type="TIMESTAMP"/>
             <column header="modified_by" name="modified_by" type="VARCHAR(255)"/>
-            <column header="modified_date" name="modified_date" type="DATETIME"/>
+            <column header="modified_date" name="modified_date" type="TIMESTAMP"/>
             <column header="version" name="version" type="integer"/>
             <column header="role" name="role" type="VARCHAR(255)"/>
             <column header="title" name="title" type="VARCHAR(255)"/>
@@ -23,9 +23,9 @@
         <loadData file="db/data/tbl_user.csv" tableName = "tbl_user" >
             <column header="id" name="id" type="bigint" />
             <column header="created_by" name="created_by" type="VARCHAR(255)"/>
-            <column header="created_date" name="created_date" type="DATETIME"/>
+            <column header="created_date" name="created_date" type="TIMESTAMP"/>
             <column header="modified_by" name="modified_by" type="VARCHAR(255)"/>
-            <column header="modified_date" name="modified_date" type="DATETIME"/>
+            <column header="modified_date" name="modified_date" type="TIMESTAMP"/>
             <column header="version" name="version" type="integer"/>
             <column header="user_name" name="user_name" type="VARCHAR(255)"/>
             <column header="email" name="email" type="VARCHAR(255)"/>

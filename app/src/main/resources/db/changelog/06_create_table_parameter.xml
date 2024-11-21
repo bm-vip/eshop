@@ -15,9 +15,9 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_parameter_group"/>
             </column>
             <column name="created_by" type="VARCHAR(255)"/>
-            <column name="created_date" type="DATETIME"/>
+            <column name="created_date" type="TIMESTAMP"/>
             <column name="modified_by" type="VARCHAR(255)"/>
-            <column name="modified_date" type="DATETIME"/>
+            <column name="modified_date" type="TIMESTAMP"/>
             <column defaultValueNumeric="0" name="version" type="integer"/>
             <column name="title" type="VARCHAR(255)">
                 <constraints nullable="false"/>
@@ -34,9 +34,9 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_parameter"/>
             </column>
             <column name="created_by" type="VARCHAR(255)"/>
-            <column name="created_date" type="DATETIME"/>
+            <column name="created_date" type="TIMESTAMP"/>
             <column name="modified_by" type="VARCHAR(255)"/>
-            <column name="modified_date" type="DATETIME"/>
+            <column name="modified_date" type="TIMESTAMP"/>
             <column defaultValueNumeric="0" name="version" type="integer"/>
             <column name="title" type="VARCHAR(255)">
                 <constraints nullable="false"/>

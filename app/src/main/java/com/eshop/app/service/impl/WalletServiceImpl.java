@@ -212,11 +212,11 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter,WalletModel,
         return walletRepository.totalRewardGroupedByCurrency(userId);
     }
 
-    @Override
-    public List<BalanceModel> totalProfitGroupedByCurrency(long userId) {
-        var result = walletRepository.totalProfitGroupedByCurrency(userId);
-        return result.stream()
-                .map(obj -> new BalanceModel(CurrencyType.valueOf((String) obj[0]),(BigDecimal) obj[1]))
-                .collect(Collectors.toList());
-    }
+//    @Override
+//    public List<BalanceModel> totalProfitGroupedByCurrency(long userId) {
+//        var result = walletRepository.totalProfitGroupedByCurrency(userId);
+//        return result.stream()
+//                .map(obj -> new BalanceModel(CurrencyType.valueOf((String) obj[0]),(BigDecimal) obj[1]))
+//                .collect(Collectors.toList());
+//    }
 }

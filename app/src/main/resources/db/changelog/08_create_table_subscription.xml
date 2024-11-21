@@ -16,9 +16,9 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_subscription_package"/>
             </column>
             <column name="created_by" type="VARCHAR(255)"/>
-            <column name="created_date" type="DATETIME"/>
+            <column name="created_date" type="TIMESTAMP"/>
             <column name="modified_by" type="VARCHAR(255)"/>
-            <column name="modified_date" type="DATETIME"/>
+            <column name="modified_date" type="TIMESTAMP"/>
             <column defaultValueNumeric="0" name="version" type="integer"/>
             <column name="name" type="VARCHAR(250)"/>
             <column name="duration" type="integer">
@@ -66,15 +66,15 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_subscription"/>
             </column>
             <column name="created_by" type="VARCHAR(255)"/>
-            <column name="created_date" type="DATETIME"/>
+            <column name="created_date" type="TIMESTAMP"/>
             <column name="modified_by" type="VARCHAR(255)"/>
-            <column name="modified_date" type="DATETIME"/>
+            <column name="modified_date" type="TIMESTAMP"/>
             <column defaultValueNumeric="0" name="version" type="integer"/>
             <column name="user_id" type="bigint"/>
             <column name="subscription_package_id" type="bigint">
                 <constraints nullable="false"/>
             </column>
-            <column name="expire_date" type="DATETIME">
+            <column name="expire_date" type="TIMESTAMP">
                 <constraints nullable="false"/>
             </column>
             <column name="discount_percentage" type="int"/>
@@ -95,9 +95,9 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_subscription_package_detail"/>
             </column>
             <column name="created_by" type="VARCHAR(255)"/>
-            <column name="created_date" type="DATETIME"/>
+            <column name="created_date" type="TIMESTAMP"/>
             <column name="modified_by" type="VARCHAR(255)"/>
-            <column name="modified_date" type="DATETIME"/>
+            <column name="modified_date" type="TIMESTAMP"/>
             <column defaultValueNumeric="0" name="version" type="integer"/>
             <column name="subscription_package_id" type="bigint">
                 <constraints nullable="false"/>

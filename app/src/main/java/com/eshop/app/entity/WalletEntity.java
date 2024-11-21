@@ -1,15 +1,13 @@
 package com.eshop.app.entity;
 
 import com.eshop.app.enums.CurrencyType;
-import com.eshop.app.enums.EntityStatusType;
 import com.eshop.app.enums.TransactionType;
 import lombok.Data;
-import lombok.experimental.Accessors;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 
 @Data
 @Entity
@@ -47,6 +45,6 @@ public class WalletEntity extends BaseEntity<Long> {
 		if (transactionType.equals(TransactionType.WITHDRAWAL))
 			builder.append("-");
 		else builder.append("+");
-		return builder.append(amount).append(" ").append(currency).append(" ").append(new SimpleDateFormat("yyyy-MM-dd").format(modifiedDate)).toString();
+		return builder.append(amount).append(" ").append(currency).append(" ").append(DateTimeFormatter.ofPattern("yyyy-MM-dd").format(modifiedDate)).toString();
 	}
 }

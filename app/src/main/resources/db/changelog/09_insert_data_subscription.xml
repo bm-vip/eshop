@@ -10,9 +10,9 @@
         <loadData file="db/data/tbl_subscription_package.csv" tableName = "tbl_subscription_package" >
             <column header="id" name="id" type="bigint" />
             <column header="created_by" name="created_by" type="VARCHAR(255)"/>
-            <column header="created_date" name="created_date" type="DATETIME"/>
+            <column header="created_date" name="created_date" type="TIMESTAMP"/>
             <column header="modified_by" name="modified_by" type="VARCHAR(255)"/>
-            <column header="modified_date" name="modified_date" type="DATETIME"/>
+            <column header="modified_date" name="modified_date" type="TIMESTAMP"/>
             <column header="version" name="version" type="integer"/>
             <column header="name" name="name" type="VARCHAR(250)"/>
             <column header="duration" name="duration" type="integer"/>
@@ -36,14 +36,14 @@
         <loadData file="db/data/tbl_subscription.csv" tableName = "tbl_subscription" >
             <column header="id" name="id" type="bigint" />
             <column header="created_by" name="created_by" type="VARCHAR(255)"/>
-            <column header="created_date" name="created_date" type="DATETIME"/>
+            <column header="created_date" name="created_date" type="TIMESTAMP"/>
             <column header="modified_by" name="modified_by" type="VARCHAR(255)"/>
-            <column header="modified_date" name="modified_date" type="DATETIME"/>
+            <column header="modified_date" name="modified_date" type="TIMESTAMP"/>
             <column header="version" name="version" type="integer"/>
             <column header="user_id" name="user_id" type="bigint"/>
             <column header="subscription_package_id" name="subscription_package_id" type="bigint"/>
             <column header="wallet_id" name="wallet_id" type="bigint"/>
-            <column header="expire_date" name="expire_date" type="DATETIME"/>
+            <column header="expire_date" name="expire_date" type="TIMESTAMP"/>
             <column header="final_price" name="final_price" type="NUMBER(19, 6)"/>
             <column header="deleted" name="deleted" type="boolean"/>
         </loadData>
@@ -52,9 +52,9 @@
         <loadData file="db/data/tbl_subscription_package_detail.csv" tableName = "tbl_subscription_package_detail" >
             <column header="id" name="id" type="bigint" />
             <column header="created_by" name="created_by" type="VARCHAR(255)"/>
-            <column header="created_date" name="created_date" type="DATETIME"/>
+            <column header="created_date" name="created_date" type="TIMESTAMP"/>
             <column header="modified_by" name="modified_by" type="VARCHAR(255)"/>
-            <column header="modified_date" name="modified_date" type="DATETIME"/>
+            <column header="modified_date" name="modified_date" type="TIMESTAMP"/>
             <column header="version" name="version" type="integer"/>
             <column header="subscription_package_id" name="subscription_package_id" type="bigint"/>
             <column header="amount" name="amount" type="NUMBER(19, 6)"/>

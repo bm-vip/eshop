@@ -10,9 +10,9 @@
         <loadData file="db/data/tbl_exchange.csv" tableName = "tbl_exchange" >
             <column header="id" name="id" type="bigint" />
             <column header="created_by" name="created_by" type="VARCHAR(255)"/>
-            <column header="created_date" name="created_date" type="DATETIME"/>
+            <column header="created_date" name="created_date" type="TIMESTAMP"/>
             <column header="modified_by" name="modified_by" type="VARCHAR(255)"/>
-            <column header="modified_date" name="modified_date" type="DATETIME"/>
+            <column header="modified_date" name="modified_date" type="TIMESTAMP"/>
             <column header="version" name="version" type="integer"/>
             <column header="name" name="name" type="VARCHAR(255)"/>
             <column header="logo" name="logo" type="VARCHAR(500)"/>
@@ -23,9 +23,9 @@
         <loadData file="db/data/tbl_coin.csv" tableName = "tbl_coin" >
             <column header="id" name="id" type="bigint" />
             <column header="created_by" name="created_by" type="VARCHAR(255)"/>
-            <column header="created_date" name="created_date" type="DATETIME"/>
+            <column header="created_date" name="created_date" type="TIMESTAMP"/>
             <column header="modified_by" name="modified_by" type="VARCHAR(255)"/>
-            <column header="modified_date" name="modified_date" type="DATETIME"/>
+            <column header="modified_date" name="modified_date" type="TIMESTAMP"/>
             <column header="version" name="version" type="integer"/>
             <column header="name" name="name" type="VARCHAR(255)"/>
             <column header="logo" name="logo" type="VARCHAR(500)"/>

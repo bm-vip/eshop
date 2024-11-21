@@ -12,5 +12,5 @@ public interface WalletService extends BaseService<WalletFilter, WalletModel, Lo
     List<BalanceModel> totalWithdrawalGroupedByCurrency(long userId);
     List<BalanceModel> totalBonusGroupedByCurrency(long userId);
     List<BalanceModel> totalRewardGroupedByCurrency(long userId);
-    List<BalanceModel> totalProfitGroupedByCurrency(long userId);
+//    List<BalanceModel> totalProfitGroupedByCurrency(long userId);
 }

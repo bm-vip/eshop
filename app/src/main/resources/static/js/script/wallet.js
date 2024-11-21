@@ -55,7 +55,7 @@ columns = [{
     render: function (data) { return "{0} {1}".format(data.firstName, data.lastName) }
 },{
     data: 'active',
-    render: function (data) { return data ? resources.active : resources.inactive; }
+    render: function (data) { return data ? `<span class='grteen'>${resources.active}</span>` :  `<span class='red'>${resources.inactive}</span>`}
 }, {
     data: 'modifiedDate',
     render: function (data) { return toLocalizingDateString(data, true) }

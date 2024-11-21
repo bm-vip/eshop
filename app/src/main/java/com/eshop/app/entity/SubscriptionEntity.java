@@ -30,7 +30,6 @@ public class SubscriptionEntity extends BaseEntity<Long> implements LogicalDelet
     @JoinColumn(name = "subscription_package_id", nullable = false)
     private SubscriptionPackageEntity subscriptionPackage;
     @Column(name = "expire_date")
-    @Temporal(TemporalType.TIMESTAMP)
     private LocalDate expireDate;
     @Column(name = "discount_percentage")
     private Integer discountPercentage;

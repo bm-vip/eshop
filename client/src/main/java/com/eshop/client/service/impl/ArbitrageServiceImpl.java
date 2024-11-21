@@ -19,6 +19,7 @@ import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.DateTemplate;
 import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -28,6 +29,7 @@ import org.springframework.util.CollectionUtils;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
@@ -48,9 +50,10 @@ public class ArbitrageServiceImpl extends BaseServiceImpl<ArbitrageFilter, Arbit
     private final WalletRepository walletRepository;
     private final UserRepository userRepository;
     private final String walletAddressValue;
+    private final JPAQueryFactory queryFactory;
 
     @Autowired
-    public ArbitrageServiceImpl(ArbitrageRepository repository, ArbitrageMapper mapper, SubscriptionPackageRepository subscriptionPackageRepository, SubscriptionRepository subscriptionRepository, ParameterService parameterService, WalletRepository walletRepository, UserRepository userRepository, ArbitrageRepository arbitrageRepository) {
+    public ArbitrageServiceImpl(ArbitrageRepository repository, ArbitrageMapper mapper, SubscriptionPackageRepository subscriptionPackageRepository, SubscriptionRepository subscriptionRepository, ParameterService parameterService, WalletRepository walletRepository, UserRepository userRepository, ArbitrageRepository arbitrageRepository, JPAQueryFactory queryFactory) {
         super(repository, mapper);
         this.repository = repository;
         this.mapper = mapper;
@@ -61,6 +64,7 @@ public class ArbitrageServiceImpl extends BaseServiceImpl<ArbitrageFilter, Arbit
         this.walletRepository = walletRepository;
         this.userRepository = userRepository;
         this.arbitrageRepository = arbitrageRepository;
+        this.queryFactory = queryFactory;
     }
 
     @Override
@@ -141,6 +145,17 @@ public class ArbitrageServiceImpl extends BaseServiceImpl<ArbitrageFilter, Arbit
     public long countAllByUserId(long userId) {
         return repository.countAllByUserId(userId);
     }
+
+    @Override
+    public long countAllByUserIdAndDate(long userId, Date date) {
+        QArbitrageEntity path = QArbitrageEntity.arbitrageEntity;
+        DateTemplate<Date> truncatedDate = Expressions.dateTemplate(Date.class, "date_trunc('day', {0})", path.createdDate);
+        return queryFactory.from(path)
+                .where(truncatedDate.eq(date))
+                .where(path.user.id.eq(userId))
+                .fetchCount();
+    }
+
     @Override
     public Page<CoinUsageDTO> findMostUsedCoins(int pageSize) {
         long count = repository.count();

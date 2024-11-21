@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 public enum TransactionType {
     DEPOSIT("deposit"),
     WITHDRAWAL("withdrawal"),
+    WITHDRAWAL_PROFIT("withdrawalProfit"),//both bonus and reward
     BONUS("bonus"),//referrals
     REWARD("reward"),//arbitrage
     ;

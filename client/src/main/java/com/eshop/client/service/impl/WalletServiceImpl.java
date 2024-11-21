@@ -2,17 +2,21 @@ package com.eshop.client.service.impl;
 
 import com.eshop.client.entity.QWalletEntity;
 import com.eshop.client.entity.WalletEntity;
+import com.eshop.client.enums.CurrencyType;
 import com.eshop.client.enums.RoleType;
 import com.eshop.client.enums.TransactionType;
 import com.eshop.client.filter.WalletFilter;
 import com.eshop.client.mapping.WalletMapper;
 import com.eshop.client.model.BalanceModel;
+import com.eshop.client.model.SubscriptionPackageModel;
 import com.eshop.client.model.WalletModel;
 import com.eshop.client.repository.WalletRepository;
 import com.eshop.client.service.SubscriptionService;
 import com.eshop.client.service.WalletService;
 import com.eshop.client.util.DateUtil;
 import com.eshop.client.util.SessionHolder;
+import com.eshop.exception.common.BadRequestException;
+import com.eshop.exception.common.NotAcceptableException;
 import com.eshop.exception.common.NotFoundException;
 import com.eshop.exception.common.PaymentRequiredException;
 import com.querydsl.core.BooleanBuilder;
@@ -24,6 +28,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -73,14 +79,38 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter,WalletModel,
     @Override
     @Transactional
     public WalletModel create(WalletModel model) {
-        var balance = walletRepository.totalBalanceGroupedByCurrency(model.getUser().getId());
+        var totalBalance = walletRepository.totalBalanceGroupedByCurrency(model.getUser().getId());
         if(model.getTransactionType().equals(TransactionType.WITHDRAWAL)) {
-            for (BalanceModel balanceModel : balance) {
+            for (BalanceModel balanceModel : totalBalance) {
                 if(model.getCurrency().equals(balanceModel.getCurrency())) {
                     if(balanceModel.getTotalAmount().compareTo(model.getAmount()) < 0)
                         throw new PaymentRequiredException();
                 }
             }
+            var currentSubscription = subscriptionService.findByUserAndActivePackage(model.getUser().getId());
+            if(currentSubscription == null)
+                throw new PaymentRequiredException();
+
+            SubscriptionPackageModel currentSubscriptionPackage = currentSubscription.getSubscriptionPackage();
+            if(!model.getCurrency().equals(currentSubscriptionPackage.getCurrency()))
+                throw new NotAcceptableException("The currency type does not match your currently active subscription's currency.");
+
+            var totalProfit = walletRepository.totalProfitGroupedByCurrency(model.getUser().getId()).stream().filter(f->f.getCurrency().equals(currentSubscriptionPackage.getCurrency())).findAny().orElse(new BalanceModel(currentSubscriptionPackage.getCurrency(),BigDecimal.ZERO));
+            if(model.getAmount().compareTo(currentSubscription.getFinalPrice()) >= 0 || model.getAmount().compareTo(totalProfit.getTotalAmount()) > 0) {
+                if(currentSubscription.getRemainingWithdrawalPerDay() > 0L)
+                    throw new NotAcceptableException(String.format("You can withdraw your funds after %d days.",currentSubscription.getRemainingWithdrawalPerDay()));
+                model.setTransactionType(TransactionType.WITHDRAWAL);
+            } else {
+                // withdrawal profit
+                model.setTransactionType(TransactionType.WITHDRAWAL_PROFIT);
+                if (model.getAmount().compareTo(new BigDecimal(15)) < 0)
+                    throw new NotAcceptableException(String.format("You need to request more than 15 %s.", currentSubscriptionPackage.getCurrency().getTitle()));
+                if (model.getAmount().compareTo(totalProfit.getTotalAmount()) > 0)
+                    throw new NotAcceptableException(String.format("Insufficient balance, You are not allowed to withdraw more than %s of the total profit.", totalProfit.getTotalAmount()));
+            }
+
+        } else if(model.getTransactionType().equals(TransactionType.DEPOSIT)) {
+            //please deposit more than the subscription amount
         }
         model.setActive(false);
         var result =  super.create(model);
@@ -147,6 +177,7 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter,WalletModel,
     public List<BalanceModel> totalBonusGroupedByCurrency(long userId) {
         return walletRepository.totalBonusGroupedByCurrency(userId);
     }
+
     @Override
     public List<BalanceModel> totalRewardGroupedByCurrency(long userId) {
         return walletRepository.totalRewardGroupedByCurrency(userId);
@@ -155,9 +186,6 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter,WalletModel,
     @Override
     public List<BalanceModel> totalProfitGroupedByCurrency(long userId) {
         return walletRepository.totalProfitGroupedByCurrency(userId);
-//        return result.stream()
-//                .map(obj -> new BalanceModel(CurrencyType.valueOf((String) obj[0]),(BigDecimal) obj[1]))
-//                .collect(Collectors.toList());
     }
 
     @Override
@@ -166,7 +194,7 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter,WalletModel,
         DateTemplate<Date> truncatedDate = Expressions.dateTemplate(Date.class, "date_trunc('day', {0})", path.createdDate);
         var results = queryFactory.select(truncatedDate, path.amount.sum())
                 .from(path)
-                .where(path.createdDate.between(DateUtil.toLocalDateTime(startDate),DateUtil.toLocalDateTime(endDate)))
+                .where(truncatedDate.between(new Date(startDate),new Date(endDate)))
                 .where(path.transactionType.eq(transactionType))
                 .where(path.user.id.eq(sessionHolder.getCurrentUser().getId()))
                 .groupBy(truncatedDate)

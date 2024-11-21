@@ -43,6 +43,10 @@ public class WalletRestController extends BaseRestControllerImpl<WalletFilter, W
     public ResponseEntity<List<BalanceModel>> totalBonusGroupedByCurrency(@PathVariable long userId){
         return ResponseEntity.ok(walletService.totalBonusGroupedByCurrency(userId));
     }
+    @GetMapping("/total-reward/{userId}")
+    public ResponseEntity<List<BalanceModel>> totalRewardGroupedByCurrency(@PathVariable long userId){
+        return ResponseEntity.ok(walletService.totalRewardGroupedByCurrency(userId));
+    }
     @GetMapping("/total-profit/{userId}")
     public ResponseEntity<List<BalanceModel>> totalProfitGroupedByCurrency(@PathVariable long userId){
         return ResponseEntity.ok(walletService.totalProfitGroupedByCurrency(userId));

@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Date;
+
 @RestController
 @Tag(name = "Arbitrage Rest Service v1")
 @RequestMapping(value = "/api/v1/arbitrage")
@@ -24,8 +26,12 @@ public class ArbitrageRestController extends BaseRestControllerImpl<ArbitrageFil
         this.arbitrageService = service;
     }
     @GetMapping("count-all-by-user/{userId}")
-    public ResponseEntity<Long> countAllByUserId(@PathVariable long userId) {
+    public ResponseEntity<Long> countAllByUserId(@PathVariable Long userId) {
         return ResponseEntity.ok(arbitrageService.countAllByUserId(userId));
+    }
+    @GetMapping("count-all-by-user-and-date/{userId}/{epochDate}")
+    public ResponseEntity<Long> countAllByUserIdAndDate(@PathVariable Long userId, @PathVariable Long epochDate) {
+        return ResponseEntity.ok(arbitrageService.countAllByUserIdAndDate(userId, new Date(epochDate)));
     }
     @GetMapping("find-top-coins/{pageSize}")
     public ResponseEntity<Page<CoinUsageDTO>> findMostUsedCoins(@PathVariable int pageSize) {
