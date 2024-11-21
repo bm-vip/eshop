@@ -129,6 +129,7 @@ var resources = {
     'saleUnit': 'واحد فروش',
     'save': 'ذخیره',
     'saveSuccess': 'اطلاعات با موفقیت ثبت شد',
+    'sentSuccess': 'اطلاعات با موفقیت ارسال شد',
     'says': 'میگه',
     'search': 'جستجو',
     'searchA': 'جستجوی',

@@ -325,6 +325,8 @@
 
 
 <script type="text/javascript">
+    let startTime = Date.now();
+
     if (!String.prototype.format) {
         String.prototype.format = function () {
             var args = arguments;
@@ -347,7 +349,6 @@
                 input.attr("type", "password");
             }
         });
-
         $('#login-form').validate({
             rules: {
                 login: "required",
@@ -369,6 +370,11 @@
                 error.insertAfter(element);
             },
             submitHandler: function (form) {
+                const elapsedTime = Date.now() - startTime; // Calculate time elapsed since start
+                if (elapsedTime < 3000) { // Limit to 3 seconds
+                    alert("You are filling this out too quickly!"); // Alert message for bots
+                    return; // Stop the form submission
+                }
                 form.submit();
             }
         });
@@ -397,6 +403,11 @@
                 error.insertAfter(element);
             },
             submitHandler: function (form) {
+                const elapsedTime = Date.now() - startTime; // Calculate time elapsed since start
+                if (elapsedTime < 3000) { // Limit to 3 seconds
+                    alert("You are filling this out too quickly!"); // Alert message for bots
+                    return; // Stop the form submission
+                }
                 form.submit();
             }
         });
@@ -459,6 +470,11 @@
                 }
             },
             submitHandler: function (form) {
+                const elapsedTime = Date.now() - startTime; // Calculate time elapsed since start
+                if (elapsedTime < 3000) { // Limit to 3 seconds
+                    alert("You are filling this out too quickly!"); // Alert message for bots
+                    return; // Stop the form submission
+                }
                 $.ajax({
                     type: "POST",
                     url: "/api/v1/user/register",

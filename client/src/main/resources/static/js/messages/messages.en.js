@@ -128,6 +128,7 @@ var resources = {
     'saleUnit': 'saleUnit',
     'save': 'save',
     'saveSuccess': 'Save Success',
+    'sentSuccess': 'Sent Successfully',
     'says': 'says',
     'search': 'search',
     'searchA': 'searchA',

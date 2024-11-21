@@ -108,7 +108,8 @@ function sendNotification() {
             $("#sendNotification").removeAttr("disabled");
             if (data.error == null) {
                 clearModal();
-                show_success(resources.saveSuccess);
+                $('#send-notification-modal').modal('hide');
+                show_success(resources.sentSuccess);
             } else {
                 show_error(data.error);
             }

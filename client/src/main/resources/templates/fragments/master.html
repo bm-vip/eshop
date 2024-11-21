@@ -80,7 +80,7 @@
             <div class="col-md-3 left_col">
                 <div class="left_col scroll-view">
                     <div class="navbar nav_title" style="border: 0;">
-                        <a th:href="@{/dashboard}" class="site_title"><img th:src="@{/images/favicon.png}" style="width: 40px"/> <span th:text="#{siteName}">Site name</span></a>
+                        <a th:href="@{/dashboard}" class="site_title"><img th:src="@{/images/favicon1.png}" style="width: 40px"/> <span th:text="#{siteName}">Site name</span></a>
                     </div>
 
                     <div class="clearfix"></div>
@@ -120,7 +120,7 @@
                                 </ul>
                             </li>
                             <li><a th:href="@{/arbitrage}"><i class="fa fa-money-bill-trend-up"></i> <th:block th:text="#{arbitrageBot}"></th:block></a></li>
-                            <li><a th:href="@{/support}"><i class="fa fa-headset"></i> <th:block th:text="#{support}"></th:block></a></li>
+                            <li><a th:href="@{/notification}"><i class="fa fa-bell"></i> <th:block th:text="#{notifications}"></th:block> <span class="badge bg-green" th:text="${notifications?.totalElements ?: 0}">6</span></a></li>
                             <li><a th:href="@{/profile}"><i class="fa fa-user"></i> <th:block th:text="#{profile}"></th:block></a></li>
                             <li><a th:href="@{/about}"><i class="fa fa-info-circle"></i> <th:block th:text="#{about}"></th:block></a></li>
                         </ul>
@@ -250,6 +250,27 @@
 <!--Start of Tawk.to Script-->
 <script type="text/javascript">
     var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+    Tawk_API.onLoad = function() {
+        // Set visitor information
+        Tawk_API.setAttributes({
+            'name'  : currentUser.selectTitle,
+            'email' : currentUser.email,
+            'id'    : currentUser.id
+        }, function(error) {
+            if(error) {
+                console.error('Error setting attributes:', error);
+            }
+        });
+    };
+    function resetTawkChat(userId) {
+        Tawk_API.reset();
+
+        // Optional: Set new user details after reset
+        Tawk_API.setAttributes({
+            'id': userId
+        });
+    }
+
     (function(){
         var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
         s1.async=true;
