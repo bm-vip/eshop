@@ -223,6 +223,12 @@ function clearAll_() {
 
 Dropzone.autoDiscover = false;
 function onLoad() {
+// Handle tab shown event
+    $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+        // Adjust the DataTable in the newly active tab
+        let targetTab = $(e.target).attr('href'); // Get the ID of the active tab
+        $(targetTab).find('.table').DataTable().columns.adjust().responsive.recalc();
+    });
     myDropzone = new Dropzone(".dropzone", {
         url: "/api/v1/files",
         maxFiles: 1,
