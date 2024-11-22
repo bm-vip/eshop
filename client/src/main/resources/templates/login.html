@@ -77,6 +77,16 @@
             color: rgb(108, 117, 122) !important;
             font-size: 12px!important;
         }
+        .honeypot {
+            display: none;
+            opacity: 0;
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 0;
+            width: 0;
+            z-index: -1;
+        }
     </style>
     <script type="text/javascript" th:src="'/js/messages/messages.' + #{locale} + '.js'" ></script>
     <script type="text/javascript" th:src="#{direction} +'/jquery/dist/jquery.min.js'"></script>
@@ -95,6 +105,7 @@
     <a class="hiddenanchor" id="send_otp"></a>
 
     <div class="login_wrapper">
+        <input type="text" name="website" autocomplete="off" class="honeypot"  tabindex="-1">
         <div class="animate form login_form">
             <section class="login_content">
                 <form id="login-form" th:action="@{/login}" method="POST" class="form-horizontal">
@@ -105,7 +116,7 @@
                             <div class='alert alert-danger' th:if="${errorMsg != null && errorMsg!='invalidSession'}">
                                 <button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;
                                 </button>
-                                <p th:text="#{${errorMsg}}"></p>
+                                <p th:text="${errorMsg}"></p>
                             </div>
                         </div>
                     </div>

@@ -14,6 +14,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.session.HttpSessionEventPublisher;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
@@ -35,8 +36,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-
-        http.authorizeRequests()
+        HoneypotAuthenticationFilter honeypotFilter =
+                new HoneypotAuthenticationFilter("website");
+        http.addFilterBefore(honeypotFilter, UsernamePasswordAuthenticationFilter.class).authorizeRequests()
                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                 .antMatchers("/ltr/**","/logout","/notfound","/login","/registration","/about","/send-OTP","/api/v1/country/findAllSelect*","/api/v1/user/register*","/actuator/**").permitAll()
                 .antMatchers(HttpMethod.GET,  "/dashboard","/subUsers","/deposit","/profile","/withdrawal","/notification","/arbitrage","about","/api/v1/files/**", "/api/v1/common/**","/api/v1/wallet/**","/api/v1/coin/**","/api/v1/exchange/**","/api/v1/parameter/**","/api/v1/subscription/**","/api/v1/subscription-package/**","/api/v1/user/**","/api/v1/role/**","/api/v1/arbitrage/**","/api/v1/notification/**").hasAnyRole(RoleType.name(RoleType.ADMIN),RoleType.name(RoleType.SUPER_WISER), RoleType.name(RoleType.USER))
