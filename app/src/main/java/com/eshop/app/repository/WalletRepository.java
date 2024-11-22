@@ -44,7 +44,7 @@ public interface WalletRepository extends BaseRepository<WalletEntity, Long> {
 			+ "FROM WalletEntity w WHERE w.user.id = :userId AND w.active is true GROUP BY w.currency")
 	List<BalanceModel> totalProfitGroupedByCurrency(Long userId);
 
-	boolean existsByUserIdAndTransactionTypeAndCurrencyAndActiveTrue(Long userId, TransactionType transactionType, CurrencyType currencyType);
+	long countAllByUserIdAndTransactionTypeAndActiveTrue(Long userId, TransactionType transactionType);
 
 //	@Query(value = "SELECT currency, SUM(totalAmount) AS totalAmount" +
 //			" FROM (" +
