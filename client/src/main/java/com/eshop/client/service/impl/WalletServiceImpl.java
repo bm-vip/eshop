@@ -198,6 +198,7 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter,WalletModel,
                 .where(path.transactionType.eq(transactionType))
                 .where(path.user.id.eq(sessionHolder.getCurrentUser().getId()))
                 .groupBy(truncatedDate)
+                .orderBy(truncatedDate.asc())
                 .fetch();
         Map<Long, BigDecimal> map = results.stream()
                 .collect(Collectors.toMap(tuple -> tuple.get(truncatedDate).getTime(),tuple -> tuple.get(path.amount.sum())));
