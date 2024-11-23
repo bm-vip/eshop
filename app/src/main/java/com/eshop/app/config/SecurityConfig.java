@@ -27,6 +27,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     SuccessLoginConfig successLoginConfig;
     @Autowired
     private CustomUserDetailsServiceImpl userDetailsService;
+    @Autowired
+    private CustomAccessDeniedHandler accessDeniedHandler;
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -40,8 +42,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.addFilterBefore(honeypotFilter, UsernamePasswordAuthenticationFilter.class).authorizeRequests()
                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
-                .antMatchers("/pnotify/**","/bootstrap-3.3.7/**","/logout","/notfound","/login","/actuator/**").permitAll()
-                .antMatchers("/dashboard","/userManagement","/wallet","/coin","/exchange","/notification","/questionAnswer","/subscriptionPackage","/fileUpload/**","/subscription","/api/v1/user/**","/api/v1/exchange/**","/api/v1/coin/**","/api/v1/role/**","/api/v1/wallet/**","/api/v1/notification/**","/api/v1/question/**","/api/v1/answer/**","/api/v1/subscription-package/**","/api/v1/subscription-package-detail/**","/api/v1/subscription/**","/api/v1/files/**","/api/v1/common/**","/api/v1/arbitrage/**").hasAnyRole(RoleType.name(RoleType.ADMIN), RoleType.name(RoleType.SUPER_WISER))
+                .antMatchers("/pnotify/**","/bootstrap-3.3.7/**","/logout","/access-denied","/notfound","/login","/actuator/**").permitAll()
+                .antMatchers("/dashboard","/userManagement","/wallet","/coin","/exchange","/questionAnswer","/notification","/fileUpload/**","/subscription","/subscriptionPackage","/api/v1/user/**","/api/v1/coin/**","/api/v1/exchange/**","/api/v1/role/**","/api/v1/wallet/**","/api/v1/notification/**","/api/v1/question/**","/api/v1/answer/**","/api/v1/subscription-package/**","/api/v1/subscription-package-detail/**","/api/v1/subscription/**","/api/v1/files/**","/api/v1/common/**","/api/v1/arbitrage/**").hasAnyRole(RoleType.name(RoleType.ADMIN), RoleType.name(RoleType.SUPER_WISER))
                 .antMatchers("/**").hasRole(RoleType.name(RoleType.ADMIN))
                 .anyRequest().authenticated()
                 .and().csrf().disable().formLogin()
@@ -52,7 +54,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and().logout()
                 .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
                 .deleteCookies("JSESSIONID", "SESSION").invalidateHttpSession(true)
-                .logoutSuccessUrl("/login").and().exceptionHandling().accessDeniedPage("/access-denied")
+                .logoutSuccessUrl("/login").and().exceptionHandling().accessDeniedHandler(accessDeniedHandler)
                 .and().sessionManagement()
                 .sessionFixation().newSession()
                 .invalidSessionUrl("/login?errorMsg=invalidSession").sessionAuthenticationErrorUrl("/login?errorMsg=sessionAuthenticationError")
