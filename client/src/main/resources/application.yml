@@ -11,6 +11,7 @@ server:
   error:
     include-message: always
     include-binding-errors: always
+    path: /error
 # Spring Boot configuration
 spring:
   application:
