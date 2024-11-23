@@ -32,7 +32,7 @@
         $("#totalArbitrage").text(data);
     });
     const today = new Date();
-    $.get(`/api/v1/arbitrage/count-all-by-user-and-date/${currentUser.id}/${new Date(today.getFullYear(), today.getMonth(), today.getDate()).getTime()}`, function (data) {
+    $.get(`/api/v1/arbitrage/count-today-by-user/${currentUser.id}`, function (data) {
         $("#dailyArbitrage").text(data);
     });
 

@@ -29,9 +29,13 @@ public class ArbitrageRestController extends BaseRestControllerImpl<ArbitrageFil
     public ResponseEntity<Long> countAllByUserId(@PathVariable Long userId) {
         return ResponseEntity.ok(arbitrageService.countAllByUserId(userId));
     }
-    @GetMapping("count-all-by-user-and-date/{userId}/{epochDate}")
-    public ResponseEntity<Long> countAllByUserIdAndDate(@PathVariable Long userId, @PathVariable Long epochDate) {
-        return ResponseEntity.ok(arbitrageService.countAllByUserIdAndDate(userId, new Date(epochDate)));
+    @GetMapping("count-by-user-and-date/{userId}/{epochDate}")
+    public ResponseEntity<Long> countByUserIdAndDate(@PathVariable Long userId, @PathVariable Long epochDate) {
+        return ResponseEntity.ok(arbitrageService.countByUserIdAndDate(userId, new Date(epochDate)));
+    }
+    @GetMapping("count-today-by-user/{userId}")
+    public ResponseEntity<Long> countByUserIdAndDate(@PathVariable Long userId) {
+        return ResponseEntity.ok(arbitrageService.countByUserIdAndDate(userId, new Date()));
     }
     @GetMapping("find-top-coins/{pageSize}")
     public ResponseEntity<Page<CoinUsageDTO>> findMostUsedCoins(@PathVariable int pageSize) {
