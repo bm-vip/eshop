@@ -28,6 +28,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private CustomUserDetailsServiceImpl userDetailsService;
     @Autowired
     SuccessLoginConfig successLoginConfig;
+    @Autowired
+    CustomAccessDeniedHandler accessDeniedHandler;
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -53,7 +55,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and().logout()
                 .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
                 .deleteCookies("JSESSIONID", "SESSION").invalidateHttpSession(true)
-                .logoutSuccessUrl("/login").and().exceptionHandling().accessDeniedPage("/page_403")
+                .logoutSuccessUrl("/login").and().exceptionHandling().accessDeniedHandler(accessDeniedHandler)
                 .and().sessionManagement()
                 .sessionFixation().newSession()
                 .invalidSessionUrl("/login?errorMsg=invalidSession").sessionAuthenticationErrorUrl("/login?errorMsg=sessionAuthenticationError")

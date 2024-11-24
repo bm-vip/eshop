@@ -6,13 +6,16 @@ import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.context.request.WebRequest;
 
 import javax.servlet.http.HttpServletRequest;
+import java.nio.file.AccessDeniedException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -94,5 +97,10 @@ public class BaseExceptionHandler {
     @ExceptionHandler(BaseException.class)
     public ResponseEntity<ErrorResponse> handleBaseException(BaseException ex, HttpServletRequest request) {
         return new ResponseEntity<>(ex.toErrorResponse(request.getRequestURI()), ex.getHttpStatus());
+    }
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ErrorResponse> handleAccessDeniedForRest(WebRequest request, AccessDeniedException ex) {
+        String path = request.getDescription(false).substring(4); // Extract the request path
+        return new ResponseEntity<>(new ErrorResponse(HttpStatus.FORBIDDEN,path,ex.getMessage()),HttpStatus.FORBIDDEN);
     }
 }
