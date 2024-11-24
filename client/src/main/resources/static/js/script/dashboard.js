@@ -20,7 +20,7 @@
         $("#referralBonus").text(get(() => data[0].totalAmount, 0));
     });
 
-    $.getJSON("/api/v1/wallet/total-reward/" + currentUser.id, function (data) {
+    $.getJSON("/api/v1/wallet/total-profit/" + currentUser.id, function (data) {
         $("#totalProfit").text(get(() => data[0].totalAmount, 0));
     });
 

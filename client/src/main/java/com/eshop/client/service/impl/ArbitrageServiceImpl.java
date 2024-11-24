@@ -151,7 +151,7 @@ public class ArbitrageServiceImpl extends BaseServiceImpl<ArbitrageFilter, Arbit
         QArbitrageEntity path = QArbitrageEntity.arbitrageEntity;
         DateTemplate<Date> truncatedDate = Expressions.dateTemplate(Date.class, "date_trunc('day', {0})", path.createdDate);
         return queryFactory.from(path)
-                .where(truncatedDate.eq(date))
+                .where(truncatedDate.eq(DateUtil.truncate(date)))
                 .where(path.user.id.eq(userId))
                 .fetchCount();
     }
