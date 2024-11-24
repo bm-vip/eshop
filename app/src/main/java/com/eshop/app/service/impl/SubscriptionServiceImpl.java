@@ -27,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import static com.eshop.app.service.ParameterService.walletAddress;
 import static com.eshop.app.util.MapperHelper.get;
@@ -65,8 +66,8 @@ public class SubscriptionServiceImpl extends BaseServiceImpl<SubscriptionFilter,
         filter.getId().ifPresent(v -> builder.and(path.id.eq(v)));
         filter.getUserId().ifPresent(v -> builder.and(path.user.id.eq(v)));
         filter.getSubscriptionPackageId().ifPresent(v -> builder.and(path.subscriptionPackage.id.eq(v)));
-        filter.getExpireDateFrom().ifPresent(v -> builder.and(path.expireDate.goe(DateUtil.toLocalDate(v))));
-        filter.getExpireDateTo().ifPresent(v -> builder.and(path.expireDate.loe(DateUtil.toLocalDate(v))));
+        filter.getExpireDateFrom().ifPresent(v -> builder.and(path.expireDate.goe(DateUtil.toLocalDateTime(v))));
+        filter.getExpireDateTo().ifPresent(v -> builder.and(path.expireDate.loe(DateUtil.toLocalDateTime(v))));
         filter.getDiscountPercentage().ifPresent(v -> builder.and(path.discountPercentage.eq(v)));
         filter.getFinalPriceFrom().ifPresent(v -> builder.and(path.finalPrice.goe(v)));
         filter.getFinalPriceTo().ifPresent(v -> builder.and(path.finalPrice.loe(v)));
@@ -83,9 +84,9 @@ public class SubscriptionServiceImpl extends BaseServiceImpl<SubscriptionFilter,
 
         entity.setStatus(EntityStatusType.Pending);
         if(subscriptionPackage.getDuration() <= 0)
-            entity.setExpireDate(DateUtil.toLocalDate(4102444800000L));
+            entity.setExpireDate(DateUtil.toLocalDateTime(4102444800000L));
         else {
-            entity.setExpireDate(LocalDate.now().plusDays(subscriptionPackage.getDuration()));
+            entity.setExpireDate(LocalDateTime.now().plusDays(subscriptionPackage.getDuration()));
         }
         entity.setFinalPrice(calculatePrice(subscriptionPackage.getPrice(), model.getDiscountPercentage()));
         if(model.getStatus().equals(EntityStatusType.Active)) {
@@ -117,7 +118,7 @@ public class SubscriptionServiceImpl extends BaseServiceImpl<SubscriptionFilter,
             var subscriptionPackage = subscriptionPackageRepository.findById(model.getSubscriptionPackage().getId()).orElseThrow(()-> new NotFoundException("No such subscriptionPackage with " + model.getSubscriptionPackage().getId()));
             entity.setSubscriptionPackage(subscriptionPackage);
             if(entity.getSubscriptionPackage().getDuration() <= 0)
-                entity.setExpireDate(DateUtil.toLocalDate(4102444800000L));
+                entity.setExpireDate(DateUtil.toLocalDateTime(4102444800000L));
             else {
                 LocalDate.now().plusDays(entity.getSubscriptionPackage().getDuration());//The remaining days of previous subscription will be burned
             }

@@ -6,7 +6,7 @@ import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import static com.eshop.app.util.MapperHelper.getOrDefault;
 import static javax.persistence.FetchType.EAGER;
@@ -30,7 +30,7 @@ public class SubscriptionEntity extends BaseEntity<Long> implements LogicalDelet
     @JoinColumn(name = "subscription_package_id", nullable = false)
     private SubscriptionPackageEntity subscriptionPackage;
     @Column(name = "expire_date")
-    private LocalDate expireDate;
+    private LocalDateTime expireDate;
     @Column(name = "discount_percentage")
     private Integer discountPercentage;
     @Column(name = "final_price", nullable = false)

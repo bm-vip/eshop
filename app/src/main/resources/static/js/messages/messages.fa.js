@@ -431,5 +431,7 @@ var resources = {
     'sender': 'ارسال کننده',
     'recipient': 'دریافت کننده',
     'subject': 'موضوع',
-    'body': 'بدنه'
+    'body': 'بدنه',
+    'minTradingReward':'کمترین پاداش',
+    'maxTradingReward':'بیشترین پاداش',
 };

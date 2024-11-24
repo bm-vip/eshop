@@ -25,9 +25,18 @@ rules = {
     },
     currency: "required",
     status: "required",
-    minTradingReward: "required",
-    maxTradingReward: "required",
-    parentReferralBonus: "required"
+    minTradingReward: {
+        required: true,
+        currency: ["$", false]
+    },
+    maxTradingReward: {
+        required: true,
+        currency: ["$", false]
+    },
+    parentReferralBonus: {
+        required: true,
+        currency: ["$", false]
+    },
 };
 
 messages = {
@@ -55,9 +64,18 @@ messages = {
     },
     currency: resources.pleaseEnter.format(resources.currency),
     status: resources.pleaseSelect.format(resources.status),
-    minTradingReward: resources.pleaseEnter.format('{0} {1} {2}'.format(resources.minimum, resources.awards, resources.trade)),
-    maxTradingReward: resources.pleaseEnter.format('{0} {1} {2}'.format(resources.maximum, resources.awards, resources.trade)),
-    parentReferralBonus: resources.pleaseEnter.format(resources.parentReferralBonus)
+    minTradingReward: {
+        required: resources.pleaseEnter.format(resources.minTradingReward),
+        currency: resources.invalidFormat.format(resources.minTradingReward)
+    },
+    maxTradingReward: {
+        required: resources.pleaseEnter.format(resources.maxTradingReward),
+        currency: resources.invalidFormat.format(resources.maxTradingReward)
+    },
+    parentReferralBonus: {
+        required: resources.pleaseEnter.format(resources.parentReferralBonus),
+        currency: resources.invalidFormat.format(resources.parentReferralBonus)
+    }
 };
 
 function loadEntityByInput() {
@@ -71,7 +89,7 @@ function loadEntityByInput() {
         status: isNullOrEmpty($("#status").val()) ? null : $("#status").val(),
         name: $("#name").val(),
         minTradingReward: $("#minTradingReward").val(),
-        maxTradingReward: $("#msxReward").val(),
+        maxTradingReward: $("#maxTradingReward").val(),
         parentReferralBonus: $("#parentReferralBonus").val(),
         userProfitPercentage: $("#userProfitPercentage").val(),
         siteProfitPercentage: $("#siteProfitPercentage").val(),

@@ -29,7 +29,6 @@ import org.springframework.util.CollectionUtils;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
@@ -170,7 +169,7 @@ public class ArbitrageServiceImpl extends BaseServiceImpl<ArbitrageFilter, Arbit
         var subscription = subscriptionRepository.findByUserIdAndStatus(userId, EntityStatusType.Active);
         if(subscription == null)
             throw new NotFoundException("subscription not found");
-        var todayArbitrages = arbitrageRepository.findByUserIdAndSubscriptionIdAndCreatedDateOrderByCreatedDateDesc(userId, subscription.getId(), DateUtil.truncate(new Date()));
+        var todayArbitrages = arbitrageRepository.findByUserIdAndSubscriptionIdAndCreatedDateOrderByCreatedDateDesc(userId, subscription.getId(), LocalDateTime.now().truncatedTo(ChronoUnit.DAYS));
         if(CollectionUtils.isEmpty(todayArbitrages))
             return null;
         var allowedDate = todayArbitrages.get(0).getCreatedDate().plusMinutes(20L);

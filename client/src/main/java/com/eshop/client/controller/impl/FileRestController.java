@@ -2,6 +2,7 @@ package com.eshop.client.controller.impl;
 
 import com.eshop.client.model.FileModel;
 import com.eshop.client.model.PageModel;
+import com.eshop.client.util.DateUtil;
 import com.eshop.exception.common.NotFoundException;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -60,7 +61,7 @@ public class FileRestController {
 
         List<FileModel> list = Arrays.stream(files)
                 .filter(File::isFile) // Only include files, not directories
-                .map(file -> new FileModel(file.getName(), new Date(file.lastModified())))
+                .map(file -> new FileModel(file.getName(), DateUtil.toLocalDateTime(file.lastModified())))
                 .filter(f -> name.isEmpty() || f.getName().contains(name.get()))
                 .sorted(getFileModelComparator(pageable))
                 .collect(Collectors.toList());

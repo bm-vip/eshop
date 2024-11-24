@@ -7,8 +7,8 @@ import lombok.experimental.Accessors;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.Date;
 
 @Data
 @Accessors(chain = true)
@@ -17,7 +17,7 @@ public class SubscriptionModel extends BaseModel<Long> {
     private UserModel user;
     @NotNull
     private SubscriptionPackageModel subscriptionPackage;
-    private Date expireDate;
+    private LocalDateTime expireDate;
     private Integer discountPercentage;
     private BigDecimal finalPrice;
     private EntityStatusType status = EntityStatusType.Pending;

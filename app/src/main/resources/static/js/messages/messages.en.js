@@ -413,5 +413,7 @@ var resources = {
     'sender': 'sender',
     'recipient': 'recipient',
     'subject': 'subject',
-    'body': 'body'
+    'body': 'body',
+    'minTradingReward':'minimum trading reward',
+    'maxTradingReward':'maximum trading reward',
 };
