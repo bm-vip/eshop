@@ -230,6 +230,7 @@ var resources = {
     'aroundTheWeb': 'Around The Web',
     'pleaseSelect': 'Please Select {0} ',
     'invalidFormat': 'Invalid Format {0} ',
+    'invalidDecimal': 'Please enter a number with no more than {0} decimal places.',
     'invalidTronHash': 'Tron transaction hash is not valid',
     'invalidTronAddress': 'Tron wallet address is not valid',
     'validMimType': 'ValidMim Type',

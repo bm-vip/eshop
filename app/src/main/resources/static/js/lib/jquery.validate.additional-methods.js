@@ -21,6 +21,17 @@ $.validator.addMethod("pattern", function (value, element, param) {
     return param.test(value);
 }, $.validator.format(resources.invalidFormat));
 
+$.validator.addMethod("decimalPlaces", function(value, element, params) {
+    if (this.optional(element)) {
+        return true;
+    }
+    if (value.indexOf(".") === -1) {
+        return true;
+    }
+    var parts = value.split(".");
+    return (parts[1].length <= params);
+}, $.validator.format(resources.invalidDecimal));
+
 $.validator.addMethod("validTronHash", function (value, element) {
     // Tron transaction hash regex: 64 hexadecimal characters
     const tronHashRegex = /^[0-9a-fA-F]{64}$/;

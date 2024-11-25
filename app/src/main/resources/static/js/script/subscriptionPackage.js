@@ -27,15 +27,18 @@ rules = {
     status: "required",
     minTradingReward: {
         required: true,
-        currency: ["$", false]
+        number: true,
+        decimalPlaces: 4
     },
     maxTradingReward: {
         required: true,
-        currency: ["$", false]
+        number: true,
+        decimalPlaces: 4
     },
     parentReferralBonus: {
         required: true,
-        currency: ["$", false]
+        number: true,
+        decimalPlaces: 4
     },
 };
 
@@ -66,15 +69,18 @@ messages = {
     status: resources.pleaseSelect.format(resources.status),
     minTradingReward: {
         required: resources.pleaseEnter.format(resources.minTradingReward),
-        currency: resources.invalidFormat.format(resources.minTradingReward)
+        number: resources.mustBeNumber.format(resources.minTradingReward),
+        decimalPlaces: resources.invalidDecimal.format(4),
     },
     maxTradingReward: {
         required: resources.pleaseEnter.format(resources.maxTradingReward),
-        currency: resources.invalidFormat.format(resources.maxTradingReward)
+        number: resources.mustBeNumber.format(resources.maxTradingReward),
+        decimalPlaces: resources.invalidDecimal.format(4),
     },
     parentReferralBonus: {
         required: resources.pleaseEnter.format(resources.parentReferralBonus),
-        currency: resources.invalidFormat.format(resources.parentReferralBonus)
+        number: resources.mustBeNumber.format(resources.parentReferralBonus),
+        decimalPlaces: resources.invalidDecimal.format(4),
     }
 };
 
