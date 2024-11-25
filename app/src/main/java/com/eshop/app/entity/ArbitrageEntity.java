@@ -2,6 +2,7 @@ package com.eshop.app.entity;
 
 import com.eshop.app.enums.CurrencyType;
 import lombok.Data;
+import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -11,6 +12,7 @@ import static com.eshop.app.util.MapperHelper.getOrDefault;
 @Data
 @Entity
 @Table(name = "tbl_arbitrage")
+@Audited
 public class ArbitrageEntity extends BaseEntity<Long> {
 
 	private static final long serialVersionUID = 1L;

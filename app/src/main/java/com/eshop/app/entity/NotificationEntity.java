@@ -2,6 +2,7 @@ package com.eshop.app.entity;
 
 import lombok.Data;
 import org.hibernate.annotations.Where;
+import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
 import java.time.ZoneOffset;
@@ -11,6 +12,7 @@ import java.time.ZonedDateTime;
 @Entity
 @Where(clause = "deleted=false")
 @Table(name = "tbl_notification")
+@Audited
 public class NotificationEntity extends BaseEntity<Long> implements LogicalDeleted {
 
     @Id

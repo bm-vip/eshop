@@ -3,6 +3,7 @@ package com.eshop.app.entity;
 import com.eshop.app.enums.CurrencyType;
 import com.eshop.app.enums.TransactionType;
 import lombok.Data;
+import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -12,6 +13,7 @@ import java.time.format.DateTimeFormatter;
 @Data
 @Entity
 @Table(name = "tbl_wallet")
+@Audited
 public class WalletEntity extends BaseEntity<Long> {
 
 	private static final long serialVersionUID = 1L;

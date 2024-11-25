@@ -1,6 +1,8 @@
 package com.eshop.app.entity;
 
 import lombok.Data;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
@@ -10,6 +12,7 @@ import java.util.Set;
 @Data
 @Entity
 @Table(name = "tbl_user")
+@Audited
 public class UserEntity extends BaseEntity<Long> {
 
 	private static final long serialVersionUID = 1L;
@@ -54,6 +57,7 @@ public class UserEntity extends BaseEntity<Long> {
 	private String profileImageUrl;
 	@ManyToOne
 	@JoinColumn(name = "country_id")
+	@NotAudited
 	private CountryEntity country;
 
 	@ManyToMany(fetch = FetchType.EAGER)

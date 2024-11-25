@@ -3,6 +3,7 @@ package com.eshop.app.entity;
 import com.eshop.app.enums.CurrencyType;
 import com.eshop.app.enums.EntityStatusType;
 import lombok.Data;
+import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -11,6 +12,7 @@ import java.math.RoundingMode;
 @Data
 @Entity
 @Table(name = "tbl_subscription_package")
+@Audited
 public class SubscriptionPackageEntity extends BaseEntity<Long> {
 
     @Id

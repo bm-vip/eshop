@@ -12,6 +12,7 @@ import com.querydsl.core.types.Predicate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.history.Revision;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
@@ -31,6 +32,11 @@ public abstract class BaseServiceImpl<F, M extends BaseModel<ID>, E extends Base
     @Transactional(readOnly = true)
     public Page<M> findAll(F filter, Pageable pageable) {
         return repository.findAll(queryBuilder(filter), pageable).map(mapper::toModel);
+    }
+
+    @Override
+    public Page<Revision<Long, M>> findAllHistory(ID id, Pageable pageable) {
+        return repository.findRevisions(id, pageable).map(revision-> Revision.of(revision.getMetadata(), mapper.toModel(revision.getEntity())));
     }
 
     @Override
@@ -66,6 +72,13 @@ public abstract class BaseServiceImpl<F, M extends BaseModel<ID>, E extends Base
     public M findById(ID id) {
         E entity = repository.findById(id).orElseThrow(() -> new NotFoundException("id: " + id));
         return mapper.toModel(entity);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Revision<Long, M> findHistoryAtRevision(ID id, Long revisionId) {
+        var revision = repository.findRevision(id,revisionId).orElseThrow(() -> new NotFoundException("Revision not found by id " + id));
+        return Revision.of(revision.getMetadata(), mapper.toModel(revision.getEntity()));
     }
 
     @Override

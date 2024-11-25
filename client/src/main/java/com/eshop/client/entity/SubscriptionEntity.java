@@ -3,6 +3,7 @@ package com.eshop.client.entity;
 import com.eshop.client.enums.EntityStatusType;
 import lombok.Data;
 import org.hibernate.annotations.Where;
+import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -16,6 +17,7 @@ import static javax.persistence.FetchType.LAZY;
 @Entity
 @Table(name = "tbl_subscription")
 @Where(clause = "deleted=false")
+@Audited
 public class SubscriptionEntity extends BaseEntity<Long> implements LogicalDeleted {
 
     @Id

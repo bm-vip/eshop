@@ -4,6 +4,7 @@ import com.eshop.client.enums.CurrencyType;
 import com.eshop.client.enums.EntityStatusType;
 import com.eshop.client.util.NumberUtil;
 import lombok.Data;
+import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -15,6 +16,7 @@ import java.util.stream.Collectors;
 @Data
 @Entity
 @Table(name = "tbl_subscription_package")
+@Audited
 public class SubscriptionPackageEntity extends BaseEntity<Long> {
 
     @Id

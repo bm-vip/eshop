@@ -1,6 +1,7 @@
 package com.eshop.client.entity;
 
 import lombok.Data;
+import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -10,6 +11,7 @@ import static javax.persistence.FetchType.LAZY;
 @Data
 @Entity
 @Table(name = "tbl_subscription_package_detail")
+@Audited
 public class SubscriptionPackageDetailEntity extends BaseEntity<Long> {
 
     @Id

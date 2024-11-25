@@ -23,6 +23,7 @@ import com.querydsl.core.types.Predicate;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.Optional;
 
 @Service
 public class SubscriptionPackageServiceImpl extends BaseServiceImpl<SubscriptionPackageFilter,SubscriptionPackageModel, SubscriptionPackageEntity, Long> implements SubscriptionPackageService {
@@ -104,6 +105,13 @@ public class SubscriptionPackageServiceImpl extends BaseServiceImpl<Subscription
 
     @Override
     public SubscriptionPackageModel findMatchedPackageByAmountAndCurrency(BigDecimal amount, CurrencyType currency) {
-        return mapper.toModel(subscriptionPackageRepository.findMatchedPackageByAmountAndCurrency(amount, currency).orElse(subscriptionPackageRepository.findTopByOrderByMaxPriceDesc()));
+        var result = subscriptionPackageRepository.findMatchedPackageByAmountAndCurrency(amount, currency);
+        if(result.isEmpty()) {
+            var lastPackage = subscriptionPackageRepository.findTopByOrderByMaxPriceDesc();
+            if(amount.compareTo(lastPackage.getMaxPrice()) >= 0)
+                return mapper.toModel(lastPackage);
+            return null;
+        }
+        return mapper.toModel(result.get());
     }
 }

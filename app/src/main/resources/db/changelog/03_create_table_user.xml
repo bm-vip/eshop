@@ -14,7 +14,7 @@
     <changeSet id="03-3" author="administrator">
         <createTable tableName="tbl_role">
             <column name="id" type="BIGINT">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_tbl_role"/>
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_role"/>
             </column>
             <column name="created_by" type="VARCHAR(255)"/>
             <column name="created_date" type="TIMESTAMP"/>
@@ -26,9 +26,27 @@
         </createTable>
     </changeSet>
     <changeSet id="03-4" author="administrator">
+        <createTable tableName="tbl_role_aud">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_role_aud"/>
+            </column>
+            <column name="created_by" type="VARCHAR(255)"/>
+            <column name="created_date" type="TIMESTAMP"/>
+            <column name="modified_by" type="VARCHAR(255)"/>
+            <column name="modified_date" type="TIMESTAMP"/>
+            <column defaultValueNumeric="0" name="version" type="integer"/>
+            <column name="role" type="VARCHAR(255)"/>
+            <column name="title" type="VARCHAR(255)"/>
+            <column name="rev" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_role_aud"/>
+            </column>
+            <column name="revtype" type="tinyint"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="03-5" author="administrator">
         <createTable tableName="tbl_user">
             <column name="id" type="BIGINT">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_tbl_user"/>
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_user"/>
             </column>
             <column name="created_by" type="VARCHAR(255)"/>
             <column name="created_date" type="TIMESTAMP"/>
@@ -52,24 +70,68 @@
             <column name="country_id" type="BIGINT" />
         </createTable>
     </changeSet>
-    <changeSet id="03-5" author="administrator">
+    <changeSet id="03-6" author="administrator">
+        <createTable tableName="tbl_user_aud">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_user_aud"/>
+            </column>
+            <column name="created_by" type="VARCHAR(255)"/>
+            <column name="created_date" type="TIMESTAMP"/>
+            <column name="modified_by" type="VARCHAR(255)"/>
+            <column name="modified_date" type="TIMESTAMP"/>
+            <column defaultValueNumeric="0" name="version" type="integer"/>
+            <column name="user_name" type="VARCHAR(255)"/>
+            <column name="email" type="VARCHAR(255)"/>
+            <column name="password" type="VARCHAR(255)"/>
+            <column name="first_name" type="VARCHAR(255)"/>
+            <column name="last_name" type="VARCHAR(255)"/>
+            <column name="uid" type="VARCHAR(8)"/>
+            <column name="parent_id" type="BIGINT" />
+            <column name="tree_path" type="VARCHAR(255)" />
+            <column name="child_count" type="int" defaultValueNumeric="0"/>
+            <column name="wallet_address" type="VARCHAR(255)" />
+            <column name="active_flag" type="BOOLEAN" defaultValueBoolean="false">
+            </column>
+            <column name="profile_image_url" type="VARCHAR(255)" />
+            <column name="country_id" type="BIGINT" />
+            <column name="rev" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_user_aud"/>
+            </column>
+            <column name="revtype" type="tinyint"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="03-7" author="administrator">
         <createTable tableName="tbl_user_role">
             <column name="role_id" type="BIGINT">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_tbl_user_role"/>
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_user_role"/>
             </column>
             <column name="user_id" type="BIGINT">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_tbl_user_role"/>
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_user_role"/>
             </column>
         </createTable>
     </changeSet>
-    <changeSet id="03-6" author="administrator">
+    <changeSet id="03-8" author="administrator">
+        <createTable tableName="tbl_user_role_aud">
+            <column name="role_id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_user_role_aud"/>
+            </column>
+            <column name="user_id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_user_role_aud"/>
+            </column>
+            <column name="rev" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_user_role_aud"/>
+            </column>
+            <column name="revtype" type="tinyint"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="03-9" author="administrator">
         <addUniqueConstraint columnNames="role" constraintName="uc_role_role" tableName="tbl_role"/>
         <addUniqueConstraint columnNames="email" constraintName="uc_user_email" tableName="tbl_user"/>
         <addUniqueConstraint columnNames="user_name" constraintName="uc_user_user_name" tableName="tbl_user"/>
         <addUniqueConstraint columnNames="uid" constraintName="uc_user_uid" tableName="tbl_user"/>
     </changeSet>
 
-    <changeSet id="03-7" author="administrator">
+    <changeSet id="03-10" author="administrator">
         <addForeignKeyConstraint baseColumnNames="role_id" baseTableName="tbl_user_role"
                                  constraintName="fk_tbl_user_rol_on_role_id" referencedColumnNames="id"
                                  referencedTableName="tbl_role"/>
@@ -86,7 +148,7 @@
                                  constraintName="fk_tbl_user_on_country_id" referencedColumnNames="id"
                                  referencedTableName="tbl_country"/>
     </changeSet>
-    <changeSet id="03-8" author="administrator">
+    <changeSet id="03-11" author="administrator">
         <sql endDelimiter="/">
             CREATE OR REPLACE FUNCTION update_tree_path() RETURNS TRIGGER AS $$
             DECLARE
@@ -116,7 +178,7 @@
                                      EXECUTE FUNCTION update_tree_path();/
         </sql>
     </changeSet>
-    <changeSet id="03-9" author="administrator">
+    <changeSet id="03-12" author="administrator">
         <sql endDelimiter="/">
             CREATE OR REPLACE FUNCTION update_child_count()
             RETURNS TRIGGER AS $$

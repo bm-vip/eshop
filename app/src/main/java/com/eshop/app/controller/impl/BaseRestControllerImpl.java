@@ -16,6 +16,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.history.Revision;
 import org.springframework.http.ResponseEntity;
 
 import java.io.Serializable;
@@ -38,11 +39,23 @@ public abstract class BaseRestControllerImpl<F,M extends BaseModel<ID>, ID exten
         return ResponseEntity.ok(service.findById(id));
     }
 
+    @Override
+    public ResponseEntity<Revision<Long, M>> findHistoryAtRevision(ID id, Long revisionId) {
+        log.debug("call BaseRestImpl.findHistoryAtRevision id {} revisionId {}, for class {}", id, revisionId, service.getClass().getName());
+        return ResponseEntity.ok(service.findHistoryAtRevision(id,revisionId));
+    }
+
     @SneakyThrows
     @Override
     public ResponseEntity<Page<M>> findAll(F filter, Pageable pageable) {
         log.debug("call BaseRestImpl.findAll {}, for class {}", filter, service.getClass().getName());
         return ResponseEntity.ok(service.findAll(filter, pageable));
+    }
+    @SneakyThrows
+    @Override
+    public ResponseEntity<Page<Revision<Long, M>>> findAllHistory(ID id, Pageable pageable) {
+        log.debug("call BaseRestImpl.findAllHistory {}, for class {}", id, service.getClass().getName());
+        return ResponseEntity.ok(service.findAllHistory(id, pageable));
     }
 
     @SneakyThrows

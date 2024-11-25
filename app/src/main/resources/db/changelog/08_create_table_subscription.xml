@@ -61,6 +61,48 @@
         </createTable>
     </changeSet>
     <changeSet id="08-3" author="administrator">
+        <createTable tableName="tbl_subscription_package_aud">
+            <column name="id" type="bigint">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_subscription_package_aud"/>
+            </column>
+            <column name="created_by" type="VARCHAR(255)"/>
+            <column name="created_date" type="TIMESTAMP"/>
+            <column name="modified_by" type="VARCHAR(255)"/>
+            <column name="modified_date" type="TIMESTAMP"/>
+            <column defaultValueNumeric="0" name="version" type="integer"/>
+            <column name="name" type="VARCHAR(250)"/>
+            <column name="duration" type="integer">
+            </column>
+            <column name="order_count" type="integer">
+            </column>
+            <column name="price" type="NUMBER(19, 6)">
+            </column>
+            <column name="max_price" type="NUMBER(19, 6)">
+            </column>
+            <column name="currency" type="VARCHAR(50)">
+            </column>
+            <column name="status" type="VARCHAR(50)" defaultValue="Pending">
+            </column>
+            <column name="description" type="VARCHAR(1000)"></column>
+            <column name="min_trading_reward" type="float">
+            </column>
+            <column name="max_trading_reward" type="float">
+            </column>
+            <column name="parent_referral_bonus" type="float">
+            </column>
+            <column name="withdrawal_duration_per_day" type="int">
+            </column>
+            <column name="user_profit_percentage" type="int">
+            </column>
+            <column name="site_profit_percentage" type="int">
+            </column>
+            <column name="rev" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_subscription_package_aud"/>
+            </column>
+            <column name="revtype" type="tinyint"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="08-4" author="administrator">
         <createTable tableName="tbl_subscription">
             <column name="id" type="bigint">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_subscription"/>
@@ -88,8 +130,36 @@
             </column>
         </createTable>
     </changeSet>
+    <changeSet id="08-5" author="administrator">
+        <createTable tableName="tbl_subscription_aud">
+            <column name="id" type="bigint">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_subscription_aud"/>
+            </column>
+            <column name="created_by" type="VARCHAR(255)"/>
+            <column name="created_date" type="TIMESTAMP"/>
+            <column name="modified_by" type="VARCHAR(255)"/>
+            <column name="modified_date" type="TIMESTAMP"/>
+            <column defaultValueNumeric="0" name="version" type="integer"/>
+            <column name="user_id" type="bigint"/>
+            <column name="subscription_package_id" type="bigint">
+            </column>
+            <column name="expire_date" type="TIMESTAMP">
+            </column>
+            <column name="discount_percentage" type="int"/>
 
-    <changeSet id="08-4" author="administrator">
+            <column name="status" type="VARCHAR(50)" defaultValue="Pending">
+            </column>
+            <column name="final_price" type="NUMBER(19, 6)"></column>
+            <column name="deleted" type="boolean" defaultValue="false">
+            </column>
+            <column name="rev" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_subscription_aud"/>
+            </column>
+            <column name="revtype" type="tinyint"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="08-6" author="administrator">
         <createTable tableName="tbl_subscription_package_detail">
             <column name="id" type="bigint">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_subscription_package_detail"/>
@@ -107,7 +177,29 @@
             <column name="max_profit" type="NUMBER(19, 6)"></column>
         </createTable>
     </changeSet>
-    <changeSet id="08-5" author="administrator">
+
+    <changeSet id="08-7" author="administrator">
+        <createTable tableName="tbl_subscription_package_detail_aud">
+            <column name="id" type="bigint">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_subscription_package_detail_aud"/>
+            </column>
+            <column name="created_by" type="VARCHAR(255)"/>
+            <column name="created_date" type="TIMESTAMP"/>
+            <column name="modified_by" type="VARCHAR(255)"/>
+            <column name="modified_date" type="TIMESTAMP"/>
+            <column defaultValueNumeric="0" name="version" type="integer"/>
+            <column name="subscription_package_id" type="bigint">
+            </column>
+            <column name="amount" type="NUMBER(19, 6)"></column>
+            <column name="min_profit" type="NUMBER(19, 6)"></column>
+            <column name="max_profit" type="NUMBER(19, 6)"></column>
+            <column name="rev" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_subscription_package_detail_aud"/>
+            </column>
+            <column name="revtype" type="tinyint"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="08-8" author="administrator">
         <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="tbl_subscription"
                                  constraintName="fk_subscription_user_id" referencedColumnNames="id"
                                  referencedTableName="tbl_user"/>
@@ -118,7 +210,7 @@
                                  constraintName="fk_subscription_package_detail_subscription_package_id" referencedColumnNames="id"
                                  referencedTableName="tbl_subscription_package"/>
     </changeSet>
-    <changeSet id="08-6" author="administrator">
+    <changeSet id="08-9" author="administrator">
         <sql>
             CREATE UNIQUE INDEX uc_subscription_user_status ON "tbl_subscription" (user_id) WHERE status = 'Active' and deleted = false;
         </sql>

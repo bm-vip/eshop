@@ -1,6 +1,7 @@
 package com.eshop.client.entity;
 
 import lombok.Data;
+import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -8,6 +9,7 @@ import javax.validation.constraints.NotNull;
 @Data
 @Entity
 @Table(name = "tbl_exchange")
+@Audited
 public class ExchangeEntity extends BaseEntity<Long> {
 
 	private static final long serialVersionUID = 1L;

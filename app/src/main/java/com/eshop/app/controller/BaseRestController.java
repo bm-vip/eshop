@@ -7,6 +7,7 @@ import com.eshop.app.validation.Update;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.history.Revision;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -21,9 +22,17 @@ public interface BaseRestController<F, M, ID extends Serializable> {
     @Operation(summary = "${api.baseRest.findById}", description = "${api.baseRest.findById.desc}")
     ResponseEntity<M> findById(@PathVariable("id") ID id);
 
+    @GetMapping(value = {"/history/{id}/{revisionId}"})
+    @Operation(summary = "${api.baseRest.findHistoryAtRevision}", description = "${api.baseRest.findById.desc}")
+    ResponseEntity<Revision<Long, M>> findHistoryAtRevision(@PathVariable ID id, @PathVariable Long revisionId);
+
     @GetMapping
     @Operation(summary = "${api.baseRest.findAll}", description = "${api.baseRest.findAll.desc}")
     ResponseEntity<Page<M>> findAll(F filter, @PageableDefault Pageable pageable);
+
+    @GetMapping("/history")
+    @Operation(summary = "${api.baseRest.findAllHistory}", description = "${api.baseRest.findAllHistory.desc}")
+    ResponseEntity<Page<Revision<Long, M>>> findAllHistory(ID id, @PageableDefault Pageable pageable);
 
     @GetMapping(value = {"/findAllTable"})
     @Operation(summary = "${api.baseRest.findAllTable}", description = "${api.baseRest.findAll.desc}")

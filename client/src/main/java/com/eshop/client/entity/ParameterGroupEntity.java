@@ -2,6 +2,7 @@ package com.eshop.client.entity;
 
 import lombok.Data;
 import org.hibernate.annotations.Where;
+import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
 
@@ -10,6 +11,7 @@ import javax.persistence.*;
 @Entity
 @Table(name = "tbl_parameter_group")
 @Where(clause = "deleted=false")
+@Audited
 public class ParameterGroupEntity extends BaseEntity<Long> implements LogicalDeleted{
     private static final long serialVersionUID = 1L;
     @Id
