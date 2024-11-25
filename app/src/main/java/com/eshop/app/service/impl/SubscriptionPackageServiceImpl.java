@@ -3,11 +3,21 @@ package com.eshop.app.service.impl;
 import com.eshop.app.entity.QSubscriptionPackageEntity;
 import com.eshop.app.entity.SubscriptionPackageEntity;
 import com.eshop.app.enums.CurrencyType;
+import com.eshop.app.enums.EntityStatusType;
+import com.eshop.app.filter.SubscriptionFilter;
 import com.eshop.app.filter.SubscriptionPackageFilter;
 import com.eshop.app.mapping.SubscriptionPackageMapper;
+import com.eshop.app.mapping.UserMapper;
+import com.eshop.app.model.BalanceModel;
+import com.eshop.app.model.SubscriptionModel;
 import com.eshop.app.model.SubscriptionPackageModel;
+import com.eshop.app.model.UserModel;
 import com.eshop.app.repository.SubscriptionPackageRepository;
+import com.eshop.app.repository.UserRepository;
+import com.eshop.app.repository.WalletRepository;
 import com.eshop.app.service.SubscriptionPackageService;
+import com.eshop.exception.common.BadRequestException;
+import com.eshop.exception.common.NotAcceptableException;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
 import org.springframework.stereotype.Service;
@@ -18,10 +28,44 @@ import java.math.BigDecimal;
 public class SubscriptionPackageServiceImpl extends BaseServiceImpl<SubscriptionPackageFilter,SubscriptionPackageModel, SubscriptionPackageEntity, Long> implements SubscriptionPackageService {
 
     private final SubscriptionPackageRepository subscriptionPackageRepository;
+    private final WalletRepository walletRepository;
+    private final UserRepository userRepository;
+    private final SubscriptionServiceImpl subscriptionService;
+    private final UserMapper userMapper;
 
-    public SubscriptionPackageServiceImpl(SubscriptionPackageRepository repository, SubscriptionPackageMapper mapper) {
+    public SubscriptionPackageServiceImpl(SubscriptionPackageRepository repository, SubscriptionPackageMapper mapper, WalletRepository walletRepository, UserRepository userRepository, SubscriptionServiceImpl subscriptionService, UserMapper userMapper) {
         super(repository, mapper);
         this.subscriptionPackageRepository = repository;
+        this.walletRepository = walletRepository;
+        this.userRepository = userRepository;
+        this.subscriptionService = subscriptionService;
+        this.userMapper = userMapper;
+    }
+
+    @Override
+    public SubscriptionPackageModel create(SubscriptionPackageModel model) {
+        var result = super.create(model);
+        userRepository.findAll().forEach(user -> {
+            var balance = walletRepository.totalBalanceGroupedByCurrency(user.getId());
+            for (BalanceModel balanceModel : balance) {
+                var currentSubscription = subscriptionService.findByUserAndActivePackage(user.getId());
+                var subscriptionPackage = findMatchedPackageByAmountAndCurrency(balanceModel.getTotalAmount(), balanceModel.getCurrency());
+                if (currentSubscription == null || (subscriptionPackage != null && !currentSubscription.getSubscriptionPackage().getId().equals(subscriptionPackage.getId()))) {
+                    subscriptionService.create(new SubscriptionModel().setSubscriptionPackage(subscriptionPackage).setUser(userMapper.toModel(user)).setStatus(EntityStatusType.Active));
+                }
+            }
+        });
+        return result;
+    }
+
+    @Override
+    public SubscriptionPackageModel update(SubscriptionPackageModel model) {
+        SubscriptionFilter subscriptionFilter = new SubscriptionFilter();
+        subscriptionFilter.setSubscriptionPackageId(model.getId());
+
+        if(subscriptionService.exists(subscriptionFilter))
+            throw new NotAcceptableException("Subscription package already taken by another user, you can't update it");
+        return super.update(model);
     }
 
     @Override

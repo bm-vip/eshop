@@ -23,6 +23,7 @@ $(function () {
                                         <li><i class="fa fa-check text-success"></i> Site profit percentage (<strong>${value.siteProfitPercentage}%</strong>)</li>
                                         <li><i class="fa fa-check text-success"></i> Withdrawal duration per day (<strong>${value.withdrawalDurationPerDay}</strong>)</li>
                                         <li><i class="fa fa-check text-success"></i> Parent referral bonus <strong>${value.parentReferralBonus}</strong> ${value.currency}</li>
+                                        <li><i class="fa fa-check text-success"></i> Maximum acceptable amount <strong>${value.maxPrice}</strong> ${value.currency}</li>
                                     </ul>
                                 </div>
                             </div>
