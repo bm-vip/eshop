@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.history.Revision;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
@@ -35,8 +36,10 @@ public abstract class BaseServiceImpl<F, M extends BaseModel<ID>, E extends Base
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Page<Revision<Long, M>> findAllHistory(ID id, Pageable pageable) {
-        return repository.findRevisions(id, pageable).map(revision-> Revision.of(revision.getMetadata(), mapper.toModel(revision.getEntity())));
+        var page = repository.findRevisions(id, pageable);
+        return page.map(revision -> Revision.of(revision.getMetadata(), mapper.toModel(revision.getEntity())));
     }
 
     @Override

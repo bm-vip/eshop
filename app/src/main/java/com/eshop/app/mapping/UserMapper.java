@@ -4,14 +4,16 @@ import com.eshop.app.entity.UserEntity;
 import com.eshop.app.model.UserModel;
 import org.mapstruct.*;
 
+import javax.persistence.EntityNotFoundException;
+
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = "spring", uses = {RoleMapper.class, CountryMapper.class},
         nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS)
 public interface UserMapper extends BaseMapper<UserModel, UserEntity> {
 
     @Override
     @Mappings({
-            @Mapping(target = "parent.roles", ignore = true),
-            @Mapping(target = "password", ignore = true)
+            @Mapping(target = "password", ignore = true),
+            @Mapping(target = "parent", qualifiedByName = "mapParentSafely")
     })
     UserModel toModel(final UserEntity entity);
 
@@ -27,4 +29,13 @@ public interface UserMapper extends BaseMapper<UserModel, UserEntity> {
             @Mapping(target = "password", ignore = true)
     })
     UserEntity updateEntity(UserModel model, @MappingTarget UserEntity entity);
+
+    @Named("mapParentSafely")
+    default UserModel mapParentSafely(UserEntity parentEntity) {
+        try {
+            return parentEntity != null ? toModel(parentEntity) : null;
+        } catch (Exception e) {
+            return null;
+        }
+    }
 }

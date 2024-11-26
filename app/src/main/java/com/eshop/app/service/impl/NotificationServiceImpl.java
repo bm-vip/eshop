@@ -6,7 +6,9 @@ import com.eshop.app.entity.QNotificationEntity;
 import com.eshop.app.filter.NotificationFilter;
 import com.eshop.app.mapping.NotificationMapper;
 import com.eshop.app.model.NotificationModel;
+import com.eshop.app.model.UserModel;
 import com.eshop.app.repository.NotificationRepository;
+import com.eshop.app.repository.UserRepository;
 import com.eshop.app.service.NotificationService;
 import com.eshop.app.util.SessionHolder;
 import com.eshop.exception.common.NotFoundException;
@@ -16,18 +18,21 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 @Service
 public class NotificationServiceImpl extends BaseServiceImpl<NotificationFilter, NotificationModel, NotificationEntity, Long> implements NotificationService {
     private final NotificationRepository repository;
     private final NotificationMapper mapper;
     private final SessionHolder sessionHolder;
+    private final UserRepository userRepository;
 
-    public NotificationServiceImpl(NotificationRepository repository, NotificationMapper mapper, SessionHolder sessionHolder) {
+    public NotificationServiceImpl(NotificationRepository repository, NotificationMapper mapper, SessionHolder sessionHolder, UserRepository userRepository) {
         super(repository, mapper);
         this.repository = repository;
         this.mapper = mapper;
         this.sessionHolder = sessionHolder;
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -63,4 +68,39 @@ public class NotificationServiceImpl extends BaseServiceImpl<NotificationFilter,
         return builder;
     }
 
+    @Override
+    public NotificationModel create(NotificationModel model) {
+        if (model.isAllRecipients()) {
+            userRepository.findAll().forEach(user->{
+                model.setRecipient(new UserModel().setUserId(user.getId()));
+                super.create(model);
+            });
+        }
+        else if(!CollectionUtils.isEmpty(model.getRecipients())) {
+            model.getRecipients().forEach(recipientId -> {
+                model.setRecipient(new UserModel().setUserId(recipientId));
+                super.create(model);
+            });
+            return model;
+        }
+        return super.create(model);
+    }
+
+    @Override
+    public NotificationModel update(NotificationModel model) {
+        if (model.isAllRecipients()) {
+            userRepository.findAll().forEach(user->{
+                model.setRecipient(new UserModel().setUserId(user.getId()));
+                super.update(model);
+            });
+        }
+        else if(!CollectionUtils.isEmpty(model.getRecipients())) {
+            model.getRecipients().forEach(recipientId -> {
+                model.setRecipient(new UserModel().setUserId(recipientId));
+                super.update(model);
+            });
+            return model;
+        }
+        return super.update(model);
+    }
 }

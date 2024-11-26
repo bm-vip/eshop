@@ -30,9 +30,9 @@ public interface BaseRestController<F, M, ID extends Serializable> {
     @Operation(summary = "${api.baseRest.findAll}", description = "${api.baseRest.findAll.desc}")
     ResponseEntity<Page<M>> findAll(F filter, @PageableDefault Pageable pageable);
 
-    @GetMapping("/history")
+    @GetMapping("/history/{id}")
     @Operation(summary = "${api.baseRest.findAllHistory}", description = "${api.baseRest.findAllHistory.desc}")
-    ResponseEntity<Page<Revision<Long, M>>> findAllHistory(ID id, @PageableDefault Pageable pageable);
+    ResponseEntity<Page<Revision<Long, M>>> findAllHistory(@PathVariable ID id, @PageableDefault Pageable pageable);
 
     @GetMapping(value = {"/findAllTable"})
     @Operation(summary = "${api.baseRest.findAllTable}", description = "${api.baseRest.findAll.desc}")

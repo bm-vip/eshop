@@ -29,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -94,7 +95,7 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter,WalletModel,
             if(!model.getCurrency().equals(currentSubscriptionPackage.getCurrency()))
                 throw new NotAcceptableException("The currency type does not match your currently active subscription's currency.");
 
-            var totalProfit = walletRepository.totalProfitGroupedByCurrency(model.getUser().getId()).stream().filter(f->f.getCurrency().equals(currentSubscriptionPackage.getCurrency())).findAny().orElse(new BalanceModel(currentSubscriptionPackage.getCurrency(),BigDecimal.ZERO));
+            var totalProfit = walletRepository.totalProfitGroupedByCurrency(model.getUser().getId(),null).stream().filter(f->f.getCurrency().equals(currentSubscriptionPackage.getCurrency())).findAny().orElse(new BalanceModel(currentSubscriptionPackage.getCurrency(),BigDecimal.ZERO));
             if(model.getAmount().compareTo(currentSubscription.getFinalPrice()) >= 0 || model.getAmount().compareTo(totalProfit.getTotalAmount()) > 0) {
                 if(currentSubscription.getRemainingWithdrawalPerDay() > 0L)
                     throw new NotAcceptableException(String.format("You can withdraw your funds after %d days.",currentSubscription.getRemainingWithdrawalPerDay()));
@@ -184,7 +185,12 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter,WalletModel,
 
     @Override
     public List<BalanceModel> totalProfitGroupedByCurrency(long userId) {
-        return walletRepository.totalProfitGroupedByCurrency(userId);
+        return walletRepository.totalProfitGroupedByCurrency(userId, null);
+    }
+
+    @Override
+    public List<BalanceModel> dailyProfitGroupedByCurrency(long userId) {
+        return walletRepository.totalProfitGroupedByCurrency(userId, LocalDateTime.now().truncatedTo(ChronoUnit.DAYS));
     }
 
     @Override

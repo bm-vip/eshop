@@ -3,6 +3,7 @@
       layout:decorate="~{fragments/master}">
 
 <th:block layout:fragment="header">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/lib/switchery.min.css}"/>
     <link rel="stylesheet" type="text/css" th:href="@{/css/lib/select2.min.css}"/>
     <link rel="stylesheet" type="text/css" th:href="@{/css/lib/select2-bootstrap.css}"/>
     <script type="text/javascript" th:src="@{/js/lib/select2.min.js}"></script>
@@ -36,7 +37,7 @@
                             </div>
                             <div class="col-md-6 form-group">
                                 <label th:text="#{recipient}"></label>
-                                <th:block th:replace="fragments/select2 :: select2('2',#{recipient}, 'recipient', '/api/v1/user/findAllSelect','{name:params.term}',false, null)"></th:block>
+                                <th:block th:replace="fragments/select2 :: select2('2',#{recipient}, 'recipient', '/api/v1/user/findAllSelect','{name:params.term}',true, null)"></th:block>
                             </div>
                         </div>
                         <div class="row">
@@ -45,8 +46,14 @@
                                 <input class="form-control" tabindex="3" type="text" th:placeholder="#{subject}" th:title="#{subject}" id="subject"/>
                             </div>
                             <div class="col-md-6 form-group">
+                                <label th:text="#{allRecipients}"></label><br/>
+                                 <input type="checkbox" class="form-control js-switch" tabindex="4" id="allRecipients"/>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12 form-group">
                                 <label th:text="#{body}"></label>
-                                <textarea class="form-control" tabindex="4"  rows="3" th:placeholder="#{body}"
+                                <textarea class="form-control" tabindex="5"  rows="4" th:placeholder="#{body}"
                                           th:title="#{body}" id="body"></textarea>
                             </div>
                         </div>
@@ -122,6 +129,7 @@
 </th:block>
 
 <th:block layout:fragment="footer">
+    <script type="text/javascript" th:src="@{/js/lib/switchery.min.js}"></script>
     <script type="text/javascript" th:src="@{/js/script/notification.js}"></script>
 </th:block>
 </html>

@@ -51,6 +51,10 @@ public class WalletRestController extends BaseRestControllerImpl<WalletFilter, W
     public ResponseEntity<List<BalanceModel>> totalProfitGroupedByCurrency(@PathVariable long userId){
         return ResponseEntity.ok(walletService.totalProfitGroupedByCurrency(userId));
     }
+    @GetMapping("/daily-profit/{userId}")
+    public ResponseEntity<List<BalanceModel>> dailyProfitGroupedByCurrency(@PathVariable long userId){
+        return ResponseEntity.ok(walletService.dailyProfitGroupedByCurrency(userId));
+    }
     @GetMapping("/get-date-range/{startDate}/{endDate}/{transactionType}")
     public ResponseEntity<Map<Long, BigDecimal>> findAllWithinDateRange(@PathVariable long startDate, @PathVariable long endDate, @PathVariable TransactionType transactionType){
         return ResponseEntity.ok(walletService.findAllWithinDateRange(startDate,endDate,transactionType));

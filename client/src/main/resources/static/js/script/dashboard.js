@@ -31,9 +31,13 @@
     $.get("/api/v1/arbitrage/count-all-by-user/" + currentUser.id, function (data) {
         $("#totalArbitrage").text(data);
     });
-    const today = new Date();
+
     $.get(`/api/v1/arbitrage/count-today-by-user/${currentUser.id}`, function (data) {
         $("#dailyArbitrage").text(data);
+    });
+
+    $.get(`/api/v1/wallet/daily-profit/${currentUser.id}`, function (data) {
+        $("#dailyProfit").text(data);
     });
 
     $.get("/api/v1/arbitrage/find-top-coins/5", function (data) {

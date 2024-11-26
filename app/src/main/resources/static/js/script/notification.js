@@ -16,9 +16,10 @@ function loadEntityByInput() {
     let model = {
         id: isNullOrEmpty($("#hdf_id").val()) ? null : $("#hdf_id").val(),
         sender: isNullOrEmpty($("#senderSelect2").val())? null : {id: $("#senderSelect2").val()},
-        recipient: isNullOrEmpty($("#recipientSelect2").val())? null : {id: $("#recipientSelect2").val()},
         subject: $("#subject").val(),
-        body: $("#body").val()
+        body: $("#body").val(),
+        recipients: arrayToJsonArray($("#recipientSelect2").val()),
+        allRecipients: $("#allRecipients").is(':checked')
     };
     return model;
 }
@@ -51,8 +52,22 @@ function loadInputByEntity(model) {
     $("#recipientSelect2").val(get(() => model.recipient.id)).trigger('change');
     $("#subject").val(model.subject);
     $("#body").val(model.body);
+
+    // $("#recipientSelect2").empty();
+    // entity.recipients.forEach(r => $("#recipientSelect2").append("<option value='" + r.id + "'>" + r.title + "</option>").trigger('change'));
+    // $("#recipientSelect2").val(entity.recipients.map(r => r.id)).trigger('change');
 }
 function onLoad() {
+    $("#allRecipients").on('change', function () {
+        if ($(this).is(':checked')) {
+            $("#recipientSelect2").html('');
+            $("#recipientSelect2").prop("disabled", true);
+            $("#recipient span.input-group-addon").attr("disabled", 'disabled');
+        } else {
+            $("#recipientSelect2").prop("disabled", false);
+            $("#recipient span.input-group-addon, #code, #title").removeAttr("disabled");
+        }
+    });
     $(".table:not(#myModal .table)").on("click", ".fa-list-alt", function (e) {
         initModal($(this))
     });
@@ -62,4 +77,18 @@ function initModal(element) {
     $.get(`${ajaxUrl}/${element.attr('id')}`,function (data){
         $("#myModal .modal-body").html(data.body);
     });
+}
+function changeSwitch(element, flag) {
+    var programmaticallyChange = !isNullOrEmpty(flag);
+    var isCheck = programmaticallyChange ? flag : element.is(':checked');
+    if (programmaticallyChange && element.is(':checked') != flag) {
+        element.click();
+    }
+    if (isCheck) {
+        element.next().next().text(resources.active);
+        element.attr('checked', 'checked');
+    } else {
+        element.removeAttr('checked');
+        element.next().next().text(resources.inactive);
+    }
 }
