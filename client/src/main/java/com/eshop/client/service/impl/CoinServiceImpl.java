@@ -44,4 +44,9 @@ public class CoinServiceImpl extends BaseServiceImpl<CoinFilter, CoinModel, Coin
     public CoinModel findByRandom() {
         return mapper.toModel(repository.findByRandom());
     }
+
+    @Override
+    public String getCachePrefix() {
+        return "coin";
+    }
 }

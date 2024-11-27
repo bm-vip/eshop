@@ -145,6 +145,11 @@ public class UserServiceImpl extends BaseServiceImpl<UserFilter,UserModel, UserE
     }
 
     @Override
+    public String getCachePrefix() {
+        return "user";
+    }
+
+    @Override
     @Transactional
     public UserModel create(UserModel model) {
         var entity = mapper.toEntity(model);

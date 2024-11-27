@@ -42,4 +42,9 @@ public class SubscriptionPackageDetailServiceImpl extends BaseServiceImpl<Subscr
     public Page<SubscriptionPackageDetailModel> findBySubscriptionPackageId(long subscriptionPackageId, Pageable pageable) {
         return repository.findBySubscriptionPackageId(subscriptionPackageId, pageable).map(mapper::toModel);
     }
+
+    @Override
+    public String getCachePrefix() {
+        return "subscription-package-detail";
+    }
 }

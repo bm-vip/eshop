@@ -48,6 +48,11 @@ public class NotificationServiceImpl extends BaseServiceImpl<NotificationFilter,
     }
 
     @Override
+    public String getCachePrefix() {
+        return "notification";
+    }
+
+    @Override
     @Transactional(readOnly = true)
     public Page<NotificationModel> findAllByRecipientId(UUID recipientId, Pageable pageable) {
         return repository.findAllByRecipientIdOrderByCreatedDateDesc(recipientId, pageable).map(mapper::toModel);

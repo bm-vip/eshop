@@ -24,10 +24,12 @@ import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.DateTemplate;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
@@ -161,40 +163,53 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter,WalletModel,
 
         repository.delete(entity);
     }
-    
+
     @Override
+    public String getCachePrefix() {
+        return "wallet";
+    }
+
+    @Override
+    @Cacheable(cacheNames = "${cache.prefix:app}", key = "'wallet:totalBalanceGroupedByCurrency:'+ #userId")
     public List<BalanceModel> totalBalanceGroupedByCurrency(UUID userId) {
         return walletRepository.totalBalanceGroupedByCurrency(userId);
     }
     @Override
+    @Cacheable(cacheNames = "${cache.prefix:app}", key = "'wallet:totalDepositGroupedByCurrency:'+ #userId")
     public List<BalanceModel> totalDepositGroupedByCurrency(UUID userId) {
         return walletRepository.totalDepositGroupedByCurrency(userId);
     }
     @Override
+    @Cacheable(cacheNames = "${cache.prefix:app}", key = "'wallet:totalWithdrawalGroupedByCurrency:'+ #userId")
     public List<BalanceModel> totalWithdrawalGroupedByCurrency(UUID userId) {
         return walletRepository.totalWithdrawalGroupedByCurrency(userId);
     }
     @Override
+    @Cacheable(cacheNames = "${cache.prefix:app}", key = "'wallet:totalBonusGroupedByCurrency:'+ #userId")
     public List<BalanceModel> totalBonusGroupedByCurrency(UUID userId) {
         return walletRepository.totalBonusGroupedByCurrency(userId);
     }
 
     @Override
+    @Cacheable(cacheNames = "${cache.prefix:app}", key = "'wallet:totalRewardGroupedByCurrency:'+ #userId")
     public List<BalanceModel> totalRewardGroupedByCurrency(UUID userId) {
         return walletRepository.totalRewardGroupedByCurrency(userId);
     }
 
     @Override
+//    @Cacheable(cacheNames = "${cache.prefix:app}", key = "'wallet:totalProfitGroupedByCurrency:'+ #userId")
     public List<BalanceModel> totalProfitGroupedByCurrency(UUID userId) {
         return walletRepository.totalProfitGroupedByCurrency(userId, null);
     }
 
     @Override
+//    @Cacheable(cacheNames = "${cache.prefix:app}", key = "'wallet:dailyProfitGroupedByCurrency:'+ #userId")
     public List<BalanceModel> dailyProfitGroupedByCurrency(UUID userId) {
         return walletRepository.totalProfitGroupedByCurrency(userId, LocalDateTime.now().truncatedTo(ChronoUnit.DAYS));
     }
 
     @Override
+    @Cacheable(cacheNames = "${cache.prefix:app}", key = "'wallet:findAllWithinDateRange:startDate:' + #startDate + ':endDate:' + #endDate + ':transactionType:' + #transactionType")
     public Map<Long, BigDecimal> findAllWithinDateRange(long startDate, long endDate, TransactionType transactionType) {
         QWalletEntity path = QWalletEntity.walletEntity;
         DateTemplate<Date> truncatedDate = Expressions.dateTemplate(Date.class, "date_trunc('day', {0})", path.createdDate);

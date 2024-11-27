@@ -40,4 +40,9 @@ public class QuestionServiceImpl extends BaseServiceImpl<QuestionFilter, Questio
 
         return builder;
     }
+
+    @Override
+    public String getCachePrefix() {
+        return "question";
+    }
 }

@@ -6,6 +6,9 @@ import com.eshop.client.service.BaseService;
 import com.eshop.exception.common.NotFoundException;
 import com.querydsl.core.types.Predicate;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,6 +16,7 @@ import com.eshop.client.entity.BaseEntity;
 import com.eshop.client.mapping.BaseMapper;
 import com.eshop.client.model.BaseModel;
 import com.eshop.client.model.PageModel;
+import org.springframework.util.DigestUtils;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -28,61 +32,101 @@ public abstract class BaseServiceImpl<F, M extends BaseModel<ID>, E extends Base
 
     public abstract Predicate queryBuilder(F filter);
 
+    // Generate cache key based on filter and pageable
+    protected String generateFilterKey(F filter, Pageable pageable) {
+        return getCachePrefix() + ":" +
+                DigestUtils.md5DigestAsHex((filter.toString() + pageable.toString()).getBytes());
+    }
+    protected String generateIdKey(ID id) {
+        return getCachePrefix() + ":id:" + id;
+    }
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(cacheNames = "${cache.prefix:app}",
+            key = "@{T(#this.generateFilterKey(#filter, #pageable)}")
     public Page<M> findAll(F filter, Pageable pageable) {
         return repository.findAll(queryBuilder(filter), pageable).map(mapper::toModel);
     }
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(cacheNames = "${cache.prefix:app}",
+            key = "@{#this.getCachePrefix() + ':table:' + T(org.springframework.util.DigestUtils).md5DigestAsHex(#filter.toString().getBytes())}")
     public PageModel<M> findAllTable(F filter, Pageable pageable) {
         Predicate predicate = queryBuilder(filter);
         var page = repository.findAll(predicate, pageable);
-
         return new PageModel<>(repository.count(), page.getTotalElements(), mapper.toModel(page.getContent()));
     }
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(cacheNames = "${cache.prefix:app}",
+            key = "@{#this.getCachePrefix() + ':select:' + T(org.springframework.util.DigestUtils).md5DigestAsHex(#filter.toString().getBytes())}")
     public Page<Select2Model> findAllSelect(F filter, Pageable pageable) {
-        Predicate predicate = queryBuilder(filter);
-        return repository.findAll(predicate, pageable).map(m -> new Select2Model(m.getId().toString(), m.getSelectTitle()));
+        return repository.findAll(queryBuilder(filter), pageable)
+                .map(m -> new Select2Model(m.getId().toString(), m.getSelectTitle()));
     }
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(cacheNames = "${cache.prefix:app}",
+            key = "@{#this.getCachePrefix() + ':count:' + T(org.springframework.util.DigestUtils).md5DigestAsHex(#filter.toString().getBytes())}")
     public Long countAll(F filter) {
         return repository.count(queryBuilder(filter));
     }
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(cacheNames = "${cache.prefix:app}",
+            key = "@{#this.getCachePrefix() + ':exists:' + T(org.springframework.util.DigestUtils).md5DigestAsHex(#filter.toString().getBytes())}")
     public boolean exists(F filter) {
         return repository.exists(queryBuilder(filter));
     }
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
+    @Cacheable(cacheNames = "${cache.prefix:app}", key = "@{#this.generateIdKey(#id)}")
     public M findById(ID id) {
-        var entity = repository.findById(id).orElseThrow(() -> new NotFoundException("id: " + id));
-        return mapper.toModel(entity);
+        return mapper.toModel(repository.findById(id)
+                .orElseThrow(() -> new NotFoundException("id: " + id)));
     }
 
     @Override
+    @CachePut(cacheNames = "${cache.prefix:app}", key = "@{#this.generateIdKey(#result.id)}")
+    @CacheEvict(cacheNames = "${cache.prefix:app}",
+            allEntries = true,
+            condition = "@{#this.getCachePrefix() + ':*'}")
     public M create(M model) {
-        return mapper.toModel(repository.save(mapper.toEntity(model)));
+        var saved = repository.save(mapper.toEntity(model));
+        return mapper.toModel(saved);
     }
 
     @Override
+    @CachePut(cacheNames = "${cache.prefix:app}", key = "@{#this.generateIdKey(#model.id)}")
+    @CacheEvict(cacheNames = "${cache.prefix:app}",
+            allEntries = true,
+            condition = "@{#this.getCachePrefix() + ':*'}")
     public M update(M model) {
-        var entity = repository.findById(model.getId()).orElseThrow(() -> new NotFoundException(String.format("%s not found by id %d", model.getClass().getName(), model.getId().toString())));
+        var entity = repository.findById(model.getId())
+                .orElseThrow(() -> new NotFoundException(String.format("%s not found by id %s",
+                        model.getClass().getName(), model.getId().toString())));
         return mapper.toModel(repository.save(mapper.updateEntity(model, entity)));
     }
 
     @Override
+    @CacheEvict(cacheNames = "${cache.prefix:app}",
+            allEntries = true,
+            condition = "@{#this.getCachePrefix() + ':*'}")
     public void deleteById(ID id) {
-        var entity = repository.findById(id).orElseThrow(() -> new NotFoundException("id: " + id));
-        repository.delete(entity);
+        repository.findById(id)
+                .orElseThrow(() -> new NotFoundException("id: " + id));
+        repository.deleteById(id);
+    }
+
+    @CacheEvict(cacheNames = "${cache.prefix:app}",
+            allEntries = true,
+            condition = "@{#this.getCachePrefix() + ':*'}")
+    public void clearCache() {
+        // Method to clear all caches for this service
     }
 }

@@ -46,4 +46,9 @@ public class ParameterGroupServiceImpl extends BaseServiceImpl<ParameterGroupFil
     public JpaRepository<ParameterGroupEntity,Long> getRepository() {
         return repository;
     }
+
+    @Override
+    public String getCachePrefix() {
+        return "parameter-group";
+    }
 }

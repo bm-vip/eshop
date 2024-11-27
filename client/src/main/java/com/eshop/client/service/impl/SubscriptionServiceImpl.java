@@ -140,6 +140,12 @@ public class SubscriptionServiceImpl extends BaseServiceImpl<SubscriptionFilter,
         }
         return mapper.toModel(subscriptionRepository.save(entity));
     }
+
+    @Override
+    public String getCachePrefix() {
+        return "subscription";
+    }
+
     private BigDecimal calculatePrice(BigDecimal originalPrice, Integer discountPercentage) {
         if(discountPercentage == null)
             return originalPrice;

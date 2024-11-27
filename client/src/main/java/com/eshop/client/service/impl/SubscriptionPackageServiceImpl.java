@@ -62,4 +62,9 @@ public class SubscriptionPackageServiceImpl extends BaseServiceImpl<Subscription
     public SubscriptionPackageModel findMatchedPackageByAmountAndCurrency(BigDecimal amount, CurrencyType currency) {
         return mapper.toModel(subscriptionPackageRepository.findMatchedPackageByAmountAndCurrency(amount, currency).orElse(subscriptionPackageRepository.findTopByOrderByMaxPriceDesc()));
     }
+
+    @Override
+    public String getCachePrefix() {
+        return "subscription-package";
+    }
 }

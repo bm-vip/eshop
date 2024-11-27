@@ -18,4 +18,6 @@ public interface BaseService<F, M extends BaseModel<ID>, ID extends Serializable
     M create(M model);
     M update(M model);
     void deleteById(ID id);
+    void clearCache();
+    String getCachePrefix();
 }

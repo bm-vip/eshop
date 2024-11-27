@@ -21,6 +21,7 @@ import com.querydsl.core.types.dsl.DateTemplate;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -142,11 +143,17 @@ public class ArbitrageServiceImpl extends BaseServiceImpl<ArbitrageFilter, Arbit
     }
 
     @Override
+    public String getCachePrefix() {
+        return "arbitrage";
+    }
+
+    @Override
     public long countAllByUserId(UUID userId) {
         return repository.countAllByUserId(userId);
     }
 
     @Override
+    @Cacheable(cacheNames = "${cache.prefix:app}", key = "'arbitrage:countByUserIdAndDate:userId:' + #userId + ':date:' + #date")
     public long countByUserIdAndDate(UUID userId, Date date) {
         QArbitrageEntity path = QArbitrageEntity.arbitrageEntity;
         DateTemplate<Date> truncatedDate = Expressions.dateTemplate(Date.class, "date_trunc('day', {0})", path.createdDate);
@@ -157,6 +164,7 @@ public class ArbitrageServiceImpl extends BaseServiceImpl<ArbitrageFilter, Arbit
     }
 
     @Override
+    @Cacheable(cacheNames = "${cache.prefix:app}", key = "'arbitrage:findMostUsedCoins:userId:' + #pageSize")
     public Page<CoinUsageDTO> findMostUsedCoins(int pageSize) {
         long count = repository.count();
         return repository.findMostUsedCoins(PageRequest.ofSize(pageSize)).map(m->{

@@ -60,4 +60,9 @@ public class ParameterServiceImpl extends BaseServiceImpl<ParameterFilter,Parame
     public JpaRepository<ParameterEntity,Long> getRepository() {
         return repository;
     }
+
+    @Override
+    public String getCachePrefix() {
+        return "parameter";
+    }
 }
