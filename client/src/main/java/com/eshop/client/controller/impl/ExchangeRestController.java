@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @Tag(name = "Exchange Rest Service v1")
@@ -25,7 +26,7 @@ public class ExchangeRestController extends BaseRestControllerImpl<ExchangeFilte
         this.exchangeService = service;
     }
     @GetMapping("buy/{userId}")
-    public ResponseEntity<List<ExchangeModel>> buy(@PathVariable Long userId){
+    public ResponseEntity<List<ExchangeModel>> buy(@PathVariable UUID userId){
         return ResponseEntity.ok(exchangeService.findByRandom());
     }
 }

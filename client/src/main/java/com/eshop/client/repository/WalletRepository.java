@@ -57,5 +57,5 @@ public interface WalletRepository extends BaseRepository<WalletEntity, Long> {
 //				   " GROUP BY a.currency" +
 //				   " ) AS combined" +
 //				   " GROUP BY currency;", nativeQuery = true)
-//	List<Object[]> totalProfitGroupedByCurrency(Long userId);
+//	List<Object[]> totalProfitGroupedByCurrency(UUID userId);
 }

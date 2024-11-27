@@ -90,10 +90,10 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter,WalletModel,
         var result =  super.create(model);
         if(model.isActive()) {
             balance = walletRepository.totalBalanceGroupedByCurrency(model.getUser().getId());
+            var currentSubscription = subscriptionService.findByUserAndActivePackage(model.getUser().getId());
             for (BalanceModel balanceModel : balance) {
-                var currentSubscription = subscriptionService.findByUserAndActivePackage(model.getUser().getId());
                 var subscriptionPackage = subscriptionPackageService.findMatchedPackageByAmountAndCurrency(balanceModel.getTotalAmount(),balanceModel.getCurrency());
-                if(currentSubscription == null || (subscriptionPackage != null && !currentSubscription.getSubscriptionPackage().getId().equals(subscriptionPackage.getId()))) {
+                if(subscriptionPackage != null && (currentSubscription == null || !currentSubscription.getSubscriptionPackage().getId().equals(subscriptionPackage.getId()))) {
                     subscriptionService.create(new SubscriptionModel().setSubscriptionPackage(subscriptionPackage).setUser(model.getUser()).setStatus(EntityStatusType.Active));
                 }
 
@@ -127,16 +127,14 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter,WalletModel,
         var result =  super.update(model);
         if(model.isActive()) {
             var balance = walletRepository.totalBalanceGroupedByCurrency(model.getUser().getId());
-            var subscriptionModel = subscriptionService.findByUserAndActivePackage(model.getUser().getId());
+            var currentSubscription = subscriptionService.findByUserAndActivePackage(model.getUser().getId());
             for (BalanceModel balanceModel : balance) {
                 var subscriptionPackage = subscriptionPackageService.findMatchedPackageByAmountAndCurrency(balanceModel.getTotalAmount(),balanceModel.getCurrency());
-                if(subscriptionPackage != null) {
-                    if(subscriptionModel != null && subscriptionModel.getSubscriptionPackage().getId().equals(subscriptionPackage.getId()))
-                        return result;
+                if(subscriptionPackage != null && (currentSubscription == null || !currentSubscription.getSubscriptionPackage().getId().equals(subscriptionPackage.getId()))) {
                     subscriptionService.create(new SubscriptionModel().setSubscriptionPackage(subscriptionPackage).setUser(model.getUser()).setStatus(EntityStatusType.Active));
                 }
-                if(model.getTransactionType().equals(TransactionType.WITHDRAWAL) && getOrDefault(()-> model.getAmount().compareTo(subscriptionModel.getSubscriptionPackage().getPrice()) >=0,false)){
-                    var subscriptionPackageModel = subscriptionModel.getSubscriptionPackage();
+                if(model.getTransactionType().equals(TransactionType.WITHDRAWAL) && getOrDefault(()-> model.getAmount().compareTo(currentSubscription.getSubscriptionPackage().getPrice()) >=0,false)){
+                    var subscriptionPackageModel = currentSubscription.getSubscriptionPackage();
                     var withdrawalDate = subscriptionPackageModel.getCreatedDate().plusDays(subscriptionPackageModel.getWithdrawalDurationPerDay());
                     if(withdrawalDate.isAfter(LocalDateTime.now()))
                         throw new NotAcceptableException("Withdrawal is allowed only after " + withdrawalDate.toString());
@@ -210,7 +208,7 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter,WalletModel,
     }
 
 //    @Override
-//    public List<BalanceModel> totalProfitGroupedByCurrency(long userId) {
+//    public List<BalanceModel> totalProfitGroupedByCurrency(UUID userId) {
 //        var result = walletRepository.totalProfitGroupedByCurrency(userId);
 //        return result.stream()
 //                .map(obj -> new BalanceModel(CurrencyType.valueOf((String) obj[0]),(BigDecimal) obj[1]))

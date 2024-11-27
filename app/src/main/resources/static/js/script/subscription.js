@@ -12,7 +12,7 @@ function loadEntityByInput() {
     let model = {
         id: isNullOrEmpty($("#hdf_id").val()) ? null : $("#hdf_id").val(),
         user: isNullOrEmpty($("#userSelect2").val())? null : {id: $("#userSelect2").val()},
-        subscriptionPackage: isNullOrEmpty($("#subscriptionPackageSelect2").val())? null : {id: $("#subscriptionPackageSelect2").val()},
+        subscriptionPackageId: isNullOrEmpty($("#subscriptionPackageSelect2").val())? null : $("#subscriptionPackageSelect2").val(),
         discountPercentage: $("#discountPercentage").val(),
         status: $("#status").val()
     };

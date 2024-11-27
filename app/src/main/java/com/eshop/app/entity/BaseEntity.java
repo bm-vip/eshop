@@ -2,6 +2,7 @@ package com.eshop.app.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
+import org.hibernate.envers.Audited;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
@@ -15,6 +16,7 @@ import java.time.LocalDateTime;
 
 @Data
 @MappedSuperclass
+@Audited
 @EntityListeners(AuditingEntityListener.class)
 public abstract class BaseEntity<ID extends Serializable> implements Serializable {
 

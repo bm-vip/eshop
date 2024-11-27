@@ -12,6 +12,8 @@ import com.querydsl.core.types.Predicate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 
 @Service
 public class ArbitrageServiceImpl extends BaseServiceImpl<ArbitrageFilter, ArbitrageModel, ArbitrageEntity, Long> implements ArbitrageService {
@@ -45,7 +47,7 @@ public class ArbitrageServiceImpl extends BaseServiceImpl<ArbitrageFilter, Arbit
     }
 
     @Override
-    public long countAllByUserId(long userId) {
+    public long countAllByUserId(UUID userId) {
         return repository.countAllByUserId(userId);
     }
 }
