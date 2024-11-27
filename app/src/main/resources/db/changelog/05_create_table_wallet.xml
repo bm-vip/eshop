@@ -22,7 +22,7 @@
             <column name="currency" type="VARCHAR(50)"/>
             <column name="transaction_type" type="VARCHAR(50)"/>
             <column name="transaction_hash" type="VARCHAR(500)"/>
-            <column name="user_id" type="BIGINT"/>
+            <column name="user_id" type="UUID"/>
             <column name="active" type="boolean" defaultValueBoolean="false">
                 <constraints nullable="false"></constraints>
             </column>
@@ -45,7 +45,7 @@
             <column name="currency" type="VARCHAR(50)"/>
             <column name="transaction_type" type="VARCHAR(50)"/>
             <column name="transaction_hash" type="VARCHAR(500)"/>
-            <column name="user_id" type="BIGINT"/>
+            <column name="user_id" type="UUID"/>
             <column name="active" type="boolean" defaultValueBoolean="false">
             </column>
             <column name="address" type="VARCHAR(500)">

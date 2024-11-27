@@ -21,7 +21,7 @@
 
     <changeSet id="04-2" author="administrator">
         <loadData file="db/data/tbl_user.csv" tableName = "tbl_user" >
-            <column header="id" name="id" type="bigint" />
+            <column header="id" name="id" type="UUID" />
             <column header="created_by" name="created_by" type="VARCHAR(255)"/>
             <column header="created_date" name="created_date" type="TIMESTAMP"/>
             <column header="modified_by" name="modified_by" type="VARCHAR(255)"/>
@@ -39,15 +39,12 @@
     <changeSet id="04-3" author="administrator">
         <loadData file="db/data/tbl_user_role.csv" tableName = "tbl_user_role" >
             <column header="role_id" name="role_id" type="bigint" />
-            <column header="user_id" name="user_id" type="bigint" />
+            <column header="user_id" name="user_id" type="UUID" />
         </loadData>
     </changeSet>
 
     <changeSet id="04-4" author="administrator">
         <sql dbms="postgresql">select setval('seq_role', max(id)+1) from tbl_role</sql>
         <sql dbms="h2">alter sequence seq_role restart with (select max(id)+1 from tbl_role)</sql>
-
-        <sql dbms="postgresql">select setval('seq_user', max(id)+1) from tbl_user</sql>
-        <sql dbms="h2">alter sequence seq_user restart with (select max(id)+1 from tbl_user)</sql>
     </changeSet>
 </databaseChangeLog>

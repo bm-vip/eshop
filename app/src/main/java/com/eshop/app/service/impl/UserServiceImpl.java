@@ -39,12 +39,13 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Optional;
+import java.util.UUID;
 
 import static com.eshop.app.util.MapperHelper.get;
 
 
 @Service
-public class UserServiceImpl extends BaseServiceImpl<UserFilter,UserModel, UserEntity, Long> implements UserService {
+public class UserServiceImpl extends BaseServiceImpl<UserFilter,UserModel, UserEntity, UUID> implements UserService {
 
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
@@ -184,7 +185,7 @@ public class UserServiceImpl extends BaseServiceImpl<UserFilter,UserModel, UserE
         return builder;
     }
     @SneakyThrows
-    public void sendWelcomeNotification(Long recipientId) {
+    public void sendWelcomeNotification(UUID recipientId) {
         var recipient = findById(recipientId);
         String siteName = messages.getMessage("siteName");
         String siteUrl = messages.getMessage("siteUrl");
@@ -197,7 +198,7 @@ public class UserServiceImpl extends BaseServiceImpl<UserFilter,UserModel, UserE
         notificationService.create(new NotificationModel()
                 .setSubject(String.format("Welcome to %s!", siteName))
                 .setBody(emailContent)
-                .setSender(new UserModel().setUserId(2L))
+                .setSender(new UserModel().setUserId(UUID.fromString("6303b84a-04cf-49e1-8416-632ebd84495e")))
                 .setRecipient(new UserModel().setUserId(recipientId)));
     }
 }

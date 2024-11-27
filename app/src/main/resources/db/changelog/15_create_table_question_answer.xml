@@ -31,7 +31,7 @@
             <column name="answer_type" type="varchar(50)">
                 <constraints nullable="false"/>
             </column>
-            <column name="user_id" type="bigint">
+            <column name="user_id" type="UUID">
                 <constraints nullable="false"/>
             </column>
             <column name="active" type="boolean" defaultValue="true">

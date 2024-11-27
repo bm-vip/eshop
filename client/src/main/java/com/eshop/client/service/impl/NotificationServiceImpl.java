@@ -18,6 +18,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.UUID;
+
 @Service
 public class NotificationServiceImpl extends BaseServiceImpl<NotificationFilter, NotificationModel, NotificationEntity, Long> implements NotificationService {
     private final NotificationRepository repository;
@@ -47,18 +49,18 @@ public class NotificationServiceImpl extends BaseServiceImpl<NotificationFilter,
 
     @Override
     @Transactional(readOnly = true)
-    public Page<NotificationModel> findAllByRecipientId(Long recipientId, Pageable pageable) {
+    public Page<NotificationModel> findAllByRecipientId(UUID recipientId, Pageable pageable) {
         return repository.findAllByRecipientIdOrderByCreatedDateDesc(recipientId, pageable).map(mapper::toModel);
     }
 
     @Override
-    public Page<NotificationModel> findAllBySenderId(Long senderId, Pageable pageable) {
+    public Page<NotificationModel> findAllBySenderId(UUID senderId, Pageable pageable) {
         return repository.findAllBySenderIdOrderByCreatedDateDesc(senderId, pageable).map(mapper::toModel);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Page<NotificationModel> findAllByRecipientIdAndNotRead(Long recipientId, Pageable pageable) {
+    public Page<NotificationModel> findAllByRecipientIdAndNotRead(UUID recipientId, Pageable pageable) {
         return repository.findAllByRecipientIdAndReadIsFalseOrderByCreatedDateDesc(recipientId, pageable).map(mapper::toModel);
     }
 

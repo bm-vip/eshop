@@ -4,13 +4,14 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @Setter
 @ToString
 public class NotificationFilter {
     private Long id;
-    private Long senderId;
-    private Long recipientId;
+    private UUID senderId;
+    private UUID recipientId;
     private String subject;
     private String body;
     private Boolean read;
@@ -20,11 +21,11 @@ public class NotificationFilter {
         return Optional.ofNullable(id);
     }
 
-    public Optional<Long> getSenderId() {
+    public Optional<UUID> getSenderId() {
         return Optional.ofNullable(senderId);
     }
 
-    public Optional<Long> getRecipientId() {
+    public Optional<UUID> getRecipientId() {
         return Optional.ofNullable(recipientId);
     }
 

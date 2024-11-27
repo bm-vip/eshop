@@ -12,11 +12,12 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Random;
+import java.util.UUID;
 
 @RestController
 @Tag(name = "User Rest Service v1")
 @RequestMapping(value = "/api/v1/user")
-public class UserRestController extends BaseRestControllerImpl<UserFilter, UserModel, Long> {
+public class UserRestController extends BaseRestControllerImpl<UserFilter, UserModel, UUID> {
 
     private final UserService userService;
     private final SessionRegistry sessionRegistry;

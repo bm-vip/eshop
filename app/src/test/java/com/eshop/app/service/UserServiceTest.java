@@ -12,6 +12,7 @@ import org.springframework.boot.test.mock.mockito.SpyBean;
 
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -42,7 +43,7 @@ public class UserServiceTest {
     @Test
     public void register_passUserModelThenShouldReturn1User() {
         //mock db
-        UserEntity userEntity = new UserEntity() {{setId(1L);setUserName("test");setPassword("test");setActive(true);setEmail("test@test.com");setRoles(Set.of(new RoleEntity() {{setRole("USER");}}));setFirstName("test");setLastName("test");}};
+        UserEntity userEntity = new UserEntity() {{setId(UUID.randomUUID());setUserName("test");setPassword("test");setActive(true);setEmail("test@test.com");setRoles(Set.of(new RoleEntity() {{setRole("USER");}}));setFirstName("test");setLastName("test");}};
         when(userRepository.save(any(UserEntity.class))).thenReturn(userEntity);
 
         //test register service
@@ -54,7 +55,7 @@ public class UserServiceTest {
     @Test
     public void register_passExistedUserModelThenShouldThrowsException() {
         //mock db
-        UserEntity userEntity = new UserEntity() {{setId(1L);setUserName("test");setPassword("test");setActive(true);setEmail("test@test.com");setRoles(Set.of(new RoleEntity() {{setRole("USER");}}));setFirstName("test");setLastName("test");}};
+        UserEntity userEntity = new UserEntity() {{setId(UUID.randomUUID());setUserName("test");setPassword("test");setActive(true);setEmail("test@test.com");setRoles(Set.of(new RoleEntity() {{setRole("USER");}}));setFirstName("test");setLastName("test");}};
         when(userRepository.findByUserName(anyString())).thenReturn(Optional.of(userEntity));
 
         //test register service

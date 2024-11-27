@@ -6,9 +6,10 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Repository
-public interface UserRepository extends BaseRepository<UserEntity, Long> {
+public interface UserRepository extends BaseRepository<UserEntity, UUID> {
 	 Optional<UserEntity> findByUserName(String userName);
 	 Optional<UserEntity> findByEmail(String email);
 	 boolean existsByUid(String uid);

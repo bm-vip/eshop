@@ -8,14 +8,15 @@ import com.eshop.client.model.WalletModel;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 public interface WalletService extends BaseService<WalletFilter, WalletModel, Long> {
-    List<BalanceModel> totalBalanceGroupedByCurrency(long userId);
-    List<BalanceModel> totalDepositGroupedByCurrency(long userId);
-    List<BalanceModel> totalWithdrawalGroupedByCurrency(long userId);
-    List<BalanceModel> totalBonusGroupedByCurrency(long userId);
-    List<BalanceModel> totalRewardGroupedByCurrency(long userId);
-    List<BalanceModel> totalProfitGroupedByCurrency(long userId);
-    List<BalanceModel> dailyProfitGroupedByCurrency(long userId);
+    List<BalanceModel> totalBalanceGroupedByCurrency(UUID userId);
+    List<BalanceModel> totalDepositGroupedByCurrency(UUID userId);
+    List<BalanceModel> totalWithdrawalGroupedByCurrency(UUID userId);
+    List<BalanceModel> totalBonusGroupedByCurrency(UUID userId);
+    List<BalanceModel> totalRewardGroupedByCurrency(UUID userId);
+    List<BalanceModel> totalProfitGroupedByCurrency(UUID userId);
+    List<BalanceModel> dailyProfitGroupedByCurrency(UUID userId);
     Map<Long, BigDecimal> findAllWithinDateRange(long startDate, long endDate, TransactionType transactionType);
 }

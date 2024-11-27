@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Date;
+import java.util.UUID;
 
 @RestController
 @Tag(name = "Arbitrage Rest Service v1")
@@ -26,15 +27,15 @@ public class ArbitrageRestController extends BaseRestControllerImpl<ArbitrageFil
         this.arbitrageService = service;
     }
     @GetMapping("count-all-by-user/{userId}")
-    public ResponseEntity<Long> countAllByUserId(@PathVariable Long userId) {
+    public ResponseEntity<Long> countAllByUserId(@PathVariable UUID userId) {
         return ResponseEntity.ok(arbitrageService.countAllByUserId(userId));
     }
     @GetMapping("count-by-user-and-date/{userId}/{epochDate}")
-    public ResponseEntity<Long> countByUserIdAndDate(@PathVariable Long userId, @PathVariable Long epochDate) {
+    public ResponseEntity<Long> countByUserIdAndDate(@PathVariable UUID userId, @PathVariable Long epochDate) {
         return ResponseEntity.ok(arbitrageService.countByUserIdAndDate(userId, new Date(epochDate)));
     }
     @GetMapping("count-today-by-user/{userId}")
-    public ResponseEntity<Long> countByUserIdAndDate(@PathVariable Long userId) {
+    public ResponseEntity<Long> countByUserIdAndDate(@PathVariable UUID userId) {
         return ResponseEntity.ok(arbitrageService.countByUserIdAndDate(userId, new Date()));
     }
     @GetMapping("find-top-coins/{pageSize}")
@@ -42,7 +43,7 @@ public class ArbitrageRestController extends BaseRestControllerImpl<ArbitrageFil
         return ResponseEntity.ok(arbitrageService.findMostUsedCoins(pageSize));
     }
     @GetMapping("purchase-limit/{userId}")
-    public ResponseEntity<String> purchaseLimit(@PathVariable long userId) {
+    public ResponseEntity<String> purchaseLimit(@PathVariable UUID userId) {
         return ResponseEntity.ok(arbitrageService.purchaseLimit(userId));
     }
 }

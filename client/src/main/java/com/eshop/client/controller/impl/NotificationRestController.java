@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.UUID;
+
 @RestController
 @Tag(name = "Notification Rest Service v1")
 @RequestMapping(value = "/api/v1/notification")
@@ -32,11 +34,11 @@ public class NotificationRestController extends BaseRestControllerImpl<Notificat
     }
 
     @GetMapping("findAll-by-recipientId/{recipientId}")
-    public ResponseEntity<Page<NotificationModel>> findAllByRecipientId(@PathVariable Long recipientId, @PageableDefault Pageable pageable) {
+    public ResponseEntity<Page<NotificationModel>> findAllByRecipientId(@PathVariable UUID recipientId, @PageableDefault Pageable pageable) {
         return ResponseEntity.ok(notificationService.findAllByRecipientId(recipientId,pageable));
     }
     @GetMapping("findAll-by-senderId/{senderId}")
-    public ResponseEntity<Page<NotificationModel>> findAllBySenderId(@PathVariable Long senderId, @PageableDefault Pageable pageable) {
+    public ResponseEntity<Page<NotificationModel>> findAllBySenderId(@PathVariable UUID senderId, @PageableDefault Pageable pageable) {
         return ResponseEntity.ok(notificationService.findAllBySenderId(senderId,pageable));
     }
 }

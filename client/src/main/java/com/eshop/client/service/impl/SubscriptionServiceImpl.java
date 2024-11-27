@@ -27,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 import static com.eshop.client.util.MapperHelper.get;
 
@@ -145,7 +146,7 @@ public class SubscriptionServiceImpl extends BaseServiceImpl<SubscriptionFilter,
         var discountAmount = originalPrice.multiply(new BigDecimal(discountPercentage).divide(new BigDecimal("100")));
         return originalPrice.subtract(discountAmount);
     }
-    private void deactivateOldActive(Long userId) {
+    private void deactivateOldActive(UUID userId) {
         var userEntity = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("No such user with " + userId));
         var oldActive = subscriptionRepository.findByUserIdAndStatus(userEntity.getId(), EntityStatusType.Active);
         if(oldActive != null) {
@@ -156,7 +157,7 @@ public class SubscriptionServiceImpl extends BaseServiceImpl<SubscriptionFilter,
 
     @Override
     @Transactional(readOnly = true)
-    public SubscriptionModel findByUserAndActivePackage(long userId) {
+    public SubscriptionModel findByUserAndActivePackage(UUID userId) {
         return mapper.toModel(subscriptionRepository.findByUserIdAndStatus(userId, EntityStatusType.Active));
     }
 

@@ -95,8 +95,6 @@ columns = [{
     data: 'modifiedDate',
     render: function (data) { return toLocalizingDateString(data, true) }
 },{
-    data: 'treePath'
-},{
     data: 'country.name'
 },{
     data: 'deposit'

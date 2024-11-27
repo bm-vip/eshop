@@ -3,12 +3,13 @@ package com.eshop.client.util;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class StringUtils {
-    public static List<Long> reverseArrayFromString(String input) {
+    public static List<UUID> reverseArrayFromString(String input) {
         // Split the string by commas
-        List<Long> numbers = Arrays.asList(input.split(",")).stream().map(Long::valueOf).collect(Collectors.toList());
+        List<UUID> numbers = Arrays.asList(input.split(",")).stream().map(UUID::fromString).collect(Collectors.toList());
 
         // Reverse the list
         Collections.reverse(numbers);

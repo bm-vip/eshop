@@ -8,6 +8,7 @@ import lombok.experimental.Accessors;
 
 import java.math.BigDecimal;
 import java.util.Optional;
+import java.util.UUID;
 
 @Setter
 @ToString
@@ -20,7 +21,7 @@ public class WalletFilter {
     private TransactionType transactionType;
     private String transactionHash;
     private CurrencyType currency;
-    private Long userId;
+    private UUID userId;
     private Boolean active;
     private String address;
 
@@ -50,7 +51,7 @@ public class WalletFilter {
     public Optional<CurrencyType> getCurrency() {
         return Optional.ofNullable(currency);
     }
-    public Optional<Long> getUserId() {
+    public Optional<UUID> getUserId() {
         return Optional.ofNullable(userId);
     }
 

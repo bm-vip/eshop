@@ -32,6 +32,7 @@ import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static com.eshop.client.util.MapperHelper.get;
@@ -141,12 +142,12 @@ public class ArbitrageServiceImpl extends BaseServiceImpl<ArbitrageFilter, Arbit
     }
 
     @Override
-    public long countAllByUserId(long userId) {
+    public long countAllByUserId(UUID userId) {
         return repository.countAllByUserId(userId);
     }
 
     @Override
-    public long countByUserIdAndDate(long userId, Date date) {
+    public long countByUserIdAndDate(UUID userId, Date date) {
         QArbitrageEntity path = QArbitrageEntity.arbitrageEntity;
         DateTemplate<Date> truncatedDate = Expressions.dateTemplate(Date.class, "date_trunc('day', {0})", path.createdDate);
         return queryFactory.from(path)
@@ -165,7 +166,7 @@ public class ArbitrageServiceImpl extends BaseServiceImpl<ArbitrageFilter, Arbit
     }
     @Override
     @Transactional(readOnly = true)
-    public String purchaseLimit(long userId) {
+    public String purchaseLimit(UUID userId) {
         var subscription = subscriptionRepository.findByUserIdAndStatus(userId, EntityStatusType.Active);
         if(subscription == null)
             throw new NotFoundException("subscription not found");

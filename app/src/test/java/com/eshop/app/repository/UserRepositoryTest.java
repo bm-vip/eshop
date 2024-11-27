@@ -19,6 +19,7 @@ import javax.validation.ConstraintViolationException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -56,8 +57,8 @@ public class UserRepositoryTest {
     @Order(2)
     @Commit
     public void deleteById_shouldDeleteByIdFromDatabase() {
-        userRepository.deleteById(1L);
-        Optional<UserEntity> childOptional = userRepository.findById(1L);
+        userRepository.deleteById(UUID.fromString("92d18767-6336-474d-9b57-9cec381db56b"));
+        Optional<UserEntity> childOptional = userRepository.findById(UUID.fromString("92d18767-6336-474d-9b57-9cec381db56b"));
 
         Assertions.assertThat(childOptional).isEmpty();
     }
@@ -85,7 +86,7 @@ public class UserRepositoryTest {
 
     @Test
     public void update_shouldUpdateUserEntityToDatabase() {
-        UserEntity userEntity = userRepository.findById(2L).get();
+        UserEntity userEntity = userRepository.findById(UUID.fromString("92d18767-6336-474d-9b57-9cec381db56b")).get();
         userEntity.setEmail("a@a.com");
         UserEntity userUpdated = userRepository.save(userEntity);
 
@@ -94,7 +95,7 @@ public class UserRepositoryTest {
 
     @Test
     public void findById_shouldReturnCompanyEntity() {
-        Optional<UserEntity> optional = userRepository.findById(2L);
+        Optional<UserEntity> optional = userRepository.findById(UUID.fromString("92d18767-6336-474d-9b57-9cec381db56b"));
 
         Assertions.assertThat(optional).isPresent();
     }

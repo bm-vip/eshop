@@ -10,9 +10,10 @@ import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 @Data
-public class UserModel extends BaseModel<Long> {
+public class UserModel extends BaseModel<UUID> {
     @NotNull
     @NotBlank
     private String userName;
@@ -43,11 +44,11 @@ public class UserModel extends BaseModel<Long> {
     private BigDecimal bonus;
     private BigDecimal reward;
 
-    public UserModel setUserId(Long id) {
+    public UserModel setUserId(UUID id) {
         setId(id);
         return this;
     }
-    public List<Long> getParents(){
+    public List<UUID> getParents(){
         if(treePath == null)
             return null;
         String parents = treePath.replace("," + getId(),"");

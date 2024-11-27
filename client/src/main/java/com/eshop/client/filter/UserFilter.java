@@ -6,11 +6,12 @@ import lombok.ToString;
 import javax.validation.constraints.Email;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 
 @Setter
 @ToString
 public class UserFilter {
-    private Long id;
+    private UUID id;
     private String userName;
     private String title;
     @Email
@@ -19,7 +20,7 @@ public class UserFilter {
     private String lastName;
     private Boolean active;
     private String uid;
-    private Long parentId;
+    private UUID parentId;
     private Boolean hasParent;
     private String treePath;
     private String walletAddress;
@@ -27,7 +28,7 @@ public class UserFilter {
     private Long countryId;
     private Set<Long> roles;
 
-    public Optional<Long> getId() {
+    public Optional<UUID> getId() {
         return Optional.ofNullable(id);
     }
 
@@ -77,7 +78,7 @@ public class UserFilter {
         return Optional.of(uid);
     }
 
-    public Optional<Long> getParentId() {
+    public Optional<UUID> getParentId() {
         return Optional.ofNullable(parentId);
     }
 

@@ -28,6 +28,7 @@ import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static com.eshop.app.util.MapperHelper.get;
@@ -188,23 +189,23 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter,WalletModel,
     }
 
     @Override
-    public List<BalanceModel> totalBalanceGroupedByCurrency(long userId) {
+    public List<BalanceModel> totalBalanceGroupedByCurrency(UUID userId) {
         return walletRepository.totalBalanceGroupedByCurrency(userId);
     }
     @Override
-    public List<BalanceModel> totalDepositGroupedByCurrency(long userId) {
+    public List<BalanceModel> totalDepositGroupedByCurrency(UUID userId) {
         return walletRepository.totalDepositGroupedByCurrency(userId);
     }
     @Override
-    public List<BalanceModel> totalWithdrawalGroupedByCurrency(long userId) {
+    public List<BalanceModel> totalWithdrawalGroupedByCurrency(UUID userId) {
         return walletRepository.totalWithdrawalGroupedByCurrency(userId);
     }
     @Override
-    public List<BalanceModel> totalBonusGroupedByCurrency(long userId) {
+    public List<BalanceModel> totalBonusGroupedByCurrency(UUID userId) {
         return walletRepository.totalBonusGroupedByCurrency(userId);
     }
     @Override
-    public List<BalanceModel> totalRewardGroupedByCurrency(long userId) {
+    public List<BalanceModel> totalRewardGroupedByCurrency(UUID userId) {
         return walletRepository.totalRewardGroupedByCurrency(userId);
     }
 

@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.Random;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -21,7 +22,7 @@ public class OneTimePasswordServiceImpl implements OneTimePasswordService {
     }
 
     @Override
-    public String create(long userId) {
+    public String create(UUID userId) {
         Random random = new Random();
         int otp = 100000 + random.nextInt(900000);
 
@@ -34,7 +35,7 @@ public class OneTimePasswordServiceImpl implements OneTimePasswordService {
     }
 
     @Override
-    public boolean verify(long userId, String password) {
+    public boolean verify(UUID userId, String password) {
         var optional = repository.findByUserIdAndPasswordAndConsumedFalse(userId, password);
         var verify = optional.isPresent() && !optional.get().isExpired();
         if(verify) {

@@ -112,7 +112,7 @@
             <column name="modified_by" type="VARCHAR(255)"/>
             <column name="modified_date" type="TIMESTAMP"/>
             <column defaultValueNumeric="0" name="version" type="integer"/>
-            <column name="user_id" type="bigint"/>
+            <column name="user_id" type="UUID"/>
             <column name="subscription_package_id" type="bigint">
                 <constraints nullable="false"/>
             </column>
@@ -140,7 +140,7 @@
             <column name="modified_by" type="VARCHAR(255)"/>
             <column name="modified_date" type="TIMESTAMP"/>
             <column defaultValueNumeric="0" name="version" type="integer"/>
-            <column name="user_id" type="bigint"/>
+            <column name="user_id" type="UUID"/>
             <column name="subscription_package_id" type="bigint">
             </column>
             <column name="expire_date" type="TIMESTAMP">

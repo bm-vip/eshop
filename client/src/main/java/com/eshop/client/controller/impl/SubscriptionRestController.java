@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.UUID;
+
 @RestController
 @Tag(name = "Subscription Rest Service v1")
 @RequestMapping(value = "/api/v1/subscription")
@@ -30,7 +32,7 @@ public class SubscriptionRestController extends BaseRestControllerImpl<Subscript
     }
 
     @GetMapping("find-active-by-user/{userId}")
-    public ResponseEntity<SubscriptionModel> findAll(@PathVariable Long userId){
+    public ResponseEntity<SubscriptionModel> findAll(@PathVariable UUID userId){
         return ResponseEntity.ok(subscriptionService.findByUserAndActivePackage(userId));
     }
 }

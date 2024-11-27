@@ -6,10 +6,11 @@ import com.eshop.client.model.CoinUsageDTO;
 import org.springframework.data.domain.Page;
 
 import java.util.Date;
+import java.util.UUID;
 
 public interface ArbitrageService extends BaseService<ArbitrageFilter, ArbitrageModel, Long> {
-    long countAllByUserId(long userId);
-    long countByUserIdAndDate(long userId, Date date);
-    String purchaseLimit(long userId);
+    long countAllByUserId(UUID userId);
+    long countByUserIdAndDate(UUID userId, Date date);
+    String purchaseLimit(UUID userId);
     Page<CoinUsageDTO> findMostUsedCoins(int pageSize);
 }

@@ -33,6 +33,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static com.eshop.client.util.DateUtil.toLocalDate;
@@ -162,34 +163,34 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter,WalletModel,
     }
     
     @Override
-    public List<BalanceModel> totalBalanceGroupedByCurrency(long userId) {
+    public List<BalanceModel> totalBalanceGroupedByCurrency(UUID userId) {
         return walletRepository.totalBalanceGroupedByCurrency(userId);
     }
     @Override
-    public List<BalanceModel> totalDepositGroupedByCurrency(long userId) {
+    public List<BalanceModel> totalDepositGroupedByCurrency(UUID userId) {
         return walletRepository.totalDepositGroupedByCurrency(userId);
     }
     @Override
-    public List<BalanceModel> totalWithdrawalGroupedByCurrency(long userId) {
+    public List<BalanceModel> totalWithdrawalGroupedByCurrency(UUID userId) {
         return walletRepository.totalWithdrawalGroupedByCurrency(userId);
     }
     @Override
-    public List<BalanceModel> totalBonusGroupedByCurrency(long userId) {
+    public List<BalanceModel> totalBonusGroupedByCurrency(UUID userId) {
         return walletRepository.totalBonusGroupedByCurrency(userId);
     }
 
     @Override
-    public List<BalanceModel> totalRewardGroupedByCurrency(long userId) {
+    public List<BalanceModel> totalRewardGroupedByCurrency(UUID userId) {
         return walletRepository.totalRewardGroupedByCurrency(userId);
     }
 
     @Override
-    public List<BalanceModel> totalProfitGroupedByCurrency(long userId) {
+    public List<BalanceModel> totalProfitGroupedByCurrency(UUID userId) {
         return walletRepository.totalProfitGroupedByCurrency(userId, null);
     }
 
     @Override
-    public List<BalanceModel> dailyProfitGroupedByCurrency(long userId) {
+    public List<BalanceModel> dailyProfitGroupedByCurrency(UUID userId) {
         return walletRepository.totalProfitGroupedByCurrency(userId, LocalDateTime.now().truncatedTo(ChronoUnit.DAYS));
     }
 

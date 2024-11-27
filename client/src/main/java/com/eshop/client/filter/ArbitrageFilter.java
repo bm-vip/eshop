@@ -9,6 +9,7 @@ import lombok.experimental.Accessors;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.UUID;
 
 @Setter
 @ToString
@@ -21,7 +22,7 @@ public class ArbitrageFilter {
     private LocalDateTime createdDateFrom;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdDateTo;
-    private Long userId;
+    private UUID userId;
     private Long exchangeId;
     private Long coinId;
     private Long subscriptionId;
@@ -45,7 +46,7 @@ public class ArbitrageFilter {
         return Optional.ofNullable(createdDate);
     }
 
-    public Optional<Long> getUserId() {
+    public Optional<UUID> getUserId() {
         return Optional.ofNullable(userId);
     }
 

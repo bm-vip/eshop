@@ -18,10 +18,10 @@
             <column name="modified_by" type="VARCHAR(255)"/>
             <column name="modified_date" type="TIMESTAMP"/>
             <column defaultValueNumeric="0" name="version" type="integer"/>
-            <column name="sender" type="bigint">
+            <column name="sender" type="uuid">
                 <constraints nullable="false"/>
             </column>
-            <column name="recipient" type="bigint">
+            <column name="recipient" type="uuid">
                 <constraints nullable="false"/>
             </column>
             <column name="subject" type="varchar(255)">
@@ -48,9 +48,9 @@
             <column name="modified_by" type="VARCHAR(255)"/>
             <column name="modified_date" type="TIMESTAMP"/>
             <column defaultValueNumeric="0" name="version" type="integer"/>
-            <column name="sender" type="bigint">
+            <column name="sender" type="uuid">
             </column>
-            <column name="recipient" type="bigint">
+            <column name="recipient" type="uuid">
             </column>
             <column name="subject" type="varchar(255)">
             </column>

@@ -6,6 +6,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @Setter
 @ToString
@@ -13,7 +14,7 @@ public class QuestionFilter {
     private Long id;
     private String title;
     private Long answerId;
-    private Long userId;
+    private UUID userId;
     private QuestionType type;
     private AnswerType answerType;
     private Boolean active;
@@ -33,7 +34,7 @@ public class QuestionFilter {
         return Optional.ofNullable(answerId);
     }
 
-    public Optional<Long> getUserId() {
+    public Optional<UUID> getUserId() {
         return Optional.ofNullable(userId);
     }
 

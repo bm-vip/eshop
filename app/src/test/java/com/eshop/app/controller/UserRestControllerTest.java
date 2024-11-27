@@ -49,7 +49,7 @@ class UserRestControllerTest {
                         .content(json)
                 )
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(2))
+                .andExpect(jsonPath("$.id").value("92d18767-6336-474d-9b57-9cec381db56b"))
                 .andExpect(jsonPath("$.roles.[0].role").value(RoleType.USER))
         ;
     }
@@ -58,7 +58,7 @@ class UserRestControllerTest {
     @Test
     @Order(2)
     void deleteById_shouldDeleteByIdFromDatabase() throws Exception {
-        mockMvc.perform(delete("/api/v1/user/deleteById/{id}",1L))
+        mockMvc.perform(delete("/api/v1/user/deleteById/{id}","92d18767-6336-474d-9b57-9cec381db56b"))
                 .andExpect(status().isNoContent());
     }
 
@@ -73,7 +73,7 @@ class UserRestControllerTest {
     @WithMockUser(roles="ADMIN")
     @Test
     void findById_shouldReturnUserModel() throws Exception {
-        mockMvc.perform(get("/api/v1/user/findById/{id}", 2L))
+        mockMvc.perform(get("/api/v1/user/findById/{id}", "92d18767-6336-474d-9b57-9cec381db56b"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.userName").value("bm_vip"));
     }
@@ -81,7 +81,7 @@ class UserRestControllerTest {
     @WithMockUser(roles="ADMIN")
     @Test
     void findById_shouldThrowNotFoundError() throws Exception {
-        mockMvc.perform(get("/api/v1/user/findById/{id}", 44L))
+        mockMvc.perform(get("/api/v1/user/findById/{id}", "92d18767-6336-474d-9b57-9cec381db57b"))
                 .andExpect(status().isNotFound());
     }
 

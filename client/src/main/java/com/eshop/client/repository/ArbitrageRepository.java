@@ -9,12 +9,13 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 @Repository
 public interface ArbitrageRepository extends BaseRepository<ArbitrageEntity, Long> {
-    long countAllByUserId(long userId);
+    long countAllByUserId(UUID userId);
     @Query("select a from ArbitrageEntity a where a.user.id=:userId and a.subscription.id=:subscriptionId and DATE(a.createdDate) =:createdDate order by a.createdDate desc")
-    List<ArbitrageEntity> findByUserIdAndSubscriptionIdAndCreatedDateOrderByCreatedDateDesc(Long userId, Long subscriptionId, LocalDateTime createdDate);
+    List<ArbitrageEntity> findByUserIdAndSubscriptionIdAndCreatedDateOrderByCreatedDateDesc(UUID userId, Long subscriptionId, LocalDateTime createdDate);
 
     @Query("SELECT NEW com.eshop.client.model.CoinUsageDTO(" +
             "a.coin.name, " +

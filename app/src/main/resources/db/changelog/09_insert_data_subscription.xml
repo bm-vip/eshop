@@ -40,7 +40,7 @@
             <column header="modified_by" name="modified_by" type="VARCHAR(255)"/>
             <column header="modified_date" name="modified_date" type="TIMESTAMP"/>
             <column header="version" name="version" type="integer"/>
-            <column header="user_id" name="user_id" type="bigint"/>
+            <column header="user_id" name="user_id" type="UUID"/>
             <column header="subscription_package_id" name="subscription_package_id" type="bigint"/>
             <column header="wallet_id" name="wallet_id" type="bigint"/>
             <column header="expire_date" name="expire_date" type="TIMESTAMP"/>

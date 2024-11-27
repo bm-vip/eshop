@@ -6,12 +6,13 @@ import lombok.ToString;
 
 import java.math.BigDecimal;
 import java.util.Optional;
+import java.util.UUID;
 
 @Setter
 @ToString
 public class SubscriptionFilter {
     private Long id;
-    private Long userId;
+    private UUID userId;
     private Long subscriptionPackageId;
     private Long expireDateFrom;
     private Long expireDateTo;
@@ -24,7 +25,7 @@ public class SubscriptionFilter {
         return Optional.ofNullable(id);
     }
 
-    public Optional<Long> getUserId() {
+    public Optional<UUID> getUserId() {
         return Optional.ofNullable(userId);
     }
 

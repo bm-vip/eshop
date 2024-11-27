@@ -1,6 +1,7 @@
 package com.eshop.client.entity;
 
 import lombok.Data;
+import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
 
@@ -8,19 +9,20 @@ import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import java.util.Set;
+import java.util.UUID;
 
 @Data
 @Entity
 @Table(name = "tbl_user")
 @Audited
-public class UserEntity extends BaseEntity<Long> {
+public class UserEntity extends BaseEntity<UUID> {
 
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@SequenceGenerator(name="seq_user",sequenceName="seq_user",allocationSize = 1)
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_user")
-	private Long id;
+	@GeneratedValue(generator = "UUID")
+	@GenericGenerator(name = "UUID", strategy = "uuid2")
+	private UUID id;
 
 	@Column(name = "user_name", unique = true)
 	@NotNull
