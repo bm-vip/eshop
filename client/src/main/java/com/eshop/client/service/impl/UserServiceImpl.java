@@ -115,7 +115,7 @@ public class UserServiceImpl extends BaseServiceImpl<UserFilter,UserModel, UserE
 
     @Override
     @Transactional
-    @CacheEvict(cacheNames = "${cache.prefix:client}", allEntries = true, condition = "'User:*'")
+    @CacheEvict(cacheNames = "${cache.prefix:client}", key = "'User:*'")
     public UserModel register(UserModel model) {
         Optional<UserEntity> optionalUserEntity = userRepository.findByUserName(model.getUserName());
         if (optionalUserEntity.isPresent())
