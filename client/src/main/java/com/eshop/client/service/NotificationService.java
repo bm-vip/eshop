@@ -8,7 +8,7 @@ import org.springframework.data.domain.Pageable;
 import java.util.UUID;
 
 public interface NotificationService extends BaseService<NotificationFilter, NotificationModel, Long>, LogicalDeletedService<Long>{
-    Page<NotificationModel> findAllByRecipientId(UUID recipientId, Pageable pageable);
-    Page<NotificationModel> findAllBySenderId(UUID senderId, Pageable pageable);
-    Page<NotificationModel> findAllByRecipientIdAndNotRead(UUID recipientId, Pageable pageable);
+    Page<NotificationModel> findAllByRecipientId(UUID recipientId, Pageable pageable, String key);
+    Page<NotificationModel> findAllBySenderId(UUID senderId, Pageable pageable, String key);
+    Page<NotificationModel> findAllByRecipientIdAndNotRead(UUID recipientId, Pageable pageable, String key);
 }

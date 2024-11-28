@@ -12,6 +12,7 @@ import com.eshop.client.util.SessionHolder;
 import com.eshop.exception.common.NotFoundException;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -49,18 +50,21 @@ public class NotificationServiceImpl extends BaseServiceImpl<NotificationFilter,
 
     @Override
     @Transactional(readOnly = true)
-    public Page<NotificationModel> findAllByRecipientId(UUID recipientId, Pageable pageable) {
+    @Cacheable(cacheNames = "${cache.prefix:client}", key = "#key")
+    public Page<NotificationModel> findAllByRecipientId(UUID recipientId, Pageable pageable, String key) {
         return repository.findAllByRecipientIdOrderByCreatedDateDesc(recipientId, pageable).map(mapper::toModel);
     }
 
     @Override
-    public Page<NotificationModel> findAllBySenderId(UUID senderId, Pageable pageable) {
+    @Cacheable(cacheNames = "${cache.prefix:client}", key = "#key")
+    public Page<NotificationModel> findAllBySenderId(UUID senderId, Pageable pageable, String key) {
         return repository.findAllBySenderIdOrderByCreatedDateDesc(senderId, pageable).map(mapper::toModel);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Page<NotificationModel> findAllByRecipientIdAndNotRead(UUID recipientId, Pageable pageable) {
+    @Cacheable(cacheNames = "${cache.prefix:client}", key = "#key")
+    public Page<NotificationModel> findAllByRecipientIdAndNotRead(UUID recipientId, Pageable pageable, String key) {
         return repository.findAllByRecipientIdAndReadIsFalseOrderByCreatedDateDesc(recipientId, pageable).map(mapper::toModel);
     }
 

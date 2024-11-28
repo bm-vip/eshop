@@ -17,6 +17,8 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import static com.eshop.client.util.StringUtils.generateFilterKey;
+
 
 @Controller
 @AllArgsConstructor
@@ -37,7 +39,8 @@ public class LoginController {
         UserModel user = sessionHolder.getCurrentUser();
         ModelAndView modelAndView = new ModelAndView(name);
         modelAndView.addObject("currentUser", sessionHolder.getCurrentUserAsJsonString());
-        modelAndView.addObject("notifications", notificationService.findAllByRecipientIdAndNotRead(user.getId(), PageRequest.of(0,10)));
+        String cacheKey = generateFilterKey("Notification","findAllByRecipientIdAndNotRead",user.getId(),PageRequest.of(0,10));
+        modelAndView.addObject("notifications", notificationService.findAllByRecipientIdAndNotRead(user.getId(), PageRequest.of(0,10),cacheKey));
         modelAndView.addObject("fullName", user.getFirstName() + " " + user.getLastName());
         modelAndView.addObject("pageTitle", messages.getMessage(name));
         modelAndView.addObject("errorMsg", null);
