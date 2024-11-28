@@ -1,6 +1,5 @@
 package com.eshop.client.service.impl;
 
-import com.eshop.client.repository.UserRepository;
 import com.eshop.client.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;

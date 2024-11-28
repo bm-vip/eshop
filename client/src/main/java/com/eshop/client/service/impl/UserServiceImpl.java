@@ -64,9 +64,12 @@ public class UserServiceImpl extends BaseServiceImpl<UserFilter,UserModel, UserE
     }
 
     @Override
-    @Cacheable(cacheNames = "${cache.prefix:client}", key = "'User:findByUserNameOrEmail:' + #login")
+//    @Cacheable(cacheNames = "${cache.prefix:client}", key = "'User:findByUserNameOrEmail:' + #login")
     public UserModel findByUserNameOrEmail(String login) {
-        return mapper.toModel(userRepository.findByUserNameOrEmail(login, login).orElseThrow(() -> new NotFoundException("User not found with username/email: " + login)));
+        var entity = userRepository.findByUserNameOrEmail(login, login).orElseThrow(() -> new NotFoundException("User not found with username/email: " + login));
+        var model = mapper.toModel(entity);
+        model.setPassword(entity.getPassword());
+        return model;
     }
 
     @Override
