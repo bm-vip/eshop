@@ -78,7 +78,7 @@ public abstract class BaseServiceImpl<F, M extends BaseModel<ID>, E extends Base
     }
 
     @Override
-    @CacheEvict(cacheNames = "${cache.prefix:client}", allEntries = true, condition = "#allKey")
+    @CacheEvict(cacheNames = "${cache.prefix:client}", key = "#allKey")
     public M create(M model, String allKey) {
         var saved = repository.save(mapper.toEntity(model));
         return mapper.toModel(saved);
@@ -86,7 +86,7 @@ public abstract class BaseServiceImpl<F, M extends BaseModel<ID>, E extends Base
 
     @Override
     @CachePut(cacheNames = "${cache.prefix:client}", key = "#key")
-    @CacheEvict(cacheNames = "${cache.prefix:client}", allEntries = true, condition = "#allKey")
+    @CacheEvict(cacheNames = "${cache.prefix:client}", key = "#allKey")
     public M update(M model,String key, String allKey) {
         var entity = repository.findById(model.getId())
                 .orElseThrow(() -> new NotFoundException(String.format("%s not found by id %s",
@@ -95,14 +95,14 @@ public abstract class BaseServiceImpl<F, M extends BaseModel<ID>, E extends Base
     }
 
     @Override
-    @CacheEvict(cacheNames = "${cache.prefix:client}", allEntries = true, condition = "#allKey")
+    @CacheEvict(cacheNames = "${cache.prefix:client}", key = "#allKey")
     public void deleteById(ID id, String allKey) {
         repository.findById(id)
                 .orElseThrow(() -> new NotFoundException("id: " + id));
         repository.deleteById(id);
     }
 
-    @CacheEvict(cacheNames = "${cache.prefix:client}", allEntries = true, condition = "#allKey")
+    @CacheEvict(cacheNames = "${cache.prefix:client}", key = "#allKey")
     public void clearCache(String allKey) {
         // Method to clear all caches for this service
     }
