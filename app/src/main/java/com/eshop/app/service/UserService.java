@@ -6,6 +6,7 @@ import com.eshop.app.model.UserModel;
 import java.util.UUID;
 
 public interface UserService extends BaseService<UserFilter, UserModel, UUID> {
+    UserModel findByUserNameOrEmail(String login);
     UserModel findByUserName(String userName);
     UserModel register(UserModel model);
 }

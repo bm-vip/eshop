@@ -1,6 +1,6 @@
 package com.eshop.app.service.impl;
 
-import com.eshop.app.repository.UserRepository;
+import com.eshop.app.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -15,12 +15,11 @@ import java.util.stream.Collectors;
 @Service
 public class CustomUserDetailsServiceImpl implements UserDetailsService {
     @Autowired
-    private UserRepository userRepository;
+    private UserService userService;
 
     @Override
     public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
-        var user = userRepository.findByUserNameOrEmail(login, login)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found with username/email: " + login));
+        var user = userService.findByUserNameOrEmail(login);
 
         return new UserDetails() {
             @Override

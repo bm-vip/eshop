@@ -17,6 +17,8 @@ import com.eshop.exception.common.BadRequestException;
 import com.eshop.exception.common.NotFoundException;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
+import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.Expressions;
 import lombok.SneakyThrows;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -191,7 +193,11 @@ public class UserServiceImpl extends BaseServiceImpl<UserFilter,UserModel, UserE
         filter.getEmail().ifPresent(v -> builder.and(path.email.toLowerCase().eq(v.toLowerCase())));
         filter.getUid().ifPresent(v -> builder.and(path.uid.eq(v)));
         filter.getParentId().ifPresent(v -> builder.and(path.parent.id.eq(v)));
-        filter.getTreePath().ifPresent(v -> builder.and(path.treePath.like(v)));
+        filter.getTreePath().ifPresent(v -> {
+            if(v.contains("%"))
+                builder.and(Expressions.booleanTemplate("tree_path like {0}", v));
+            else builder.and(path.treePath.contains(v));
+        });
         filter.getWalletAddress().ifPresent(v -> builder.and(path.walletAddress.eq(v)));
         filter.getFirstName().ifPresent(v -> builder.and(path.firstName.toLowerCase().contains(v.toLowerCase())));
         filter.getLastName().ifPresent(v -> builder.and(path.lastName.toLowerCase().contains(v.toLowerCase())));
