@@ -61,11 +61,12 @@ public class SubscriptionPackageServiceImpl extends BaseServiceImpl<Subscription
 
     @Override
     public SubscriptionPackageModel update(SubscriptionPackageModel model) {
-        SubscriptionFilter subscriptionFilter = new SubscriptionFilter();
-        subscriptionFilter.setSubscriptionPackageId(model.getId());
-
-        if(subscriptionService.exists(subscriptionFilter))
-            throw new NotAcceptableException("Subscription package already taken by another user, you can't update it");
+        if(model.getPrice()!=null || model.getMaxPrice()!=null) {
+            SubscriptionFilter subscriptionFilter = new SubscriptionFilter();
+            subscriptionFilter.setSubscriptionPackageId(model.getId());
+            if (subscriptionService.exists(subscriptionFilter))
+                throw new NotAcceptableException("Subscription package already taken by another user, you can't update it");
+        }
         return super.update(model);
     }
 

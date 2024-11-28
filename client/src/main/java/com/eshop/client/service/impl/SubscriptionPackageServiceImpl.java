@@ -10,6 +10,7 @@ import com.eshop.client.repository.SubscriptionPackageRepository;
 import com.eshop.client.service.SubscriptionPackageService;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -59,12 +60,8 @@ public class SubscriptionPackageServiceImpl extends BaseServiceImpl<Subscription
     }
 
     @Override
+    @Cacheable(cacheNames = "${cache.prefix:client}", key = "'SubscriptionPackage:findMatchedPackageByAmountAndCurrency:amount:' + #amount.toString() + ':currency:' + #currency.toString()")
     public SubscriptionPackageModel findMatchedPackageByAmountAndCurrency(BigDecimal amount, CurrencyType currency) {
         return mapper.toModel(subscriptionPackageRepository.findMatchedPackageByAmountAndCurrency(amount, currency).orElse(subscriptionPackageRepository.findTopByOrderByMaxPriceDesc()));
-    }
-
-    @Override
-    public String getCachePrefix() {
-        return "subscription-package";
     }
 }

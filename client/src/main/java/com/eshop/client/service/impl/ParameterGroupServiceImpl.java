@@ -47,8 +47,4 @@ public class ParameterGroupServiceImpl extends BaseServiceImpl<ParameterGroupFil
         return repository;
     }
 
-    @Override
-    public String getCachePrefix() {
-        return "parameter-group";
-    }
 }

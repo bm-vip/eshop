@@ -21,6 +21,8 @@ import com.eshop.exception.common.NotFoundException;
 import com.eshop.exception.common.PaymentRequiredException;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
+import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.core.types.dsl.DateTemplate;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -81,7 +83,7 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter,WalletModel,
 
     @Override
     @Transactional
-    public WalletModel create(WalletModel model) {
+    public WalletModel create(WalletModel model, String allKey) {
         var totalBalance = walletRepository.totalBalanceGroupedByCurrency(model.getUser().getId());
         if(model.getTransactionType().equals(TransactionType.WITHDRAWAL)) {
             for (BalanceModel balanceModel : totalBalance) {
@@ -98,7 +100,7 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter,WalletModel,
             if(!model.getCurrency().equals(currentSubscriptionPackage.getCurrency()))
                 throw new NotAcceptableException("The currency type does not match your currently active subscription's currency.");
 
-            var totalProfit = walletRepository.totalProfitGroupedByCurrency(model.getUser().getId(),null).stream().filter(f->f.getCurrency().equals(currentSubscriptionPackage.getCurrency())).findAny().orElse(new BalanceModel(currentSubscriptionPackage.getCurrency(),BigDecimal.ZERO));
+            var totalProfit = walletRepository.totalProfitGroupedByCurrency(model.getUser().getId()).stream().filter(f->f.getCurrency().equals(currentSubscriptionPackage.getCurrency())).findAny().orElse(new BalanceModel(currentSubscriptionPackage.getCurrency(),BigDecimal.ZERO));
             if(model.getAmount().compareTo(currentSubscription.getFinalPrice()) >= 0 || model.getAmount().compareTo(totalProfit.getTotalAmount()) > 0) {
                 if(currentSubscription.getRemainingWithdrawalPerDay() > 0L)
                     throw new NotAcceptableException(String.format("You can withdraw your funds after %d days.",currentSubscription.getRemainingWithdrawalPerDay()));
@@ -116,7 +118,7 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter,WalletModel,
             //please deposit more than the subscription amount
         }
         model.setActive(false);
-        var result =  super.create(model);
+        var result =  super.create(model, allKey);
 //        if(model.isActive()) {
 //            balance = walletRepository.findBalanceGroupedByCurrency(model.getUser().getId());
 //            for (BalanceModel balanceModel : balance) {
@@ -132,9 +134,9 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter,WalletModel,
 
     @Override
     @Transactional
-    public WalletModel update(WalletModel model) {
+    public WalletModel update(WalletModel model, String key, String allKey) {
         model.setActive(false);
-        var result =  super.update(model);
+        var result =  super.update(model, key, allKey);
 //        if(model.isActive()) {
 //            var balance = walletRepository.findBalanceGroupedByCurrency(model.getUser().getId());
 //            var subscriptionModel = subscriptionService.findByUserAndActivePackage(model.getUser().getId());
@@ -150,7 +152,7 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter,WalletModel,
 
     @Override
     @Transactional
-    public void deleteById(Long id) {
+    public void deleteById(Long id, String allKey) {
         WalletEntity entity = repository.findById(id).orElseThrow(() -> new NotFoundException("id: " + id));
 
         var balance = walletRepository.totalBalanceGroupedByCurrency(entity.getUser().getId());
@@ -165,51 +167,69 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter,WalletModel,
     }
 
     @Override
-    public String getCachePrefix() {
-        return "wallet";
-    }
-
-    @Override
-    @Cacheable(cacheNames = "${cache.prefix:app}", key = "'wallet:totalBalanceGroupedByCurrency:'+ #userId")
+    @Cacheable(cacheNames = "${cache.prefix:client}", key = "'Wallet:totalBalanceGroupedByCurrency:'+ #userId.toString()")
     public List<BalanceModel> totalBalanceGroupedByCurrency(UUID userId) {
         return walletRepository.totalBalanceGroupedByCurrency(userId);
     }
     @Override
-    @Cacheable(cacheNames = "${cache.prefix:app}", key = "'wallet:totalDepositGroupedByCurrency:'+ #userId")
+    @Cacheable(cacheNames = "${cache.prefix:client}", key = "'Wallet:totalDepositGroupedByCurrency:'+ #userId.toString()")
     public List<BalanceModel> totalDepositGroupedByCurrency(UUID userId) {
         return walletRepository.totalDepositGroupedByCurrency(userId);
     }
     @Override
-    @Cacheable(cacheNames = "${cache.prefix:app}", key = "'wallet:totalWithdrawalGroupedByCurrency:'+ #userId")
+    @Cacheable(cacheNames = "${cache.prefix:client}", key = "'Wallet:totalWithdrawalGroupedByCurrency:'+ #userId.toString()")
     public List<BalanceModel> totalWithdrawalGroupedByCurrency(UUID userId) {
         return walletRepository.totalWithdrawalGroupedByCurrency(userId);
     }
     @Override
-    @Cacheable(cacheNames = "${cache.prefix:app}", key = "'wallet:totalBonusGroupedByCurrency:'+ #userId")
+    @Cacheable(cacheNames = "${cache.prefix:client}", key = "'Wallet:totalBonusGroupedByCurrency:'+ #userId.toString()")
     public List<BalanceModel> totalBonusGroupedByCurrency(UUID userId) {
         return walletRepository.totalBonusGroupedByCurrency(userId);
     }
 
     @Override
-    @Cacheable(cacheNames = "${cache.prefix:app}", key = "'wallet:totalRewardGroupedByCurrency:'+ #userId")
+    @Cacheable(cacheNames = "${cache.prefix:client}", key = "'Wallet:totalRewardGroupedByCurrency:'+ #userId.toString()")
     public List<BalanceModel> totalRewardGroupedByCurrency(UUID userId) {
         return walletRepository.totalRewardGroupedByCurrency(userId);
     }
 
     @Override
-//    @Cacheable(cacheNames = "${cache.prefix:app}", key = "'wallet:totalProfitGroupedByCurrency:'+ #userId")
+    @Cacheable(cacheNames = "${cache.prefix:client}", key = "'Wallet:totalProfitGroupedByCurrency:'+ #userId.toString()")
     public List<BalanceModel> totalProfitGroupedByCurrency(UUID userId) {
-        return walletRepository.totalProfitGroupedByCurrency(userId, null);
+        return walletRepository.totalProfitGroupedByCurrency(userId);
     }
 
     @Override
-//    @Cacheable(cacheNames = "${cache.prefix:app}", key = "'wallet:dailyProfitGroupedByCurrency:'+ #userId")
+    @Cacheable(cacheNames = "${cache.prefix:client}", key = "'Wallet:dailyProfitGroupedByCurrency:'+ #userId.toString()")
     public List<BalanceModel> dailyProfitGroupedByCurrency(UUID userId) {
-        return walletRepository.totalProfitGroupedByCurrency(userId, LocalDateTime.now().truncatedTo(ChronoUnit.DAYS));
+        QWalletEntity path = QWalletEntity.walletEntity;
+        DateTemplate<Date> truncatedDate = Expressions.dateTemplate(Date.class, "date_trunc('day', {0})", path.createdDate);
+        var rewardBonusSum =
+                new CaseBuilder()
+                        .when(path.transactionType.eq(TransactionType.REWARD)
+                                .or(path.transactionType.eq(TransactionType.BONUS)))
+                        .then(path.amount)
+                        .otherwise(BigDecimal.ZERO)
+                        .sum();
+
+        var withdrawalProfitSum =
+                new CaseBuilder()
+                        .when(path.transactionType.eq(TransactionType.WITHDRAWAL_PROFIT))
+                        .then(path.amount)
+                        .otherwise(BigDecimal.ZERO)
+                        .sum();
+
+
+        return queryFactory.select(Projections.constructor(BalanceModel.class, path.currency, rewardBonusSum.subtract(withdrawalProfitSum)))
+                .from(path)
+                .where(path.user.id.eq(userId))
+                .where(truncatedDate.eq(DateUtil.truncate(new Date())))
+                .groupBy(path.currency)
+                .fetch();
     }
 
     @Override
-    @Cacheable(cacheNames = "${cache.prefix:app}", key = "'wallet:findAllWithinDateRange:startDate:' + #startDate + ':endDate:' + #endDate + ':transactionType:' + #transactionType")
+    @Cacheable(cacheNames = "${cache.prefix:client}", key = "'Wallet:findAllWithinDateRange:startDate:' + #startDate + ':endDate:' + #endDate + ':transactionType:' + #transactionType")
     public Map<Long, BigDecimal> findAllWithinDateRange(long startDate, long endDate, TransactionType transactionType) {
         QWalletEntity path = QWalletEntity.walletEntity;
         DateTemplate<Date> truncatedDate = Expressions.dateTemplate(Date.class, "date_trunc('day', {0})", path.createdDate);

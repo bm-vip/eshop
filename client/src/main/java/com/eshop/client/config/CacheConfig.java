@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit;
 @EnableCaching
 public class CacheConfig {
 
-    @Value("${cache.ttl:3600}")
+    @Value("${cache.ttl:1200}")
     private int cacheTtl;
 
     @Bean

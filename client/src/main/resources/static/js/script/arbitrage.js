@@ -1,6 +1,6 @@
 $(function () {
     //create subscription packages
-    $.getJSON("/api/v1/subscription-package?size=100", function (subscriptionPackages) {
+    $.getJSON("/api/v1/subscription-package?size=100&sort=price,asc&status=Active", function (subscriptionPackages) {
         $.get("/api/v1/subscription/find-active-by-user/" + currentUser.id, function (subscription) {
             subscriptionPackages.content.forEach(function (value) {
                 const active = get(()=>value.id,0) == get(()=>subscription.subscriptionPackage.id,0);

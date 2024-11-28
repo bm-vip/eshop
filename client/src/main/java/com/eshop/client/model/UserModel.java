@@ -29,7 +29,7 @@ public class UserModel extends BaseModel<UUID> {
     @NotNull
     @NotBlank
     private String lastName;
-    private Boolean active;
+    private boolean active;
     private String uid;
     private String referralCode;
     private UserModel parent;

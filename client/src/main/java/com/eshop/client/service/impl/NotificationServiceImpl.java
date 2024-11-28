@@ -39,17 +39,12 @@ public class NotificationServiceImpl extends BaseServiceImpl<NotificationFilter,
     }
 
     @Override
-    public NotificationModel findById(Long id) {
+    public NotificationModel findById(Long id, String key) {
         var entity = repository.findById(id).orElseThrow(() -> new NotFoundException("id: " + id));
         if(entity.getRecipient().getId().equals(sessionHolder.getCurrentUser().getId()))
             entity.setRead(true);
         repository.save(entity);
         return mapper.toModel(entity);
-    }
-
-    @Override
-    public String getCachePrefix() {
-        return "notification";
     }
 
     @Override

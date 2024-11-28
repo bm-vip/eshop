@@ -79,7 +79,7 @@ public class SubscriptionServiceImpl extends BaseServiceImpl<SubscriptionFilter,
 
     @Override
     @Transactional
-    public SubscriptionModel create(SubscriptionModel model){
+    public SubscriptionModel create(SubscriptionModel model, String allKey){
         var entity = mapper.toEntity(model);
         var subscriptionPackage = subscriptionPackageRepository.findById(model.getSubscriptionPackage().getId()).orElseThrow(()-> new NotFoundException("No such subscriptionPackage with " + model.getSubscriptionPackage().getId()));
 
@@ -105,7 +105,7 @@ public class SubscriptionServiceImpl extends BaseServiceImpl<SubscriptionFilter,
     }
     @Override
     @Transactional
-    public SubscriptionModel update(SubscriptionModel model){
+    public SubscriptionModel update(SubscriptionModel model, String key, String allKey){
         var entity = subscriptionRepository.findById(model.getId()).orElseThrow(()-> new NotFoundException("No such subscription with " + model.getId()));
         if(entity.getStatus().equals(EntityStatusType.Active))
             throw new BadRequestException("subscription with Active status could not be update");
@@ -139,11 +139,6 @@ public class SubscriptionServiceImpl extends BaseServiceImpl<SubscriptionFilter,
             addBonus(entity);
         }
         return mapper.toModel(subscriptionRepository.save(entity));
-    }
-
-    @Override
-    public String getCachePrefix() {
-        return "subscription";
     }
 
     private BigDecimal calculatePrice(BigDecimal originalPrice, Integer discountPercentage) {

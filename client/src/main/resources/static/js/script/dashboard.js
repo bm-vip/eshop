@@ -37,7 +37,7 @@
     });
 
     $.get(`/api/v1/wallet/daily-profit/${currentUser.id}`, function (data) {
-        $("#dailyProfit").text(data);
+        $("#dailyProfit").text(get(() => data[0].totalAmount, 0));
     });
 
     $.get("/api/v1/arbitrage/find-top-coins/5", function (data) {

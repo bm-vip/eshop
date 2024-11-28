@@ -5,19 +5,19 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import com.eshop.client.model.BaseModel;
 import com.eshop.client.model.PageModel;
+import org.springframework.data.history.Revision;
 
 import java.io.Serializable;
 
 public interface BaseService<F, M extends BaseModel<ID>, ID extends Serializable> {
-    Page<M> findAll(F filter, Pageable pageable);
-    PageModel<M> findAllTable(F filter, Pageable pageable);
-    Page<Select2Model> findAllSelect(F filter, Pageable pageable);
-    Long countAll(F filter);
-    boolean exists(F filter);
-    M findById(ID id);
-    M create(M model);
-    M update(M model);
-    void deleteById(ID id);
-    void clearCache();
-    String getCachePrefix();
+    Page<M> findAll(F filter, Pageable pageable, String key);
+    PageModel<M> findAllTable(F filter, Pageable pageable, String key);
+    Page<Select2Model> findAllSelect(F filter, Pageable pageable, String key);
+    Long countAll(F filter, String key);
+    boolean exists(F filter, String key);
+    M findById(ID id, String key);
+    M create(M model, String allKey);
+    M update(M model, String key, String allKey);
+    void deleteById(ID id, String allKey);
+    void clearCache(String allKey);
 }

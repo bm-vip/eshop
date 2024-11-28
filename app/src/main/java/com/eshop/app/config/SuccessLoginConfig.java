@@ -2,6 +2,7 @@ package com.eshop.app.config;
 
 import com.eshop.app.enums.RoleType;
 import com.eshop.app.service.UserService;
+import org.slf4j.MDC;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.DefaultRedirectStrategy;
 import org.springframework.security.web.RedirectStrategy;
@@ -26,6 +27,7 @@ public class SuccessLoginConfig implements AuthenticationSuccessHandler {
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
         var userModel = userService.findByUserName(authentication.getName());
         request.getSession().setAttribute("currentUser", userModel);
+        MDC.put("userId",userModel.getId().toString());
 
         SecurityContextHolderAwareRequestWrapper requestWrapper = new SecurityContextHolderAwareRequestWrapper(request, "");
         String targetUrl = "/access-denied";

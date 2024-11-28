@@ -43,9 +43,4 @@ public class ExchangeServiceImpl extends BaseServiceImpl<ExchangeFilter, Exchang
     public List<ExchangeModel> findByRandom() {
         return mapper.toModel(repository.findByRandom());
     }
-
-    @Override
-    public String getCachePrefix() {
-        return "exchange";
-    }
 }

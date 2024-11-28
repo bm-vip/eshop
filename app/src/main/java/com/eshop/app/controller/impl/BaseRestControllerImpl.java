@@ -39,12 +39,6 @@ public abstract class BaseRestControllerImpl<F,M extends BaseModel<ID>, ID exten
         return ResponseEntity.ok(service.findById(id));
     }
 
-    @Override
-    public ResponseEntity<Revision<Long, M>> findHistoryAtRevision(ID id, Long revisionId) {
-        log.debug("call BaseRestImpl.findHistoryAtRevision id {} revisionId {}, for class {}", id, revisionId, service.getClass().getName());
-        return ResponseEntity.ok(service.findHistoryAtRevision(id,revisionId));
-    }
-
     @SneakyThrows
     @Override
     public ResponseEntity<Page<M>> findAll(F filter, Pageable pageable) {

@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.UUID;
 
 public interface UserService extends BaseService<UserFilter, UserModel, UUID> {
+    UserModel findByUserNameOrEmail(String login);
     UserModel findByUserName(String userName);
     UserModel findByEmail(String email);
     UserModel register(UserModel model);

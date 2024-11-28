@@ -37,9 +37,4 @@ public class AnswerServiceImpl extends BaseServiceImpl<AnswerFilter, AnswerModel
 
         return builder;
     }
-
-    @Override
-    public String getCachePrefix() {
-        return "answer";
-    }
 }

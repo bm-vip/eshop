@@ -18,6 +18,8 @@ import com.eshop.exception.common.NotFoundException;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
 import lombok.SneakyThrows;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.data.domain.Page;
@@ -36,6 +38,7 @@ import java.nio.file.Paths;
 import java.util.*;
 
 import static com.eshop.client.util.MapperHelper.get;
+import static com.eshop.client.util.StringUtils.generateIdKey;
 
 
 @Service
@@ -61,38 +64,47 @@ public class UserServiceImpl extends BaseServiceImpl<UserFilter,UserModel, UserE
     }
 
     @Override
+    @Cacheable(cacheNames = "${cache.prefix:client}", key = "'User:findByUserNameOrEmail:' + #login")
+    public UserModel findByUserNameOrEmail(String login) {
+        return mapper.toModel(userRepository.findByUserNameOrEmail(login, login).orElseThrow(() -> new NotFoundException("User not found with username/email: " + login)));
+    }
+
+    @Override
+    @Cacheable(cacheNames = "${cache.prefix:client}", key = "'User:findByUserName:' + #userName")
     public UserModel findByUserName(String userName) {
-        return mapper.toModel(userRepository.findByUserName(userName).orElseThrow(() -> new NotFoundException("userName: " + userName)));
+        return mapper.toModel(userRepository.findByUserName(userName).orElseThrow(() -> new NotFoundException("username: " + userName)));
     }
     @Override
+    @Cacheable(cacheNames = "${cache.prefix:client}", key = "'User:findByEmail:' + #email")
     public UserModel findByEmail(String email) {
-        return mapper.toModel(userRepository.findByEmail(email).orElseThrow(() -> new NotFoundException("userName: " + email)));
+        return mapper.toModel(userRepository.findByEmail(email).orElseThrow(() -> new NotFoundException("username: " + email)));
     }
     @Override
+    @Cacheable(cacheNames = "${cache.prefix:client}", key = "'User:findAllUserCountByCountry'")
     public List<CountryUsers> findAllUserCountByCountry() {
         return userRepository.findAllUserCountByCountry();
     }
 
     @Override
-    public Page<UserModel> findAll(UserFilter filter, Pageable pageable) {
-        return super.findAll(filter, pageable).map(m->{
+    public Page<UserModel> findAll(UserFilter filter, Pageable pageable, String key) {
+        return super.findAll(filter, pageable, key).map(m->{
             m.setDeposit(walletRepository.totalDepositGroupedByCurrency(m.getId()).stream().filter(f->f.getCurrency().equals(CurrencyType.USDT)).map(BalanceModel::getTotalAmount).findFirst().orElse(BigDecimal.ZERO));
             m.setWithdrawal(walletRepository.totalWithdrawalGroupedByCurrency(m.getId()).stream().filter(f->f.getCurrency().equals(CurrencyType.USDT)).map(BalanceModel::getTotalAmount).findFirst().orElse(BigDecimal.ZERO));
             m.setBonus(walletRepository.totalBonusGroupedByCurrency(m.getId()).stream().filter(f->f.getCurrency().equals(CurrencyType.USDT)).map(BalanceModel::getTotalAmount).findFirst().orElse(BigDecimal.ZERO));
-            m.setReward(walletRepository.totalProfitGroupedByCurrency(m.getId(),null).stream().filter(f->f.getCurrency().equals(CurrencyType.USDT)).map(BalanceModel::getTotalAmount).findFirst().orElse(BigDecimal.ZERO));
+            m.setReward(walletRepository.totalProfitGroupedByCurrency(m.getId()).stream().filter(f->f.getCurrency().equals(CurrencyType.USDT)).map(BalanceModel::getTotalAmount).findFirst().orElse(BigDecimal.ZERO));
             return m;
         });
     }
 
     @Override
-    public PageModel<UserModel> findAllTable(UserFilter filter, Pageable pageable) {
-        var data = super.findAllTable(filter, pageable);
+    public PageModel<UserModel> findAllTable(UserFilter filter, Pageable pageable,String key) {
+        var data = super.findAllTable(filter, pageable,key);
         if(!CollectionUtils.isEmpty(data.getData())) {
             for (UserModel m : data.getData()) {
                 m.setDeposit(walletRepository.totalDepositGroupedByCurrency(m.getId()).stream().filter(f->f.getCurrency().equals(CurrencyType.USDT)).map(BalanceModel::getTotalAmount).findFirst().orElse(BigDecimal.ZERO));
                 m.setWithdrawal(walletRepository.totalWithdrawalGroupedByCurrency(m.getId()).stream().filter(f->f.getCurrency().equals(CurrencyType.USDT)).map(BalanceModel::getTotalAmount).findFirst().orElse(BigDecimal.ZERO));
                 m.setBonus(walletRepository.totalBonusGroupedByCurrency(m.getId()).stream().filter(f->f.getCurrency().equals(CurrencyType.USDT)).map(BalanceModel::getTotalAmount).findFirst().orElse(BigDecimal.ZERO));
-                m.setReward(walletRepository.totalProfitGroupedByCurrency(m.getId(),null).stream().filter(f->f.getCurrency().equals(CurrencyType.USDT)).map(BalanceModel::getTotalAmount).findFirst().orElse(BigDecimal.ZERO));
+                m.setReward(walletRepository.totalProfitGroupedByCurrency(m.getId()).stream().filter(f->f.getCurrency().equals(CurrencyType.USDT)).map(BalanceModel::getTotalAmount).findFirst().orElse(BigDecimal.ZERO));
             }
         }
         return data;
@@ -100,6 +112,7 @@ public class UserServiceImpl extends BaseServiceImpl<UserFilter,UserModel, UserE
 
     @Override
     @Transactional
+    @CacheEvict(cacheNames = "${cache.prefix:client}", allEntries = true, condition = "'User:*'")
     public UserModel register(UserModel model) {
         Optional<UserEntity> optionalUserEntity = userRepository.findByUserName(model.getUserName());
         if (optionalUserEntity.isPresent())
@@ -131,7 +144,7 @@ public class UserServiceImpl extends BaseServiceImpl<UserFilter,UserModel, UserE
 
     @Override
     @Transactional
-    public UserModel update(UserModel model) {
+    public UserModel update(UserModel model, String key, String allKey) {
         var entity = repository.findById(model.getId()).orElseThrow(() -> new NotFoundException("id: " + model.getId()));
         mapper.updateEntity(model, entity);
 
@@ -145,13 +158,8 @@ public class UserServiceImpl extends BaseServiceImpl<UserFilter,UserModel, UserE
     }
 
     @Override
-    public String getCachePrefix() {
-        return "user";
-    }
-
-    @Override
     @Transactional
-    public UserModel create(UserModel model) {
+    public UserModel create(UserModel model, String allKey) {
         var entity = mapper.toEntity(model);
 
         if (StringUtils.hasLength(model.getPassword()))
@@ -192,7 +200,7 @@ public class UserServiceImpl extends BaseServiceImpl<UserFilter,UserModel, UserE
     }
     @SneakyThrows
     public void sendWelcomeNotification(UUID recipientId) {
-        var recipient = findById(recipientId);
+        var recipient = findById(recipientId,generateIdKey("User",recipientId));
         String siteName = messages.getMessage("siteName");
         String siteUrl = messages.getMessage("siteUrl");
 
@@ -214,6 +222,6 @@ public class UserServiceImpl extends BaseServiceImpl<UserFilter,UserModel, UserE
                 .setSubject(String.format("Welcome to %s!", siteName))
                 .setBody(emailContent)
                 .setSender(new UserModel().setUserId(UUID.fromString("6303b84a-04cf-49e1-8416-632ebd84495e")))
-                .setRecipient(new UserModel().setUserId(recipientId)));
+                .setRecipient(new UserModel().setUserId(recipientId)),"User:*");
     }
 }

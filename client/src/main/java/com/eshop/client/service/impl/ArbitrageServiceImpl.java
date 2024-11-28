@@ -91,7 +91,7 @@ public class ArbitrageServiceImpl extends BaseServiceImpl<ArbitrageFilter, Arbit
 
     @Override
     @Transactional
-    public ArbitrageModel create(ArbitrageModel model) {
+    public ArbitrageModel create(ArbitrageModel model, String allKey) {
         var purchaseLimitResponse = purchaseLimit(model.getUser().getId());
         if(purchaseLimitResponse != null)
             throw new NotAcceptableException("You have reached purchase limitation, please try " + purchaseLimitResponse);
@@ -127,7 +127,7 @@ public class ArbitrageServiceImpl extends BaseServiceImpl<ArbitrageFilter, Arbit
             }
 
             //grand parent reward
-            if(get(()->user.getParent().getParent())!=null) {
+            if(get(()-> user.getParent().getParent())!=null) {
                 WalletEntity buyRewardGrandParent = new WalletEntity();
                 buyRewardGrandParent.setActive(true);
                 buyRewardGrandParent.setAmount(reward.multiply(new BigDecimal("0.08")).setScale(6, RoundingMode.HALF_UP));
@@ -137,14 +137,9 @@ public class ArbitrageServiceImpl extends BaseServiceImpl<ArbitrageFilter, Arbit
                 buyRewardGrandParent.setAddress(walletAddressValue);
                 walletRepository.save(buyRewardGrandParent);
             }
-            return super.create(model);
+            return super.create(model, allKey);
         }
         throw new NotAcceptableException("Your profit is equal to zero, please contact support.");
-    }
-
-    @Override
-    public String getCachePrefix() {
-        return "arbitrage";
     }
 
     @Override
@@ -153,7 +148,7 @@ public class ArbitrageServiceImpl extends BaseServiceImpl<ArbitrageFilter, Arbit
     }
 
     @Override
-    @Cacheable(cacheNames = "${cache.prefix:app}", key = "'arbitrage:countByUserIdAndDate:userId:' + #userId + ':date:' + #date")
+    @Cacheable(cacheNames = "${cache.prefix:client}", key = "'Arbitrage:countByUserIdAndDate:userId:' + #userId.toString() + ':date:' + #date.getTime()")
     public long countByUserIdAndDate(UUID userId, Date date) {
         QArbitrageEntity path = QArbitrageEntity.arbitrageEntity;
         DateTemplate<Date> truncatedDate = Expressions.dateTemplate(Date.class, "date_trunc('day', {0})", path.createdDate);
@@ -164,7 +159,7 @@ public class ArbitrageServiceImpl extends BaseServiceImpl<ArbitrageFilter, Arbit
     }
 
     @Override
-    @Cacheable(cacheNames = "${cache.prefix:app}", key = "'arbitrage:findMostUsedCoins:userId:' + #pageSize")
+    @Cacheable(cacheNames = "${cache.prefix:client}", key = "'Arbitrage:findMostUsedCoins:' + #pageSize")
     public Page<CoinUsageDTO> findMostUsedCoins(int pageSize) {
         long count = repository.count();
         return repository.findMostUsedCoins(PageRequest.ofSize(pageSize)).map(m->{
@@ -174,6 +169,7 @@ public class ArbitrageServiceImpl extends BaseServiceImpl<ArbitrageFilter, Arbit
     }
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(cacheNames = "${cache.prefix:client}", key = "'Arbitrage:purchaseLimit:' + #userId.toString()")
     public String purchaseLimit(UUID userId) {
         var subscription = subscriptionRepository.findByUserIdAndStatus(userId, EntityStatusType.Active);
         if(subscription == null)

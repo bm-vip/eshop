@@ -43,9 +43,4 @@ public class RoleServiceImpl extends BaseServiceImpl<RoleFilter,RoleModel, RoleE
     public RoleModel findByRole(String role) {
         return mapper.toModel(repository.findByRole(role).orElseThrow(() -> new NotFoundException("role: " + role)));
     }
-
-    @Override
-    public String getCachePrefix() {
-        return "role";
-    }
 }

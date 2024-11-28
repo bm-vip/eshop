@@ -1,5 +1,7 @@
 package com.eshop.client.util;
 
+import org.springframework.util.DigestUtils;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -17,4 +19,14 @@ public class StringUtils {
         // Join the list back into a string with commas
         return numbers;
     }
+    public static String generateFilterKey(String className,String name, Object filter, Object pageable) {
+        String filterString = MapperHelper.getOrDefault(()-> filter.toString(),"");
+        String pageableString = MapperHelper.getOrDefault(()-> pageable.toString(),"");
+
+        return String.format("%s:%s:%s", className, name, DigestUtils.md5DigestAsHex((filterString + pageableString).getBytes()));
+    }
+    public static String generateIdKey(String className,Object id) {
+        return className + ":id:" + id.toString();
+    }
+
 }

@@ -22,9 +22,9 @@ public interface BaseRestController<F, M, ID extends Serializable> {
     @Operation(summary = "${api.baseRest.findById}", description = "${api.baseRest.findById.desc}")
     ResponseEntity<M> findById(@PathVariable("id") ID id);
 
-    @GetMapping(value = {"/history/{id}/{revisionId}"})
-    @Operation(summary = "${api.baseRest.findHistoryAtRevision}", description = "${api.baseRest.findById.desc}")
-    ResponseEntity<Revision<Long, M>> findHistoryAtRevision(@PathVariable ID id, @PathVariable Long revisionId);
+//    @GetMapping(value = {"/history/{id}/{revisionId}"})
+//    @Operation(summary = "${api.baseRest.findHistoryAtRevision}", description = "${api.baseRest.findById.desc}")
+//    ResponseEntity<Revision<Long, M>> findHistoryAtRevision(@PathVariable ID id, @PathVariable Long revisionId);
 
     @GetMapping
     @Operation(summary = "${api.baseRest.findAll}", description = "${api.baseRest.findAll.desc}")

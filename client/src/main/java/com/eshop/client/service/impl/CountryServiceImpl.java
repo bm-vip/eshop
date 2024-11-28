@@ -35,9 +35,4 @@ public class CountryServiceImpl extends BaseServiceImpl<CountryFilter, CountryMo
 
         return builder;
     }
-
-    @Override
-    public String getCachePrefix() {
-        return "country";
-    }
 }

@@ -18,6 +18,8 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
+import static com.eshop.client.util.StringUtils.generateFilterKey;
+
 
 @Service
 public class ParameterServiceImpl extends BaseServiceImpl<ParameterFilter,ParameterModel, ParameterEntity, Long> implements ParameterService {
@@ -53,16 +55,11 @@ public class ParameterServiceImpl extends BaseServiceImpl<ParameterFilter,Parame
     }
     public List<ParameterModel> findAllByParameterGroupCode(String parameterGroupCode) {
         ParameterFilter filter = new ParameterFilter(){{setParameterGroup(new ParameterGroupFilter(){{setCode(parameterGroupCode);}});}};
-        return super.findAll(filter, PageRequest.ofSize(1000)).getContent();
+        return super.findAll(filter, PageRequest.ofSize(1000), generateFilterKey("Parameter","findAllByParameterGroupCode",filter,PageRequest.ofSize(1000))).getContent();
     }
 
     @Override
     public JpaRepository<ParameterEntity,Long> getRepository() {
         return repository;
-    }
-
-    @Override
-    public String getCachePrefix() {
-        return "parameter";
     }
 }
