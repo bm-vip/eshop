@@ -57,7 +57,7 @@ public class CustomUserDetailsServiceImpl implements UserDetailsService {
 
             @Override
             public boolean isEnabled() {
-                return user.isActive();
+                return user.getActive();
             }
 
             // You can add custom methods to get additional user information

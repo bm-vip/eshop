@@ -1,12 +1,14 @@
 package com.eshop.client.controller;
 
 
+import com.eshop.client.config.Limited;
 import com.eshop.client.config.MessageConfig;
 import com.eshop.client.enums.RoleType;
-import com.eshop.client.model.EmailModel;
+import com.eshop.client.model.ResetPassModel;
 import com.eshop.client.model.UserModel;
 import com.eshop.client.service.MailService;
 import com.eshop.client.service.NotificationService;
+import com.eshop.client.service.OneTimePasswordService;
 import com.eshop.client.service.impl.UserServiceImpl;
 import com.eshop.client.util.SessionHolder;
 import lombok.AllArgsConstructor;
@@ -18,8 +20,11 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotEmpty;
 
 import static com.eshop.client.util.StringUtils.generateFilterKey;
+import static com.eshop.client.util.StringUtils.generateIdKey;
 
 
 @Slf4j
@@ -32,6 +37,7 @@ public class LoginController {
     final HttpServletRequest request;
     final UserServiceImpl userService;
     final MailService mailService;
+    final OneTimePasswordService oneTimePasswordService;
     final NotificationService notificationService;
 
     @RequestMapping(value = "/{name}", method = RequestMethod.GET)
@@ -72,19 +78,34 @@ public class LoginController {
     }
 
     @PostMapping("/registration")
+    @Limited(requestsPerMinutes = 3)
     public String register(@Valid @ModelAttribute("user") UserModel user) {
         userService.register(user);
         return "redirect:/login#signin";
     }
 
     @PostMapping("/send-OTP")
-    public String changePassword(@Valid @ModelAttribute("email") EmailModel email) {
+    @Limited(requestsPerMinutes = 3)
+    public String sendOTP(@Email @NotEmpty String email) {
         try {
-            mailService.sendOTP(email.getEmail());
+            mailService.sendOTP(email);
         } catch(Exception e) {
-            return "redirect:/login#signin";
+            return "redirect:/login?errorMsg=failedToSendEmail#send_otp";
         }
-        return "redirect:/login#signin";
+        return "redirect:/login#reset_pass";
     }
 
+    @PostMapping("/reset-pass")
+    @Limited(requestsPerMinutes = 3)
+    public String changePassword(@Valid @ModelAttribute("resetPassModel") ResetPassModel resetPassModel) {
+        var user = userService.findByUserNameOrEmail(resetPassModel.getLogin());
+        var verify = oneTimePasswordService.verify(user.getId(), resetPassModel.getOtp());
+        if (verify) {
+            var newUser = new UserModel().setUserId(user.getId());
+            newUser.setPassword(resetPassModel.getNewPassword());
+            userService.update(user, generateIdKey("User",user.getUid().toString()),"User:*");
+            return "redirect:/login#signin";
+        }
+        return "redirect:/login?errorMsg=invalidOTPCode#reset_pass";
+    }
 }

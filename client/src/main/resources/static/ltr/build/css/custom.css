@@ -4016,7 +4016,7 @@ a.hiddenanchor {
   max-width: 350px;
   position: relative; }
 
-.registration_form, .login_form, .send_otp_form {
+.registration_form, .login_form, .send_otp_form, .reset_pass_form {
   position: absolute;
   top: 0px;
   width: 100%;
@@ -4028,6 +4028,11 @@ a.hiddenanchor {
   width: 100%; }
 
 .send_otp_form {
+  z-index: 22;
+  opacity: 0;
+  width: 100%;
+}
+.reset_pass_form {
   z-index: 22;
   opacity: 0;
   width: 100%;
@@ -4053,8 +4058,19 @@ a.hiddenanchor {
   animation-name: fadeInLeft;
   -webkit-animation-delay: .1s;
   animation-delay: .1s; }
+#reset_pass:target ~ .login_wrapper .reset_pass_form, #signin:target ~ .login_wrapper .login_forml {
+  z-index: 23;
+  -webkit-animation-name: fadeInLeft;
+  animation-name: fadeInLeft;
+  -webkit-animation-delay: .1s;
+  animation-delay: .1s; }
 
 #send_otp:target ~ .login_wrapper .login_form, #signin:target ~ .login_wrapper .send_otp_form {
+  -webkit-animation-name: fadeOutLeft;
+  animation-name: fadeOutLeft; }
+
+
+#reset_pass:target ~ .login_wrapper .login_form, #signin:target ~ .login_wrapper .reset_pass_form {
   -webkit-animation-name: fadeOutLeft;
   animation-name: fadeOutLeft; }
 

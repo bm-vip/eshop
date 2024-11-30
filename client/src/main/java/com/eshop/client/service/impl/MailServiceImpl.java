@@ -44,7 +44,7 @@ public class MailServiceImpl implements MailService {
             mailSender.send(mimeMessage);
         } catch (Exception e) {
             log.error("failed to send email", e);
-            throw new IllegalStateException("failed to send email");
+            throw new IllegalStateException("failed to send email." + e.getMessage());
         }
     }
 

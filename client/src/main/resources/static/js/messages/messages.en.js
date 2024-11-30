@@ -406,6 +406,7 @@ var resources = {
     'parentReferralBonus': 'Parent referral bonus',
     'trade':'Trade',
     'tradeNow':'Trade now!',
+    'oneTimePassword':'One time password!',
     'depositAlert':'Your request is being reviewed, if matches, the result will be added to your account balance after a few hours.',
     'withdrawalAlert':'Your request is being reviewed, the amount will be deposited to your wallet after maximum 24 hours.'
 };

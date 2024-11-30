@@ -57,7 +57,7 @@ spring:
     username: no-reply@arbitrage-broker.com
     password: ehb=9Qx@UVul41>
     port: 465
-    properties.mail.smtp.auth: true
+#    properties.mail.smtp.auth: true
     properties.mail.smtp.starttls.enabled: true
 
 site.url: arbitrage-broker.com

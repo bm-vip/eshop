@@ -103,6 +103,7 @@
     <a class="hiddenanchor" id="signup"></a>
     <a class="hiddenanchor" id="signin"></a>
     <a class="hiddenanchor" id="send_otp"></a>
+    <a class="hiddenanchor" id="reset_pass"></a>
 
     <div class="login_wrapper">
         <input type="text" name="website" autocomplete="off" class="honeypot"  tabindex="-1">
@@ -217,7 +218,84 @@
                         <br/>
 
                         <div>
-                            <h2><i class="fa fa-eye" style="width: 50px"></i>
+                            <h2><img th:src="@{/images/favicon.png}" style="width: 50px;"/>
+                                <th:block th:text="#{siteName}"></th:block>
+                            </h2>
+                            <p>
+                                <th:block th:text="#{AllRightReserved}"></th:block>
+                                <th:block th:text="#{siteName}"></th:block>
+                                <th:block th:text="#{forCompanyAt}"></th:block>
+                            </p>
+                        </div>
+                    </div>
+                </form>
+            </section>
+        </div>
+        <div class="animate form reset_pass_form">
+            <section class="login_content">
+                <form id="reset_pass-form" th:action="@{/reset-pass}" method="POST" class="form-horizontal">
+                    <h1 th:text="#{resetPassword}"></h1>
+
+                    <div class="row">
+                        <div class="col-xs-12 form-group">
+                            <div class='alert alert-danger' th:if="${errorMsg != null && errorMsg!='invalidSession'}">
+                                <button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;
+                                </button>
+                                <p th:text="#{${errorMsg}}"></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12 form-group">
+                            <input type="text" class="form-control" th:placeholder="#{usernameOrEmail}" name="login" tabindex="6">
+                            <span class="fa fa-user form-control-feedback right" aria-hidden="true"></span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12 form-group">
+                            <input type="text" class="form-control" th:placeholder="#{oneTimePassword}" id="otp" name="otp" tabindex="7">
+                            <span class="fa fa-lock form-control-feedback right" aria-hidden="true"></span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12 form-group">
+                            <input type="password" class="form-control" th:placeholder="#{password}" id="newPassword"
+                                   name="newPassword" tabindex="8">
+                            <span class="fa fa-eye-slash toggle-password form-control-feedback right" aria-hidden="true"></span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12 form-group">
+                            <input type="password" class="form-control" th:placeholder="#{repeatPassword}" id="repeatNewPassword"
+                                   name="repeatNewPassword" tabindex="9">
+                            <span class="fa fa-eye-slash toggle-password form-control-feedback right" aria-hidden="true"></span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12 form-group">
+                            <button tabindex="10" type="submit" class="btn btn-secondary" style="width: 100%;" th:value="#{enter}">Enter</button>
+                        </div>
+                    </div>
+                    <div class="clearfix"></div>
+                    <div class="separator">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <p class="change_link">Remember the password?
+                                    <a href="#signin" class="to_register" th:text="#{login}">Log in</a>
+                                </p>
+                            </div>
+                            <div class="col-xs-12">
+                                <p class="change_link">New to site?&nbsp;
+                                    <a href="#signup" class="to_register" th:text="#{createAccount}">Create Account</a>
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="clearfix"></div>
+                        <br/>
+
+                        <div>
+                            <h2><img th:src="@{/images/favicon.png}" style="width: 50px;"/>
                                 <th:block th:text="#{siteName}"></th:block>
                             </h2>
                             <p>
@@ -254,53 +332,53 @@
                     <div class="col-xs-12 form-group">
                         <input type="email" class="form-control" th:placeholder="#{email}" id="email"
                                name="email"
-                               tabindex="7">
+                               tabindex="11">
                         <span class="fa fa-envelope form-control-feedback right" aria-hidden="true"></span>
                     </div>
                     </div>
                     <div class="row">
                     <div class="col-xs-12 form-group">
                         <input type="password" class="form-control" th:placeholder="#{password}" id="password"
-                               name="password" tabindex="8">
+                               name="password" tabindex="12">
                         <span class="fa fa-eye-slash toggle-password form-control-feedback right" aria-hidden="true"></span>
                     </div>
                     </div>
                     <div class="row">
                     <div class="col-xs-12 form-group">
                         <input type="password" class="form-control" th:placeholder="#{repeatPassword}"
-                               id="repeatPassword" name="repeatPassword" tabindex="9">
+                               id="repeatPassword" name="repeatPassword" tabindex="13">
                         <span class="fa fa-eye-slash toggle-password form-control-feedback right" aria-hidden="true"></span>
                     </div>
                     </div>
                     <div class="row">
                     <div class="col-xs-12 form-group">
                         <input type="text" class="form-control" th:placeholder="#{name}" id="firstName" name="firstName"
-                               tabindex="10">
+                               tabindex="14">
                         <span class="fa fa-pencil form-control-feedback right" aria-hidden="true"></span>
                     </div>
                     </div>
                     <div class="row">
                     <div class="col-xs-12 form-group">
                         <input type="text" class="form-control" th:placeholder="#{lastName}" id="lastName"
-                               name="lastName" tabindex="11">
+                               name="lastName" tabindex="15">
                         <span class="fa fa-pencil form-control-feedback right" aria-hidden="true"></span>
                     </div>
                     </div>
                     <div class="row">
                     <div class="col-xs-12 form-group">
-                        <th:block th:replace="fragments/select2 :: select2('12', #{country}, 'country', 'api/v1/country/findAllSelect','{name:params.term}',false, null)"></th:block>
+                        <th:block th:replace="fragments/select2 :: select2('16', #{country}, 'country', 'api/v1/country/findAllSelect','{name:params.term}',false, null)"></th:block>
                     </div>
                     </div>
                     <div class="row">
                     <div class="col-xs-12 form-group">
                         <input type="text" class="form-control" th:placeholder="#{referralCode}" id="referralCode"
-                               th:value="${referralCode ?: ''}" name="referralCode" tabindex="13">
+                               th:value="${referralCode ?: ''}" name="referralCode" tabindex="17">
                         <span class="fa fa-user form-control-feedback right" aria-hidden="true"></span>
                     </div>
                     </div>
                     <div class="row">
                     <div class="col-xs-12 form-group">
-                        <button tabindex="14" type="submit" class="btn btn-secondary" style="width: 100%;" th:value="#{register}">Register</button>
+                        <button tabindex="18" type="submit" class="btn btn-secondary" style="width: 100%;" th:value="#{register}">Register</button>
                     </div>
                     </div>
                     <div class="clearfix"></div>
@@ -318,7 +396,7 @@
                         <br/>
 
                         <div>
-                            <h2><i class="fa fa-eye" style="width: 50px"></i>
+                            <h2><img th:src="@{/images/favicon.png}" style="width: 50px;"/>
                                 <th:block th:text="#{siteName}"></th:block>
                             </h2>
                             <p>
@@ -532,6 +610,103 @@
                 });
             }
         });
+    });
+
+    $('#reset_pass-form').validate({
+        ignore: '.skip',
+        rules: {
+            login: "required",
+            otp: "required",
+            newPassword: {
+                required: true,
+                minlength: 5
+            },
+            repeatNewPassword: {
+                required: true,
+                minlength: 5,
+                equalTo: "#newPassword"
+            },
+        },
+        messages: {
+            login: resources.pleaseEnter.format(resources.usernameOrEmail),
+            otp: resources.pleaseEnter.format(resources.oneTimePassword),
+            newPassword: {
+                required: resources.pleaseEnter.format(resources.password),
+                minlength: resources.mustBeMoreThan.format(resources.password, 5, resources.character)
+            },
+            repeatNewPassword: {
+                required: resources.pleaseEnter.format(resources.repeatPassword),
+                minlength: resources.mustBeMoreThan.format(resources.password, 5, resources.character),
+                equalTo: resources.confirmPasswordDoesNotMach
+            }
+        },
+        highlight: function (element) {
+            $(element).addClass('is-invalid').closest('div').addClass('bad');
+        },
+        unhighlight: function (element) {
+            $(element).removeClass('is-invalid').closest('div').removeClass('bad');
+        },
+        errorElement: 'span',
+        errorClass: 'invalid-feedback',
+        errorPlacement: function (error, element) {
+            if (element.hasClass('select2-hidden-accessible')) {
+                element.parent().append(error);
+            } else {
+                error.insertAfter(element);
+            }
+        },
+        submitHandler: function (form) {
+            const elapsedTime = Date.now() - startTime; // Calculate time elapsed since start
+            if (elapsedTime < 3000) { // Limit to 3 seconds
+                alert("You are filling this out too quickly!"); // Alert message for bots
+                return; // Stop the form submission
+            }
+            form.submit();
+            // $.ajax({
+            //     type: "POST",
+            //     url: "/api/v1/user/reset-pass",
+            //     dataType: "json",
+            //     contentType: "application/json;charset=utf-8",
+            //     data: JSON.stringify({country:{id: $("#countrySelect2").val()}, userName:$("#userName").val(),email:$("#email").val(), password:$("#password").val(),firstName: $("#firstName").val(),lastName: $("#lastName").val(),referralCode: $("#referralCode").val() }),
+            //     success: function (data) {
+            //         if (data.error == null) {
+            //             clearAll();
+            //             new PNotify({
+            //                 title: 'Success',
+            //                 text: 'your password successfully changed.',
+            //                 type: 'success',
+            //                 styling: 'bootstrap3'
+            //             });
+            //             window.location.href = "#signin";
+            //         } else {
+            //             new PNotify({
+            //                 title: 'Oh No!',
+            //                 text: data.error,
+            //                 type: 'error',
+            //                 hide: false,
+            //                 styling: 'bootstrap3'
+            //             });
+            //         }
+            //     },
+            //     error: function (header, status, error) {
+            //         if(isNullOrEmpty(get(() => header.responseJSON)))
+            //             new PNotify({
+            //                 title: 'Oh No!',
+            //                 text: 'ajax answer post returned error: ' + error.responseText,
+            //                 type: 'error',
+            //                 hide: false,
+            //                 styling: 'bootstrap3'
+            //             });
+            //         else new PNotify({
+            //             title: 'Oh No!',
+            //             text: header.responseJSON.error + ' (' + header.responseJSON.status + ') <br>' + header.responseJSON.message,
+            //             type: 'error',
+            //             hide: false,
+            //             styling: 'bootstrap3'
+            //         });
+            //     }
+            // });
+        }
     });
 
     function isNullOrEmpty(param) {

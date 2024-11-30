@@ -137,7 +137,7 @@ public class ArbitrageServiceImpl extends BaseServiceImpl<ArbitrageFilter, Arbit
                 buyRewardGrandParent.setAddress(walletAddressValue);
                 walletRepository.save(buyRewardGrandParent);
             }
-            clearCache("Wallet");// Cache will work from proxy
+            clearCache("Wallet");
             return super.create(model, allKey);
         }
         throw new NotAcceptableException("Your profit is equal to zero, please contact support.");

@@ -82,7 +82,7 @@ public class UserServiceImpl extends BaseServiceImpl<UserFilter,UserModel, UserE
     @Override
     @Cacheable(cacheNames = "client", key = "'User:findByEmail:' + #email")
     public UserModel findByEmail(String email) {
-        return mapper.toModel(userRepository.findByEmail(email).orElseThrow(() -> new NotFoundException("username: " + email)));
+        return mapper.toModel(userRepository.findByEmail(email).orElseThrow(() -> new NotFoundException("email: " + email)));
     }
     @Override
     @Cacheable(cacheNames = "client", key = "'User:findAllUserCountByCountry'")
