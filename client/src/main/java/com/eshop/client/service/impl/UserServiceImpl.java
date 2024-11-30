@@ -66,7 +66,7 @@ public class UserServiceImpl extends BaseServiceImpl<UserFilter,UserModel, UserE
     }
 
     @Override
-    @Cacheable(cacheNames = "${cache.prefix:client}", key = "'User:findByUserNameOrEmail:' + #login")
+    @Cacheable(cacheNames = "client", key = "'User:findByUserNameOrEmail:' + #login")
     public UserModel findByUserNameOrEmail(String login) {
         var entity = userRepository.findByUserNameOrEmail(login, login).orElseThrow(() -> new NotFoundException("User not found with username/email: " + login));
         var model = mapper.toModel(entity);
@@ -75,17 +75,17 @@ public class UserServiceImpl extends BaseServiceImpl<UserFilter,UserModel, UserE
     }
 
     @Override
-    @Cacheable(cacheNames = "${cache.prefix:client}", key = "'User:findByUserName:' + #userName")
+    @Cacheable(cacheNames = "client", key = "'User:findByUserName:' + #userName")
     public UserModel findByUserName(String userName) {
         return mapper.toModel(userRepository.findByUserName(userName).orElseThrow(() -> new NotFoundException("username: " + userName)));
     }
     @Override
-    @Cacheable(cacheNames = "${cache.prefix:client}", key = "'User:findByEmail:' + #email")
+    @Cacheable(cacheNames = "client", key = "'User:findByEmail:' + #email")
     public UserModel findByEmail(String email) {
         return mapper.toModel(userRepository.findByEmail(email).orElseThrow(() -> new NotFoundException("username: " + email)));
     }
     @Override
-    @Cacheable(cacheNames = "${cache.prefix:client}", key = "'User:findAllUserCountByCountry'")
+    @Cacheable(cacheNames = "client", key = "'User:findAllUserCountByCountry'")
     public List<CountryUsers> findAllUserCountByCountry() {
         return userRepository.findAllUserCountByCountry();
     }
@@ -117,7 +117,7 @@ public class UserServiceImpl extends BaseServiceImpl<UserFilter,UserModel, UserE
 
     @Override
     @Transactional
-    @CacheEvict(cacheNames = "${cache.prefix:client}", key = "'User:*'")
+    @CacheEvict(cacheNames = "client", key = "'User:*'")
     public UserModel register(UserModel model) {
         Optional<UserEntity> optionalUserEntity = userRepository.findByUserName(model.getUserName());
         if (optionalUserEntity.isPresent())

@@ -54,9 +54,6 @@ public class LoginController {
     @RequestMapping(value = {"/login"}, method = RequestMethod.GET)
     public ModelAndView login() {
         ModelAndView modelAndView = new ModelAndView();
-        String errorMsg = request.getParameter("errorMsg");
-        if (errorMsg != null)
-            modelAndView.addObject("errorMsg", messages.getMessage(errorMsg));
         modelAndView.setViewName("login");
         return modelAndView;
     }

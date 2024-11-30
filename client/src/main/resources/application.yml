@@ -53,12 +53,12 @@ spring:
     date-format: "yyyy-MM-dd HH:mm:ss"
     time-zone: "UTC"
   mail:
-    host: live.smtp.mailtrap.io
-    username: api
-    password: sdf
-    port: 587
-#    properties.mail.smtp.auth: true
-#    properties.mail.smtp.starttls.enabled: true
+    host: smtp0101.titan.email
+    username: no-reply@arbitrage-broker.com
+    password: ehb=9Qx@UVul41>
+    port: 465
+    properties.mail.smtp.auth: true
+    properties.mail.smtp.starttls.enabled: true
 
 site.url: arbitrage-broker.com
 springdoc:

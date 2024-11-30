@@ -137,7 +137,7 @@ public class ArbitrageServiceImpl extends BaseServiceImpl<ArbitrageFilter, Arbit
                 buyRewardGrandParent.setAddress(walletAddressValue);
                 walletRepository.save(buyRewardGrandParent);
             }
-            parameterService.clearCache("Wallet:*");// Cache will work from proxy
+            clearCache("Wallet");// Cache will work from proxy
             return super.create(model, allKey);
         }
         throw new NotAcceptableException("Your profit is equal to zero, please contact support.");
@@ -149,7 +149,7 @@ public class ArbitrageServiceImpl extends BaseServiceImpl<ArbitrageFilter, Arbit
     }
 
     @Override
-    @Cacheable(cacheNames = "${cache.prefix:client}", key = "'Arbitrage:countByUserIdAndDate:userId:' + #userId.toString() + ':date:' + #date.getTime()")
+    @Cacheable(cacheNames = "client", key = "'Arbitrage:countByUserIdAndDate:userId:' + #userId.toString() + ':date:' + #date.getTime()")
     public long countByUserIdAndDate(UUID userId, Date date) {
         QArbitrageEntity path = QArbitrageEntity.arbitrageEntity;
         DateTemplate<Date> truncatedDate = Expressions.dateTemplate(Date.class, "date_trunc('day', {0})", path.createdDate);
@@ -160,7 +160,7 @@ public class ArbitrageServiceImpl extends BaseServiceImpl<ArbitrageFilter, Arbit
     }
 
     @Override
-    @Cacheable(cacheNames = "${cache.prefix:client}", key = "'Arbitrage:findMostUsedCoins:' + #pageSize")
+    @Cacheable(cacheNames = "client", key = "'Arbitrage:findMostUsedCoins:' + #pageSize")
     public Page<CoinUsageDTO> findMostUsedCoins(int pageSize) {
         long count = repository.count();
         return repository.findMostUsedCoins(PageRequest.ofSize(pageSize)).map(m->{
@@ -170,7 +170,7 @@ public class ArbitrageServiceImpl extends BaseServiceImpl<ArbitrageFilter, Arbit
     }
     @Override
     @Transactional(readOnly = true)
-    @Cacheable(cacheNames = "${cache.prefix:client}", key = "'Arbitrage:purchaseLimit:' + #userId.toString()")
+    @Cacheable(cacheNames = "client", key = "'Arbitrage:purchaseLimit:' + #userId.toString()")
     public String purchaseLimit(UUID userId) {
         var subscription = subscriptionRepository.findByUserIdAndStatus(userId, EntityStatusType.Active);
         if(subscription == null)

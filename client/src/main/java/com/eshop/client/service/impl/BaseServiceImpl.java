@@ -10,9 +10,12 @@ import com.eshop.client.service.BaseService;
 import com.eshop.exception.common.NotFoundException;
 import com.querydsl.core.types.Predicate;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.caffeine.CaffeineCache;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,19 +31,21 @@ public abstract class BaseServiceImpl<F, M extends BaseModel<ID>, E extends Base
     protected final BaseMapper<M, E> mapper;
     @PersistenceContext
     protected EntityManager entityManager;
+    @Autowired
+    protected CacheManager cacheManager;
 
     public abstract Predicate queryBuilder(F filter);
 
     @Override
     @Transactional(readOnly = true)
-    @Cacheable(cacheNames = "${cache.prefix:client}", key = "#key")
+    @Cacheable(cacheNames = "client", key = "#key")
     public Page<M> findAll(F filter, Pageable pageable, String key) {
         return repository.findAll(queryBuilder(filter), pageable).map(mapper::toModel);
     }
 
     @Override
     @Transactional(readOnly = true)
-    @Cacheable(cacheNames = "${cache.prefix:client}", key = "#key")
+    @Cacheable(cacheNames = "client", key = "#key")
     public PageModel<M> findAllTable(F filter, Pageable pageable, String key) {
         Predicate predicate = queryBuilder(filter);
         var page = repository.findAll(predicate, pageable);
@@ -49,7 +54,7 @@ public abstract class BaseServiceImpl<F, M extends BaseModel<ID>, E extends Base
 
     @Override
     @Transactional(readOnly = true)
-    @Cacheable(cacheNames = "${cache.prefix:client}", key = "#key")
+    @Cacheable(cacheNames = "client", key = "#key")
     public Page<Select2Model> findAllSelect(F filter, Pageable pageable, String key) {
         return repository.findAll(queryBuilder(filter), pageable)
                 .map(m -> new Select2Model(m.getId().toString(), m.getSelectTitle()));
@@ -57,36 +62,36 @@ public abstract class BaseServiceImpl<F, M extends BaseModel<ID>, E extends Base
 
     @Override
     @Transactional(readOnly = true)
-    @Cacheable(cacheNames = "${cache.prefix:client}", key = "#key")
+    @Cacheable(cacheNames = "client", key = "#key")
     public Long countAll(F filter, String key) {
         return repository.count(queryBuilder(filter));
     }
 
     @Override
     @Transactional(readOnly = true)
-    @Cacheable(cacheNames = "${cache.prefix:client}", key = "#key")
+    @Cacheable(cacheNames = "client", key = "#key")
     public boolean exists(F filter, String key) {
         return repository.exists(queryBuilder(filter));
     }
 
     @Override
     @Transactional(readOnly = true)
-    @Cacheable(cacheNames = "${cache.prefix:client}", key = "#key")
+    @Cacheable(cacheNames = "client", key = "#key")
     public M findById(ID id, String key) {
         return mapper.toModel(repository.findById(id)
                 .orElseThrow(() -> new NotFoundException("id: " + id)));
     }
 
     @Override
-    @CacheEvict(cacheNames = "${cache.prefix:client}", key = "#allKey")
+    @CacheEvict(cacheNames = "client", key = "#allKey")
     public M create(M model, String allKey) {
         var saved = repository.save(mapper.toEntity(model));
         return mapper.toModel(saved);
     }
 
     @Override
-    @CachePut(cacheNames = "${cache.prefix:client}", key = "#key")
-    @CacheEvict(cacheNames = "${cache.prefix:client}", key = "#allKey")
+    @CachePut(cacheNames = "client", key = "#key")
+    @CacheEvict(cacheNames = "client", key = "#allKey")
     public M update(M model,String key, String allKey) {
         var entity = repository.findById(model.getId())
                 .orElseThrow(() -> new NotFoundException(String.format("%s not found by id %s",
@@ -95,15 +100,18 @@ public abstract class BaseServiceImpl<F, M extends BaseModel<ID>, E extends Base
     }
 
     @Override
-    @CacheEvict(cacheNames = "${cache.prefix:client}", key = "#allKey")
+    @CacheEvict(cacheNames = "client", key = "#allKey")
     public void deleteById(ID id, String allKey) {
         repository.findById(id)
                 .orElseThrow(() -> new NotFoundException("id: " + id));
         repository.deleteById(id);
     }
 
-    @CacheEvict(cacheNames = "${cache.prefix:client}", key = "#allKey")
+    @CacheEvict(cacheNames = "client", key = "#allKey")
     public void clearCache(String allKey) {
-        // Method to clear all caches for this service
+        CaffeineCache cache = (CaffeineCache) cacheManager.getCache("client");
+        if(cache != null) {
+            cache.getNativeCache().asMap().keySet().removeIf(key -> key.toString().startsWith(allKey));
+        }
     }
 }

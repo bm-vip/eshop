@@ -60,7 +60,7 @@ public class SubscriptionPackageServiceImpl extends BaseServiceImpl<Subscription
     }
 
     @Override
-    @Cacheable(cacheNames = "${cache.prefix:client}", key = "'SubscriptionPackage:findMatchedPackageByAmountAndCurrency:amount:' + #amount.toString() + ':currency:' + #currency.toString()")
+    @Cacheable(cacheNames = "client", key = "'SubscriptionPackage:findMatchedPackageByAmountAndCurrency:amount:' + #amount.toString() + ':currency:' + #currency.toString()")
     public SubscriptionPackageModel findMatchedPackageByAmountAndCurrency(BigDecimal amount, CurrencyType currency) {
         return mapper.toModel(subscriptionPackageRepository.findMatchedPackageByAmountAndCurrency(amount, currency).orElse(subscriptionPackageRepository.findTopByOrderByMaxPriceDesc()));
     }

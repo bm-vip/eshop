@@ -3,12 +3,14 @@ package com.eshop.client.controller;
 
 import com.eshop.client.config.MessageConfig;
 import com.eshop.client.enums.RoleType;
+import com.eshop.client.model.EmailModel;
 import com.eshop.client.model.UserModel;
 import com.eshop.client.service.MailService;
 import com.eshop.client.service.NotificationService;
 import com.eshop.client.service.impl.UserServiceImpl;
 import com.eshop.client.util.SessionHolder;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +22,7 @@ import javax.validation.Valid;
 import static com.eshop.client.util.StringUtils.generateFilterKey;
 
 
+@Slf4j
 @Controller
 @AllArgsConstructor
 public class LoginController {
@@ -61,9 +64,6 @@ public class LoginController {
 
     @RequestMapping(value = {"/login"}, method = RequestMethod.GET)
     public ModelAndView login(ModelAndView modelAndView) {
-        String errorMsg = request.getParameter("errorMsg");
-        if (errorMsg != null)
-            modelAndView.addObject("errorMsg", messages.getMessage(errorMsg));
         modelAndView.setViewName("login");
         request.getParameterMap().forEach((key, value) -> {
             modelAndView.addObject(key, value[0]);
@@ -78,10 +78,12 @@ public class LoginController {
     }
 
     @PostMapping("/send-OTP")
-    public String changePassword(@Valid @ModelAttribute("user") UserModel user) {
+    public String changePassword(@Valid @ModelAttribute("email") EmailModel email) {
         try {
-            mailService.sendOTP(user.getEmail());
-        } catch(Exception e) {}
+            mailService.sendOTP(email.getEmail());
+        } catch(Exception e) {
+            return "redirect:/login#signin";
+        }
         return "redirect:/login#signin";
     }
 

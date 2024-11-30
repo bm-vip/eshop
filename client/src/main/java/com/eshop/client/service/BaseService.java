@@ -5,7 +5,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import com.eshop.client.model.BaseModel;
 import com.eshop.client.model.PageModel;
-import org.springframework.data.history.Revision;
 
 import java.io.Serializable;
 

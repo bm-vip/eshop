@@ -116,7 +116,7 @@
                             <div class='alert alert-danger' th:if="${errorMsg != null && errorMsg!='invalidSession'}">
                                 <button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;
                                 </button>
-                                <p th:text="${errorMsg}"></p>
+                                <p th:text="#{${errorMsg}}"></p>
                             </div>
                         </div>
                     </div>

@@ -154,7 +154,7 @@ public class SubscriptionServiceImpl extends BaseServiceImpl<SubscriptionFilter,
             oldActive.setStatus(EntityStatusType.Passive);
             subscriptionRepository.saveAndFlush(oldActive);
         }
-        parameterService.clearCache("Subscription:*");// Cache will work from proxy
+        clearCache("Subscription");// Cache will work from proxy
     }
 
     @Override
@@ -185,6 +185,6 @@ public class SubscriptionServiceImpl extends BaseServiceImpl<SubscriptionFilter,
             parentWallet.setAddress(walletAddressValue);
             walletRepository.save(parentWallet);
         }
-        parameterService.clearCache("Wallet:*");// Cache will work from proxy
+        clearCache("Wallet");// Cache will work from proxy
     }
 }

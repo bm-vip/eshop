@@ -1,45 +1,51 @@
+var tradeButtonText = resources.tradeNow;
 $(function () {
     //create subscription packages
-    $.getJSON("/api/v1/subscription-package?size=100&sort=price,asc&status=Active", function (subscriptionPackages) {
-        $.get("/api/v1/subscription/find-active-by-user/" + currentUser.id, function (subscription) {
-            subscriptionPackages.content.forEach(function (value) {
-                const active = get(()=>value.id,0) == get(()=>subscription.subscriptionPackage.id,0);
-                // Create the entire price element
-                const priceElement = `
-                <div class="col-md-3 col-sm-6" id="subscription-package-item-${value.id}">
-                    <div class="pricing">
-                        <div class="title">
-                            <h2>${value.name}</h2>
-                            <h1>${value.price} ${value.currency}</h1>
-                        </div>
-                        <div class="x_content">
-                            <div class="">
-                                <div class="pricing_features">
-                                    <ul class="list-unstyled text-left">
-                                        <li><i class="fa fa-check text-success"></i> <strong>Unlimited access</strong>.</li>
-                                        <li><i class="fa fa-check text-success"></i> Order count <strong> ${value.orderCount}</strong> times</li>
-                                        <li><i class="fa fa-check text-success"></i> Trading reward between range (<strong>${value.minTradingReward} - ${value.maxTradingReward}</strong>) ${value.currency}</li>
-                                        <li><i class="fa fa-check text-success"></i> User profit percentage (<strong>${value.userProfitPercentage}%</strong>)</li>
-                                        <li><i class="fa fa-check text-success"></i> Site profit percentage (<strong>${value.siteProfitPercentage}%</strong>)</li>
-                                        <li><i class="fa fa-check text-success"></i> Withdrawal duration per day (<strong>${value.withdrawalDurationPerDay}</strong>)</li>
-                                        <li><i class="fa fa-check text-success"></i> Parent referral bonus <strong>${value.parentReferralBonus}</strong> ${value.currency}</li>
-                                        <li><i class="fa fa-check text-success"></i> Maximum acceptable amount <strong>${value.maxPrice}</strong> ${value.currency}</li>
-                                    </ul>
+    $.get("/api/v1/arbitrage/purchase-limit/" + currentUser.id, function (purchaseLimit) {
+        if(!isNullOrEmpty(purchaseLimit)) {
+            show_warning(`You have reached the purchase limitation, please try ${purchaseLimit}`);
+            tradeButtonText = 'Trade ' + purchaseLimit;
+        }
+        $.getJSON("/api/v1/subscription-package?size=100&sort=price,asc&status=Active", function (subscriptionPackages) {
+            $.get("/api/v1/subscription/find-active-by-user/" + currentUser.id, function (subscription) {
+                subscriptionPackages.content.forEach(function (value) {
+                    const active = get(() => value.id, 0) == get(() => subscription.subscriptionPackage.id, 0);
+                    // Create the entire price element
+                    const priceElement = `
+                        <div class="col-md-3 col-sm-6" id="subscription-package-item-${value.id}">
+                            <div class="pricing">
+                                <div class="title">
+                                    <h2>${value.name}</h2>
+                                    <h1>${value.price} ${value.currency}</h1>
+                                </div>
+                                <div class="x_content">
+                                    <div class="">
+                                        <div class="pricing_features">
+                                            <ul class="list-unstyled text-left">
+                                                <li><i class="fa fa-check text-success"></i> <strong>Unlimited access</strong>.</li>
+                                                <li><i class="fa fa-check text-success"></i> Order count <strong> ${value.orderCount}</strong> times</li>
+                                                <li><i class="fa fa-check text-success"></i> Trading reward between range (<strong>${value.minTradingReward} - ${value.maxTradingReward}</strong>) ${value.currency}</li>
+                                                <li><i class="fa fa-check text-success"></i> User profit percentage (<strong>${value.userProfitPercentage}%</strong>)</li>
+                                                <li><i class="fa fa-check text-success"></i> Site profit percentage (<strong>${value.siteProfitPercentage}%</strong>)</li>
+                                                <li><i class="fa fa-check text-success"></i> Withdrawal duration per day (<strong>${value.withdrawalDurationPerDay}</strong>)</li>
+                                                <li><i class="fa fa-check text-success"></i> Parent referral bonus <strong>${value.parentReferralBonus}</strong> ${value.currency}</li>
+                                                <li><i class="fa fa-check text-success"></i> Maximum acceptable amount <strong>${value.maxPrice}</strong> ${value.currency}</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <div class="pricing_footer">
+                                        <a href="javascript:trade(${value.id});" class="btn btn-success btn-block ${!active ? 'disabled' : ''}" aria-disabled="${!active}" role="button">${tradeButtonText}</a> 
+                                        <a href="javascript:loadPages('deposit?amount=${value.price}');" class="btn btn-primary btn-block ${active ? 'disabled' : ''}" aria-disabled="${active}" role="button">Purchase<span></span></a>                          
+                                    </div>
                                 </div>
                             </div>
-                            <div class="pricing_footer">
-                                <a href="javascript:trade(${value.id});" class="btn btn-success btn-block ${!active ? 'disabled' : ''}" aria-disabled="${!active}" role="button">Trade now!</a> 
-                                <a href="javascript:loadPages('deposit?amount=${value.price}');" class="btn btn-primary btn-block ${active ? 'disabled' : ''}" aria-disabled="${active}" role="button">Purchase<span></span></a>                          
-                            </div>
-                        </div>
-                    </div>
-                </div>`;
-                // Append the price element to the subscription package container
-                $("#subscription-package").append(priceElement);
+                        </div>`;
+                    // Append the price element to the subscription package container
+                    $("#subscription-package").append(priceElement);
+                });
             });
         });
     });
-
 });
 async function trade(id) {
     let purchaseLimit = await (await fetch("/api/v1/arbitrage/purchase-limit/" + currentUser.id)).text();
@@ -48,7 +54,7 @@ async function trade(id) {
         $(`#subscription-package-item-${id} .btn-success`).text('Trade ' + purchaseLimit);
         return;
     } else {
-        $(`#subscription-package-item-${id} .btn-success`).text('Trade Now!');
+        $(`#subscription-package-item-${id} .btn-success`).text(resources.tradeNow);
     }
 
     $("#subscription-package-content .collapse-link").click();

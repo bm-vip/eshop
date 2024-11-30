@@ -167,40 +167,40 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter,WalletModel,
     }
 
     @Override
-    @Cacheable(cacheNames = "${cache.prefix:client}", key = "'Wallet:totalBalanceGroupedByCurrency:'+ #userId.toString()")
+    @Cacheable(cacheNames = "client", key = "'Wallet:totalBalanceGroupedByCurrency:'+ #userId.toString()")
     public List<BalanceModel> totalBalanceGroupedByCurrency(UUID userId) {
         return walletRepository.totalBalanceGroupedByCurrency(userId);
     }
     @Override
-    @Cacheable(cacheNames = "${cache.prefix:client}", key = "'Wallet:totalDepositGroupedByCurrency:'+ #userId.toString()")
+    @Cacheable(cacheNames = "client", key = "'Wallet:totalDepositGroupedByCurrency:'+ #userId.toString()")
     public List<BalanceModel> totalDepositGroupedByCurrency(UUID userId) {
         return walletRepository.totalDepositGroupedByCurrency(userId);
     }
     @Override
-    @Cacheable(cacheNames = "${cache.prefix:client}", key = "'Wallet:totalWithdrawalGroupedByCurrency:'+ #userId.toString()")
+    @Cacheable(cacheNames = "client", key = "'Wallet:totalWithdrawalGroupedByCurrency:'+ #userId.toString()")
     public List<BalanceModel> totalWithdrawalGroupedByCurrency(UUID userId) {
         return walletRepository.totalWithdrawalGroupedByCurrency(userId);
     }
     @Override
-    @Cacheable(cacheNames = "${cache.prefix:client}", key = "'Wallet:totalBonusGroupedByCurrency:'+ #userId.toString()")
+    @Cacheable(cacheNames = "client", key = "'Wallet:totalBonusGroupedByCurrency:'+ #userId.toString()")
     public List<BalanceModel> totalBonusGroupedByCurrency(UUID userId) {
         return walletRepository.totalBonusGroupedByCurrency(userId);
     }
 
     @Override
-    @Cacheable(cacheNames = "${cache.prefix:client}", key = "'Wallet:totalRewardGroupedByCurrency:'+ #userId.toString()")
+    @Cacheable(cacheNames = "client", key = "'Wallet:totalRewardGroupedByCurrency:'+ #userId.toString()")
     public List<BalanceModel> totalRewardGroupedByCurrency(UUID userId) {
         return walletRepository.totalRewardGroupedByCurrency(userId);
     }
 
     @Override
-    @Cacheable(cacheNames = "${cache.prefix:client}", key = "'Wallet:totalProfitGroupedByCurrency:'+ #userId.toString()")
+    @Cacheable(cacheNames = "client", key = "'Wallet:totalProfitGroupedByCurrency:'+ #userId.toString()")
     public List<BalanceModel> totalProfitGroupedByCurrency(UUID userId) {
         return walletRepository.totalProfitGroupedByCurrency(userId);
     }
 
     @Override
-    @Cacheable(cacheNames = "${cache.prefix:client}", key = "'Wallet:dailyProfitGroupedByCurrency:'+ #userId.toString()")
+    @Cacheable(cacheNames = "client", key = "'Wallet:dailyProfitGroupedByCurrency:'+ #userId.toString()")
     public List<BalanceModel> dailyProfitGroupedByCurrency(UUID userId) {
         QWalletEntity path = QWalletEntity.walletEntity;
         DateTemplate<Date> truncatedDate = Expressions.dateTemplate(Date.class, "date_trunc('day', {0})", path.createdDate);
@@ -229,7 +229,7 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter,WalletModel,
     }
 
     @Override
-    @Cacheable(cacheNames = "${cache.prefix:client}", key = "'Wallet:findAllWithinDateRange:startDate:' + #startDate + ':endDate:' + #endDate + ':transactionType:' + #transactionType")
+    @Cacheable(cacheNames = "client", key = "'Wallet:findAllWithinDateRange:startDate:' + #startDate + ':endDate:' + #endDate + ':transactionType:' + #transactionType")
     public Map<Long, BigDecimal> findAllWithinDateRange(long startDate, long endDate, TransactionType transactionType) {
         QWalletEntity path = QWalletEntity.walletEntity;
         DateTemplate<Date> truncatedDate = Expressions.dateTemplate(Date.class, "date_trunc('day', {0})", path.createdDate);

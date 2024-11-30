@@ -40,12 +40,9 @@ public class MailServiceImpl implements MailService {
             helper.setText(body, true);
             helper.setTo(to);
             helper.setSubject(subject);
-            helper.setFrom("support@" + siteUrl, "Support");
+            helper.setFrom("no-reply@" + siteUrl, "Support");
             mailSender.send(mimeMessage);
-        } catch (MessagingException e) {
-            log.error("failed to send email", e);
-            throw new IllegalStateException("failed to send email");
-        } catch (UnsupportedEncodingException e) {
+        } catch (Exception e) {
             log.error("failed to send email", e);
             throw new IllegalStateException("failed to send email");
         }
