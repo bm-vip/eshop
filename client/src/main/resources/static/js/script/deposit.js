@@ -1,4 +1,3 @@
-
 ajaxUrl = "/api/v1/wallet";
 rules = {
     walletAddress: {

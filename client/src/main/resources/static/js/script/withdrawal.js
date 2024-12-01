@@ -1,4 +1,4 @@
-ajaxUrl = "/api/v1/wallet/";
+ajaxUrl = "/api/v1/wallet";
 rules = {
     walletAddress: {
         required: true,
