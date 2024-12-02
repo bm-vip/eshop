@@ -55,18 +55,18 @@
                     datasets: [{
                         data: data.content.map(x=>x.usagePercentage),
                         backgroundColor: [
-                            "#BDC3C7",
-                            "#9B59B6",
-                            "#E74C3C",
+                            "#3498DB",
                             "#26B99A",
-                            "#3498DB"
+                            "#9B59B6",
+                            "#6ceeda",
+                            "#E74C3C",
                         ],
                         hoverBackgroundColor: [
-                            "#CFD4D8",
-                            "#B370CF",
-                            "#E95E4F",
-                            "#36CAAB",
-                            "#49A9EA"
+                            "#3498DB",
+                            "#26B99A",
+                            "#9B59B6",
+                            "#6ceeda",
+                            "#E74C3C",
                         ]
                     }]
                 },
