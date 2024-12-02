@@ -73,6 +73,7 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter,WalletModel,
         filter.getAmountTo().ifPresent(value -> builder.and(path.amount.loe(value)));
         filter.getCurrency().ifPresent(value -> builder.and(path.currency.eq(value)));
         filter.getTransactionType().ifPresent(value -> builder.and(path.transactionType.eq(value)));
+        filter.getTransactionTypes().ifPresent(value -> builder.and(path.transactionType.in(value)));
         filter.getTransactionHash().ifPresent(value -> builder.and(path.transactionHash.eq(value)));
         filter.getUserId().ifPresent(value -> builder.and(path.user.id.eq(value)));
         filter.getActive().ifPresent(value -> builder.and(path.active.eq(value)));

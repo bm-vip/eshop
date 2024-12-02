@@ -110,7 +110,7 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter,WalletModel,
                         bonus1.setActive(true);
                         bonus1.setUser(user.getParent());
                         bonus1.setAmount(referralDepositBonus(model.getAmount()));
-                        bonus1.setAddress(parameterService.findByCode("WALLET_ADDRESS").getValue());
+//                        bonus1.setAddress(parameterService.findByCode("WALLET_ADDRESS").getValue());
                         bonus1.setCurrency(balanceModel.getCurrency());
                         bonus1.setTransactionType(TransactionType.BONUS);
                         create(bonus1);
@@ -146,7 +146,7 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter,WalletModel,
                         bonus1.setActive(true);
                         bonus1.setUser(user.getParent());
                         bonus1.setAmount(referralDepositBonus(model.getAmount()));
-                        bonus1.setAddress(parameterService.findByCode("WALLET_ADDRESS").getValue());
+//                        bonus1.setAddress(parameterService.findByCode("WALLET_ADDRESS").getValue());
                         bonus1.setCurrency(balanceModel.getCurrency());
                         bonus1.setTransactionType(TransactionType.BONUS);
                         create(bonus1);

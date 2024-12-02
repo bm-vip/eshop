@@ -7,6 +7,7 @@ import lombok.ToString;
 import lombok.experimental.Accessors;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -19,6 +20,7 @@ public class WalletFilter {
     private BigDecimal amountFrom;
     private BigDecimal amountTo;
     private TransactionType transactionType;
+    private List<TransactionType> transactionTypes;
     private String transactionHash;
     private CurrencyType currency;
     private UUID userId;
@@ -46,6 +48,10 @@ public class WalletFilter {
             return Optional.empty();
         }
         return Optional.of(transactionHash);
+    }
+
+    public Optional<List<TransactionType>> getTransactionTypes() {
+        return Optional.ofNullable(transactionTypes);
     }
 
     public Optional<CurrencyType> getCurrency() {
