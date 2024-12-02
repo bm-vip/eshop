@@ -34,6 +34,8 @@ columns = [{
 },{
     data: 'currency'
 },{
+    data: 'transactionType'
+},{
     data: 'transactionHash'
 },{
     data: 'address'

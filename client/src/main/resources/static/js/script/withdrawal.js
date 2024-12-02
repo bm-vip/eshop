@@ -27,6 +27,8 @@ columns = [{
     render: function (data) { return addPeriod(data) }
 }, {
     data: 'currency'
+},{
+    data: 'transactionType'
 }, {
     data: 'transactionHash'
 },{
