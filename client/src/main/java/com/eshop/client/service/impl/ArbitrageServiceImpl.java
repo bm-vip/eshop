@@ -137,7 +137,7 @@ public class ArbitrageServiceImpl extends BaseServiceImpl<ArbitrageFilter, Arbit
                 buyRewardGrandParent.setAddress(walletAddressValue);
                 walletRepository.save(buyRewardGrandParent);
             }
-            clearCache("Wallet");
+            clearCache("Wallet:" + user.getId().toString());
             return super.create(model, allKey);
         }
         throw new NotAcceptableException("Your profit is equal to zero, please contact support.");
@@ -149,7 +149,7 @@ public class ArbitrageServiceImpl extends BaseServiceImpl<ArbitrageFilter, Arbit
     }
 
     @Override
-    @Cacheable(cacheNames = "client", key = "'Arbitrage:countByUserIdAndDate:userId:' + #userId.toString() + ':date:' + #date.getTime()")
+    @Cacheable(cacheNames = "client", key = "'Arbitrage:' + #userId.toString() + ':' + #date.getTime() + ':countByUserIdAndDate'")
     public long countByUserIdAndDate(UUID userId, Date date) {
         QArbitrageEntity path = QArbitrageEntity.arbitrageEntity;
         DateTemplate<Date> truncatedDate = Expressions.dateTemplate(Date.class, "date_trunc('day', {0})", path.createdDate);
@@ -170,7 +170,7 @@ public class ArbitrageServiceImpl extends BaseServiceImpl<ArbitrageFilter, Arbit
     }
     @Override
     @Transactional(readOnly = true)
-    @Cacheable(cacheNames = "client", key = "'Arbitrage:purchaseLimit:' + #userId.toString()")
+    @Cacheable(cacheNames = "client", key = "'Arbitrage:' + #userId.toString() + ':purchaseLimit'")
     public String purchaseLimit(UUID userId) {
         var subscription = subscriptionRepository.findByUserIdAndStatus(userId, EntityStatusType.Active);
         if(subscription == null)

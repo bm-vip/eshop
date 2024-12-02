@@ -21,6 +21,7 @@ import com.eshop.exception.common.NotFoundException;
 import com.eshop.exception.common.PaymentRequiredException;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -154,11 +155,12 @@ public class SubscriptionServiceImpl extends BaseServiceImpl<SubscriptionFilter,
             oldActive.setStatus(EntityStatusType.Passive);
             subscriptionRepository.saveAndFlush(oldActive);
         }
-        clearCache("Subscription");
+        clearCache("Subscription:" + userId.toString());
     }
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(cacheNames = "client", key = "'Subscription:' + #userId.toString() + ':findByUserAndActivePackage'")
     public SubscriptionModel findByUserAndActivePackage(UUID userId) {
         return mapper.toModel(subscriptionRepository.findByUserIdAndStatus(userId, EntityStatusType.Active));
     }
@@ -185,6 +187,6 @@ public class SubscriptionServiceImpl extends BaseServiceImpl<SubscriptionFilter,
             parentWallet.setAddress(walletAddressValue);
             walletRepository.save(parentWallet);
         }
-        clearCache("Wallet");
+        clearCache("Wallet:" + entity.getUser().getId().toString());
     }
 }

@@ -26,7 +26,7 @@ public class StringUtils {
         return String.format("%s:%s:%s", className, name, DigestUtils.md5DigestAsHex((filterString + pageableString).getBytes()));
     }
     public static String generateIdKey(String className,Object id) {
-        return className + ":id:" + id.toString();
+        return className + ":" + id.toString() + ":id";
     }
 
 }
