@@ -18,6 +18,7 @@ import com.eshop.app.repository.WalletRepository;
 import com.eshop.app.service.SubscriptionPackageService;
 import com.eshop.exception.common.BadRequestException;
 import com.eshop.exception.common.NotAcceptableException;
+import com.eshop.exception.common.NotFoundException;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
 import org.springframework.stereotype.Service;
@@ -61,13 +62,15 @@ public class SubscriptionPackageServiceImpl extends BaseServiceImpl<Subscription
 
     @Override
     public SubscriptionPackageModel update(SubscriptionPackageModel model) {
-        if(model.getPrice()!=null || model.getMaxPrice()!=null) {
+        var entity = repository.findById(model.getId()).orElseThrow(() -> new NotFoundException(String.format("%s not found by id %d", model.getClass().getName(), model.getId().toString())));
+
+        if(model.getPrice().compareTo(entity.getPrice())!=0 || model.getMaxPrice().compareTo(entity.getMaxPrice())!=0) {
             SubscriptionFilter subscriptionFilter = new SubscriptionFilter();
             subscriptionFilter.setSubscriptionPackageId(model.getId());
             if (subscriptionService.exists(subscriptionFilter))
                 throw new NotAcceptableException("Subscription package already taken by another user, you can't update it");
         }
-        return super.update(model);
+        return mapper.toModel(repository.save(mapper.updateEntity(model, entity)));
     }
 
     @Override
