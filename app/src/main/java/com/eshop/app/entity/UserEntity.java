@@ -77,4 +77,9 @@ public class UserEntity extends BaseEntity<UUID> {
 			builder.append(" ").append(lastName);
 		return builder.toString();
 	}
+
+	public UserEntity setUserId(UUID id) {
+		this.id = id;
+		return this;
+	}
 }

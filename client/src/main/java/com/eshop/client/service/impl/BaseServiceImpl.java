@@ -86,6 +86,7 @@ public abstract class BaseServiceImpl<F, M extends BaseModel<ID>, E extends Base
     @CacheEvict(cacheNames = "client", key = "#allKey")
     public M create(M model, String allKey) {
         var saved = repository.save(mapper.toEntity(model));
+        clearCache(allKey);
         return mapper.toModel(saved);
     }
 
@@ -96,6 +97,7 @@ public abstract class BaseServiceImpl<F, M extends BaseModel<ID>, E extends Base
         var entity = repository.findById(model.getId())
                 .orElseThrow(() -> new NotFoundException(String.format("%s not found by id %s",
                         model.getClass().getName(), model.getId().toString())));
+        clearCache(allKey);
         return mapper.toModel(repository.save(mapper.updateEntity(model, entity)));
     }
 
@@ -111,7 +113,7 @@ public abstract class BaseServiceImpl<F, M extends BaseModel<ID>, E extends Base
     public void clearCache(String allKey) {
         CaffeineCache cache = (CaffeineCache) cacheManager.getCache("client");
         if(cache != null) {
-            cache.getNativeCache().asMap().keySet().removeIf(key -> key.toString().startsWith(allKey));
+            cache.getNativeCache().asMap().keySet().removeIf(key -> key.toString().startsWith(allKey.replace("*","")));
         }
     }
 }

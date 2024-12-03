@@ -2,6 +2,7 @@ package com.eshop.app.service.impl;
 
 import com.eshop.app.entity.QSubscriptionEntity;
 import com.eshop.app.entity.SubscriptionEntity;
+import com.eshop.app.entity.UserEntity;
 import com.eshop.app.entity.WalletEntity;
 import com.eshop.app.enums.EntityStatusType;
 import com.eshop.app.enums.RoleType;
@@ -11,10 +12,10 @@ import com.eshop.app.mapping.SubscriptionMapper;
 import com.eshop.app.model.SubscriptionModel;
 import com.eshop.app.repository.SubscriptionPackageRepository;
 import com.eshop.app.repository.SubscriptionRepository;
-import com.eshop.app.repository.UserRepository;
 import com.eshop.app.repository.WalletRepository;
 import com.eshop.app.service.ParameterService;
 import com.eshop.app.service.SubscriptionService;
+import com.eshop.app.service.UserService;
 import com.eshop.app.util.DateUtil;
 import com.eshop.exception.common.BadRequestException;
 import com.eshop.exception.common.NotFoundException;
@@ -38,15 +39,15 @@ public class SubscriptionServiceImpl extends BaseServiceImpl<SubscriptionFilter,
 
     private final SubscriptionRepository subscriptionRepository;
     private final SubscriptionPackageRepository subscriptionPackageRepository;
-    private final UserRepository userRepository;
+    private final UserService userService;
     private final WalletRepository walletRepository;
     private final ParameterService parameterService;
 
-    public SubscriptionServiceImpl(SubscriptionRepository repository, SubscriptionMapper mapper, SubscriptionPackageRepository subscriptionPackageRepository, UserRepository userRepository, WalletRepository walletRepository, ParameterService parameterService) {
+    public SubscriptionServiceImpl(SubscriptionRepository repository, SubscriptionMapper mapper, SubscriptionPackageRepository subscriptionPackageRepository, UserService userService, WalletRepository walletRepository, ParameterService parameterService) {
         super(repository, mapper);
         this.subscriptionRepository = repository;
         this.subscriptionPackageRepository = subscriptionPackageRepository;
-        this.userRepository = userRepository;
+        this.userService = userService;
         this.walletRepository = walletRepository;
         this.parameterService = parameterService;
     }
@@ -113,7 +114,7 @@ public class SubscriptionServiceImpl extends BaseServiceImpl<SubscriptionFilter,
         if(model.getDiscountPercentage() != null)
             entity.setDiscountPercentage(model.getDiscountPercentage());
         if (get(()->model.getUser().getId()) != null)
-            entity.setUser(userRepository.findById(model.getUser().getId()).orElseThrow(() -> new NotFoundException("No such user with " + model.getUser().getId())));
+            entity.setUser(new UserEntity().setUserId(model.getUser().getId()));
 
         if(!get(()-> model.getSubscriptionPackage().getId()).equals(entity.getSubscriptionPackage().getId())) {//subscription package changed
             var subscriptionPackage = subscriptionPackageRepository.findById(model.getSubscriptionPackage().getId()).orElseThrow(()-> new NotFoundException("No such subscriptionPackage with " + model.getSubscriptionPackage().getId()));
@@ -147,8 +148,8 @@ public class SubscriptionServiceImpl extends BaseServiceImpl<SubscriptionFilter,
         return originalPrice.subtract(discountAmount);
     }
     private void deactivateOldActive(UUID userId) {
-        var userEntity = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("No such user with " + userId));
-        var oldActive = subscriptionRepository.findByUserIdAndStatus(userEntity.getId(), EntityStatusType.Active);
+        var userModel = userService.findById(userId);
+        var oldActive = subscriptionRepository.findByUserIdAndStatus(userModel.getId(), EntityStatusType.Active);
         if(oldActive != null) {
             oldActive.setStatus(EntityStatusType.Passive);
             subscriptionRepository.saveAndFlush(oldActive);

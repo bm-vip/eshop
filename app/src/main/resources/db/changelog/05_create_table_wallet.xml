@@ -63,4 +63,8 @@
                                  referencedTableName="tbl_user"/>
         <addUniqueConstraint tableName="tbl_wallet" columnNames="transaction_hash" constraintName="uc_wallet_transaction_hash"/>
     </changeSet>
+    <changeSet id="05-5" author="administrator">
+        <dropNotNullConstraint tableName="tbl_wallet" columnName="address"></dropNotNullConstraint>
+        <dropNotNullConstraint tableName="tbl_wallet_aud" columnName="address"></dropNotNullConstraint>
+    </changeSet>
 </databaseChangeLog>

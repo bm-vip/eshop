@@ -116,89 +116,68 @@
     // });
 
     //chart
+    var chart_plot_01_settings = {
+        series: {
+            lines: {
+                show: false,
+                fill: true
+            },
+            splines: {
+                show: true,
+                tension: 0.4,
+                lineWidth: 1,
+                fill: 0.4
+            },
+            points: {
+                radius: 0,
+                show: true
+            },
+            shadowSize: 2
+        },
+        grid: {
+            verticalLines: true,
+            hoverable: true,
+            clickable: true,
+            tickColor: "#d5d5d5",
+            borderWidth: 1,
+            color: '#fff'
+        },
+        colors: ["rgba(38, 185, 154, 0.38)", "rgba(3, 88, 106, 0.38)"],
+        xaxis: {
+            tickColor: "rgba(51, 51, 51, 0.06)",
+            mode: "time",
+            tickSize: [1, "day"],
+            //tickLength: 10,
+            axisLabel: "Date",
+            axisLabelUseCanvas: true,
+            axisLabelFontSizePixels: 12,
+            axisLabelFontFamily: 'Verdana, Arial',
+            axisLabelPadding: 10
+        },
+        yaxis: {
+            ticks: 8,
+            tickColor: "rgba(51, 51, 51, 0.06)",
+            axisLabel: "Value",  // Added Y-axis label
+            axisLabelUseCanvas: true,
+            axisLabelFontSizePixels: 12,
+            axisLabelFontFamily: 'Verdana, Arial',
+            axisLabelPadding: 5
+        },
+        tooltip: false,
+        legend: {  // Added legend settings
+            show: true,
+            position: "nw",
+            labelFormatter: function(label, series) {
+                return '<span style="color: #000;">' + label + '</span>';
+            }
+        }
+    };
     if ($("#chart_01").length) {
         $.getJSON("/api/v1/wallet/get-date-range/" + addDays(new Date(),-7).getTime() +"/"+ new Date().getTime() + "/DEPOSIT", function (depositData) {
             const depositArray = Object.entries(depositData).map(([key, value]) => [key, value]).sort((a, b) => Number(a[0]) - Number(b[0]));
             $.getJSON("/api/v1/wallet/get-date-range/" + addDays(new Date(),-7).getTime() +"/"+ new Date().getTime() + "/WITHDRAWAL", function (withdrawalData) {
                 const withdrawalArray = Object.entries(withdrawalData).map(([key, value]) => [key, value]).sort((a, b) => Number(a[0]) - Number(b[0]));
-                $.plot($("#chart_01"), [
-                    {
-                        label: "Deposit",
-                        data: depositArray,
-                        lines: {
-                            fillColor: "rgb(253,249,4)",
-                            lineWidth: 2
-                        },
-                        points: {
-                            fillColor: "#e8e67d",
-                            show: true,
-                            radius: 4,
-                            lineWidth: 2
-                        }
-                    },
-                    {
-                        label: "Withdrawal",
-                        data: withdrawalArray,
-                        lines: {
-                            fillColor: "rgba(183,52,219,0.12)",
-                            lineWidth: 2
-                        },
-                        points: {
-                            fillColor: "#c38ff3",
-                            show: true,
-                            radius: 4,
-                            lineWidth: 2
-                        }
-                    }], {
-                    series: {
-                        lines: {
-                            show: true
-                        },
-                        points: {
-                            show: true
-                        },
-                        curvedLines: {
-                            apply: true,
-                            active: true,
-                            monotonicFit: true
-                        }
-                    },
-                    colors: ["#fdf904","#c38ff3"],
-                    grid: {
-                        borderWidth: {
-                            top: 0,
-                            right: 0,
-                            bottom: 1,
-                            left: 1
-                        },
-                        borderColor: {
-                            bottom: "#7F8790",
-                            left: "#7F8790"
-                        },
-                        hoverable: true,
-                        clickable: true
-                    },
-                    xaxis: {
-                        tickColor: "rgba(51, 51, 51, 0.06)",
-                        mode: "time",
-                        tickSize: [1, "day"],
-                        //tickLength: 10,
-                        axisLabel: "Date",
-                        axisLabelUseCanvas: true,
-                        axisLabelFontSizePixels: 12,
-                        axisLabelFontFamily: 'Verdana, Arial',
-                        axisLabelPadding: 10
-                    },
-                    legend: {
-                        show: true,
-                        position: "ne"
-                    },
-                    tooltip: true,
-                    tooltipOpts: {
-                        content: "%s at %x: %y",
-                        defaultTheme: true
-                    }
-                });
+                $.plot($("#chart_01"),[depositArray, withdrawalArray],chart_plot_01_settings);
             });
         });
     }
@@ -208,85 +187,7 @@
             const bonusArray = Object.entries(bonusData).map(([key, value]) => [key, value]).sort((a, b) => Number(a[0]) - Number(b[0]));
             $.getJSON("/api/v1/wallet/get-date-range/" + addDays(new Date(),-7).getTime() +"/"+ new Date().getTime() + "/REWARD", function (rewardData) {
                 const rewardArray = Object.entries(rewardData).map(([key, value]) => [key, value]).sort((a, b) => Number(a[0]) - Number(b[0]));
-                $.plot($("#chart_02"), [
-                    {
-                        label: "Bonus",
-                        data: bonusArray,
-                        lines: {
-                            fillColor: "rgb(171,236,111)",
-                            lineWidth: 2
-                        },
-                        points: {
-                            fillColor: "#abec6f",
-                            show: true,
-                            radius: 4,
-                            lineWidth: 2
-                        }
-                    },
-                    {
-                        label: "Reward",
-                        data: rewardArray,
-                        lines: {
-                            fillColor: "rgba(52, 152, 219, 0.12)",
-                            lineWidth: 2
-                        },
-                        points: {
-                            fillColor: "#6ccbee",
-                            show: true,
-                            radius: 4,
-                            lineWidth: 2
-                        }
-                    }
-                ], {
-                    series: {
-                        lines: {
-                            show: true
-                        },
-                        points: {
-                            show: true
-                        },
-                        curvedLines: {
-                            apply: true,
-                            active: true,
-                            monotonicFit: true
-                        }
-                    },
-                    colors: ["#04f5c2", "#0794f3"],
-                    grid: {
-                        borderWidth: {
-                            top: 0,
-                            right: 0,
-                            bottom: 1,
-                            left: 1
-                        },
-                        borderColor: {
-                            bottom: "#7F8790",
-                            left: "#7F8790"
-                        },
-                        hoverable: true,
-                        clickable: true
-                    },
-                    xaxis: {
-                        tickColor: "rgba(51, 51, 51, 0.06)",
-                        mode: "time",
-                        tickSize: [1, "day"],
-                        //tickLength: 10,
-                        axisLabel: "Date",
-                        axisLabelUseCanvas: true,
-                        axisLabelFontSizePixels: 12,
-                        axisLabelFontFamily: 'Verdana, Arial',
-                        axisLabelPadding: 10
-                    },
-                    legend: {
-                        show: true,
-                        position: "ne"
-                    },
-                    tooltip: true,
-                    tooltipOpts: {
-                        content: "%s at %x: %y",
-                        defaultTheme: true
-                    }
-                });
+                $.plot($("#chart_02"), [bonusArray,rewardArray], chart_plot_01_settings);
             });
         });
     }
