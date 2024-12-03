@@ -121,7 +121,7 @@
                             </li>
                             <li><a th:href="@{/arbitrage}"><i class="fa fa-money-bill-trend-up"></i> <th:block th:text="#{arbitrageBot}"></th:block></a></li>
                             <li><a th:href="@{/notification}"><i class="fa fa-bell"></i> <th:block th:text="#{notifications}"></th:block> <span class="badge bg-green" th:text="${notifications?.totalElements ?: 0}">6</span></a></li>
-                            <li><a th:href="@{/profile}"><i class="fa fa-user"></i> <th:block th:text="#{profile}"></th:block></a></li>
+                            <li><a th:href="@{/profile}"><i class="fa fa-user"></i> <th:block th:text="#{profile}"></th:block> <span class="userOccupied badge bg-red">1%</span></a></li>
                             <li><a th:href="@{/about}"><i class="fa fa-info-circle"></i> <th:block th:text="#{about}"></th:block></a></li>
                         </ul>
                     </div>
@@ -159,7 +159,7 @@
                                 </a>
                                 <div class="dropdown-menu dropdown-usermenu pull-right" aria-labelledby="navbarDropdown">
                                     <a class="dropdown-item" th:href="@{/profile}">
-                                        <span id="userOccupied" class="badge bg-red pull-right">50%</span>
+                                        <span class="userOccupied badge bg-red pull-right">1%</span>
                                         <span th:text="#{profile}">Profile</span>
                                     </a>
                                     <a class="dropdown-item referral-code-menu" href="javascript:copyLink()"><i class="copy-referral-code fas fa-copy pull-right"></i> <th:block th:text="#{copyReferralCode}"></th:block> </a>

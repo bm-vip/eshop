@@ -5019,3 +5019,9 @@ ul.notifications {
 .copied-message.visible {
   opacity: 1;
 }
+.text-red {
+  color: red!important;
+}
+.text-green {
+  color: green!important;
+}

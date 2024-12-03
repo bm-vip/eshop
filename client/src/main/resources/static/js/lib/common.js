@@ -30,38 +30,8 @@ $.postJSON = function(url, data, success, error, dataType) {
 
 var currentUser = JSON.parse($("#currentUser").val());
 let userOccupied = 0;
-if(!isNullOrEmpty(currentUser.firstName))
-    userOccupied+=5;
-if(!isNullOrEmpty(currentUser.lastName))
-    userOccupied+=5;
-if(currentUser.childCount > 0)
-    userOccupied+=10;
-if(!isNullOrEmpty(currentUser.email))
-    userOccupied+=10;
-if(!isNullOrEmpty(currentUser.profileImageUrl))
-    userOccupied+=10;
-if(!isNullOrEmpty(currentUser.country))
-    userOccupied+=10;
-if(!isNullOrEmpty(currentUser.walletAddress))
-    userOccupied+=10;
-$.get(`api/v1/wallet/exists?userId=${currentUser.id}&transactionType=DEPOSIT`,function(anyWallet){
-    if(anyWallet)
-        userOccupied+=10;
-    $.get(`api/v1/arbitrage/exists?userId=${currentUser.id}`,function(anyArbitrage){
-        if(anyArbitrage)
-            userOccupied+=10;
-        $.get(`api/v1/user/${currentUser.id}`,function(userData){
-            if(userData.childCount > 0)
-                userOccupied+=20;
-            $("#userOccupied").text(`${userOccupied}%`);
-            if(userOccupied > 50 && userOccupied < 100)
-                $("#userOccupied").removeClass("bg-red").addClass("bg-orange");
-            if(userOccupied == 100)
-                $("#userOccupied").removeClass("bg-red").addClass("bg-green");
-        });
-    });
+userProfileOccupied();
 
-});
 const referralLink = window.location.origin + `/login?referralCode=${currentUser.uid}#signup`;
 $(".referral-code").attr("href", referralLink).html(`${currentUser.uid}`);
 $(".referral-code-menu").attr("link", referralLink);
@@ -587,4 +557,53 @@ function copyLink() {
         }
         document.body.removeChild(tempInput);
     }
+}
+
+function userProfileOccupied(){
+    if(!isNullOrEmpty(currentUser.firstName)) {
+        userOccupied += 5;
+        $("#fullName-occupied").text("Yes").removeClass('text-red').addClass('text-green');
+    }
+    if(!isNullOrEmpty(currentUser.lastName))
+        userOccupied+=5;
+    if(!isNullOrEmpty(currentUser.email)) {
+        userOccupied += 10;
+        $("#email-occupied").removeClass('text-red').addClass('text-green').text("Yes");
+    }
+    if(!isNullOrEmpty(currentUser.profileImageUrl)) {
+        userOccupied += 10;
+        $("#profileImageUrl-occupied").removeClass('text-red').addClass('text-green').text("Yes");
+    }
+    if(!isNullOrEmpty(currentUser.country)) {
+        userOccupied += 10;
+        $("#country-occupied").removeClass('text-red').addClass('text-green').text("Yes");
+    }
+    if(!isNullOrEmpty(currentUser.walletAddress)) {
+        userOccupied += 10;
+        $("#walletAddress-occupied").removeClass('text-red').addClass('text-green').text("Yes");
+    }
+    $.get(`api/v1/wallet/exists?userId=${currentUser.id}&transactionType=DEPOSIT`,function(anyDeposit){
+        if(anyDeposit) {
+            userOccupied += 20;
+            $("#anyDeposit-occupied").removeClass('text-red').addClass('text-green').text("Yes");
+        }
+        $.get(`api/v1/arbitrage/exists?userId=${currentUser.id}`,function(anyArbitrage){
+            if(anyArbitrage) {
+                userOccupied += 10;
+                $("#anyArbitrage-occupied").removeClass('text-red').addClass('text-green').text("Yes");
+            }
+            $.get(`api/v1/user/${currentUser.id}`,function(userData){
+                if(userData.childCount > 0) {
+                    userOccupied += 20;
+                    $("#anyReferral-occupied").removeClass('text-red').addClass('text-green').text("Yes");
+                }
+                $(".userOccupied").text(`${userOccupied}%`);
+                if(userOccupied > 50 && userOccupied < 100)
+                    $(".userOccupied").removeClass("bg-red").addClass("bg-orange");
+                if(userOccupied == 100)
+                    $(".userOccupied").removeClass("bg-red").addClass("bg-green");
+            });
+        });
+
+    });
 }
