@@ -174,7 +174,7 @@ public class ArbitrageServiceImpl extends BaseServiceImpl<ArbitrageFilter, Arbit
     public String purchaseLimit(UUID userId) {
         var subscription = subscriptionRepository.findByUserIdAndStatus(userId, EntityStatusType.Active);
         if(subscription == null)
-            throw new NotFoundException("subscription not found");
+            return null;
         var todayArbitrages = arbitrageRepository.findByUserIdAndSubscriptionIdAndCreatedDateOrderByCreatedDateDesc(userId, subscription.getId(), LocalDateTime.now().truncatedTo(ChronoUnit.DAYS));
         if(CollectionUtils.isEmpty(todayArbitrages))
             return null;

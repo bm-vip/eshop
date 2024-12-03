@@ -324,7 +324,7 @@
                     <div class="col-xs-12 form-group">
                         <input type="text" class="form-control" th:placeholder="#{userName}" id="userName"
                                name="userName" autofocus
-                               tabindex="6">
+                               tabindex="11">
                         <span class="fa fa-user form-control-feedback right" aria-hidden="true"></span>
                     </div>
                     </div>
@@ -332,53 +332,53 @@
                     <div class="col-xs-12 form-group">
                         <input type="email" class="form-control" th:placeholder="#{email}" id="email"
                                name="email"
-                               tabindex="11">
+                               tabindex="12">
                         <span class="fa fa-envelope form-control-feedback right" aria-hidden="true"></span>
                     </div>
                     </div>
                     <div class="row">
                     <div class="col-xs-12 form-group">
                         <input type="password" class="form-control" th:placeholder="#{password}" id="password"
-                               name="password" tabindex="12">
+                               name="password" tabindex="13">
                         <span class="fa fa-eye-slash toggle-password form-control-feedback right" aria-hidden="true"></span>
                     </div>
                     </div>
                     <div class="row">
                     <div class="col-xs-12 form-group">
                         <input type="password" class="form-control" th:placeholder="#{repeatPassword}"
-                               id="repeatPassword" name="repeatPassword" tabindex="13">
+                               id="repeatPassword" name="repeatPassword" tabindex="14">
                         <span class="fa fa-eye-slash toggle-password form-control-feedback right" aria-hidden="true"></span>
                     </div>
                     </div>
                     <div class="row">
                     <div class="col-xs-12 form-group">
                         <input type="text" class="form-control" th:placeholder="#{name}" id="firstName" name="firstName"
-                               tabindex="14">
+                               tabindex="15">
                         <span class="fa fa-pencil form-control-feedback right" aria-hidden="true"></span>
                     </div>
                     </div>
                     <div class="row">
                     <div class="col-xs-12 form-group">
                         <input type="text" class="form-control" th:placeholder="#{lastName}" id="lastName"
-                               name="lastName" tabindex="15">
+                               name="lastName" tabindex="16">
                         <span class="fa fa-pencil form-control-feedback right" aria-hidden="true"></span>
                     </div>
                     </div>
                     <div class="row">
                     <div class="col-xs-12 form-group">
-                        <th:block th:replace="fragments/select2 :: select2('16', #{country}, 'country', 'api/v1/country/findAllSelect','{name:params.term}',false, null)"></th:block>
+                        <th:block th:replace="fragments/select2 :: select2('17', #{country}, 'country', 'api/v1/country/findAllSelect','{name:params.term}',false, null)"></th:block>
                     </div>
                     </div>
                     <div class="row">
                     <div class="col-xs-12 form-group">
                         <input type="text" class="form-control" th:placeholder="#{referralCode}" id="referralCode"
-                               th:value="${referralCode ?: ''}" name="referralCode" tabindex="17">
+                               th:value="${referralCode ?: ''}" name="referralCode" tabindex="18">
                         <span class="fa fa-user form-control-feedback right" aria-hidden="true"></span>
                     </div>
                     </div>
                     <div class="row">
                     <div class="col-xs-12 form-group">
-                        <button tabindex="18" type="submit" class="btn btn-secondary" style="width: 100%;" th:value="#{register}">Register</button>
+                        <button tabindex="19" type="submit" class="btn btn-secondary" style="width: 100%;" th:value="#{register}">Register</button>
                     </div>
                     </div>
                     <div class="clearfix"></div>
