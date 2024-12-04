@@ -24,7 +24,7 @@ public class HoneypotAuthenticationFilter extends OncePerRequestFilter {
     @SneakyThrows
     public HoneypotAuthenticationFilter(String honeypotFieldName) {
         this.honeypotFieldName = honeypotFieldName;
-        File database = new File("src/main/resources/GeoLite2-Country.mmdb");
+        File database = new File(getClass().getClassLoader().getResource("GeoLite2-Country.mmdb").getFile());
         dbReader = new DatabaseReader.Builder(database).build();
     }
 
