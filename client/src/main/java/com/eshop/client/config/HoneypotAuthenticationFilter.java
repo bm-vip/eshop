@@ -42,17 +42,21 @@ public class HoneypotAuthenticationFilter extends OncePerRequestFilter {
                 ipAddress = request.getRemoteAddr();
             }
         }
-        InetAddress ip = InetAddress.getByName(ipAddress);
-        // Get country information
-        CountryResponse countryResponse = dbReader.country(ip);
-        String countryCode = countryResponse.getCountry().getIsoCode();
-
         MDC.put("clientIp", ipAddress);
+        boolean isLocalIp = false;
+        if(ipAddress.equals("127.0.0.1"))
+            isLocalIp = true;
 
-        // Block specific countries
-        if ("CN".equals(countryCode) || "RU".equals(countryCode) || "IR".equals(countryCode)|| "KP".equals(countryCode)) {
-            response.sendRedirect("/region_denied.html");
-            return;
+        if(!isLocalIp) {
+            // Get country information
+            InetAddress ip = InetAddress.getByName(ipAddress);
+            CountryResponse countryResponse = dbReader.country(ip);
+            String countryCode = countryResponse.getCountry().getIsoCode();
+            // Block specific countries
+            if ("CN".equals(countryCode) || "RU".equals(countryCode) || "IR".equals(countryCode) || "KP".equals(countryCode)) {
+                response.sendRedirect("/region_denied.html");
+                return;
+            }
         }
         if (isLoginRequest(request)) {
             String honeypotValue = request.getParameter(honeypotFieldName);
