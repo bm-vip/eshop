@@ -23,6 +23,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 
+import static com.eshop.client.util.MapperHelper.get;
 import static com.eshop.client.util.StringUtils.generateFilterKey;
 import static com.eshop.client.util.StringUtils.generateIdKey;
 
@@ -47,6 +48,7 @@ public class LoginController {
 
         UserModel user = sessionHolder.getCurrentUser();
         ModelAndView modelAndView = new ModelAndView(name);
+        if(user == null) return modelAndView;
         modelAndView.addObject("currentUser", sessionHolder.getCurrentUserAsJsonString());
         String cacheKey = generateFilterKey("Notification","findAllByRecipientIdAndNotRead",user.getId(),PageRequest.of(0,10));
         modelAndView.addObject("notifications", notificationService.findAllByRecipientIdAndNotRead(user.getId(), PageRequest.of(0,10),cacheKey));

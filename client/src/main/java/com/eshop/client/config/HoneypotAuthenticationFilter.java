@@ -28,20 +28,20 @@ public class HoneypotAuthenticationFilter extends OncePerRequestFilter {
         InputStream databaseStream = getClass().getClassLoader().getResourceAsStream("GeoLite2-Country.mmdb");
         dbReader = new DatabaseReader.Builder(databaseStream).build();
     }
-
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        String path = request.getRequestURI();
+        return path.equals("/page_403") ||
+                path.equals("/page_404") ||
+                path.equals("/region_denied");
+    }
     @SneakyThrows
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
         MDC.put("traceId", UUID.randomUUID().toString());
-        String ipAddress = "";
-        if (request != null) {
-            ipAddress = request.getHeader("X-FORWARDED-FOR");
-            if (StringUtils.isEmpty(ipAddress)) {
-                ipAddress = request.getRemoteAddr();
-            }
-        }
+        String ipAddress = "77.77.101.228";//getClientIp(request);
         MDC.put("clientIp", ipAddress);
         boolean isLocalIp = false;
         if(ipAddress.equals("127.0.0.1"))
@@ -54,7 +54,7 @@ public class HoneypotAuthenticationFilter extends OncePerRequestFilter {
             String countryCode = countryResponse.getCountry().getIsoCode();
             // Block specific countries
             if ("CN".equals(countryCode) || "RU".equals(countryCode) || "IR".equals(countryCode) || "KP".equals(countryCode)) {
-                response.sendRedirect("/region_denied.html");
+                response.sendRedirect("/region_denied");
                 return;
             }
         }
@@ -68,7 +68,13 @@ public class HoneypotAuthenticationFilter extends OncePerRequestFilter {
         }
         filterChain.doFilter(request, response);
     }
-
+    private String getClientIp(HttpServletRequest request) {
+        String xForwardedFor = request.getHeader("X-Forwarded-For");
+        if (xForwardedFor != null && !xForwardedFor.isEmpty()) {
+            return xForwardedFor.split(",")[0].trim();
+        }
+        return request.getRemoteAddr();
+    }
     private boolean isLoginRequest(HttpServletRequest request) {
         return request.getMethod().equals("POST") &&
                 request.getServletPath().equals("/login");
