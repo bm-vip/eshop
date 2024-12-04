@@ -43,7 +43,7 @@ public class MailServiceImpl implements MailService {
             helper.setFrom("no-reply@" + siteUrl, "Support");
             mailSender.send(mimeMessage);
         } catch (Exception e) {
-            log.error("failed to send email", e);
+            log.error("failed to send email. {}", e.getMessage());
             throw new IllegalStateException("failed to send email." + e.getMessage());
         }
     }
