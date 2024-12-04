@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.InetAddress;
 import java.util.UUID;
 
@@ -24,8 +25,8 @@ public class HoneypotAuthenticationFilter extends OncePerRequestFilter {
     @SneakyThrows
     public HoneypotAuthenticationFilter(String honeypotFieldName) {
         this.honeypotFieldName = honeypotFieldName;
-        File database = new File(getClass().getClassLoader().getResource("GeoLite2-Country.mmdb").getFile());
-        dbReader = new DatabaseReader.Builder(database).build();
+        InputStream databaseStream = getClass().getClassLoader().getResourceAsStream("GeoLite2-Country.mmdb");
+        dbReader = new DatabaseReader.Builder(databaseStream).build();
     }
 
     @SneakyThrows
