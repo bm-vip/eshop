@@ -353,14 +353,14 @@
                     <div class="row">
                     <div class="col-xs-12 form-group">
                         <input type="text" class="form-control" th:placeholder="#{name}" id="firstName" name="firstName"
-                               tabindex="15">
+                               oninput="validateInput(this)" tabindex="15">
                         <span class="fa fa-pencil form-control-feedback right" aria-hidden="true"></span>
                     </div>
                     </div>
                     <div class="row">
                     <div class="col-xs-12 form-group">
                         <input type="text" class="form-control" th:placeholder="#{lastName}" id="lastName"
-                               name="lastName" tabindex="16">
+                               name="lastName" oninput="validateInput(this)" tabindex="16">
                         <span class="fa fa-pencil form-control-feedback right" aria-hidden="true"></span>
                     </div>
                     </div>
@@ -762,6 +762,9 @@
         } catch (e) {
             return isNullOrEmpty(defaultValue) ? '' : defaultValue;
         }
+    }
+    function validateInput(input) {
+        input.value = input.value.replace(/[^a-zA-Z0-9]/g, '');
     }
 </script>
 </body>

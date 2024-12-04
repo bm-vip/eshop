@@ -492,22 +492,25 @@ function jsonToUrlSearchParams(json) {
     return params.toString();
 }
 
-function copyLink() {
-    let link = $('.referral-code').attr('href');
+function copyLink(id, text) {
+    let link = $(id).attr('href');
     if(isNullOrEmpty(link))
-        link = $('.referral-code-menu').attr('link');
+        link = $(id).attr('link');
+    copyValue(link, text);
+}
+function copyValue(value, name) {
     async () => {
         if (navigator.share) {
             try {
                 await navigator.share({
                     title: 'Check this out!',
-                    text: 'Here’s referral code to share.',
+                    text: `Here’s ${name} to share.`,
                     url: window.location.origin
                 });
                 console.log('Successfully copied');
                 new PNotify({
                     title: 'Successfully copied!',
-                    text: 'Referral code has successfully copied to your clip board!',
+                    text: `${name} has successfully copied to your clip board!`,
                     type: 'info',
                     styling: 'bootstrap3',
                     nonblock: {nonblock: !0},
@@ -521,7 +524,7 @@ function copyLink() {
     }
     if (navigator.clipboard && navigator.clipboard.writeText) {
         // Use clipboard API if available
-        navigator.clipboard.writeText(link).then(() => {
+        navigator.clipboard.writeText(value).then(() => {
             // Show the "Copied!" message
             $('.copiedMessage').addClass('visible');
 
@@ -532,7 +535,7 @@ function copyLink() {
 
             new PNotify({
                 title: 'Successfully copied!',
-                text: 'Referral code has successfully copied to your clip board!',
+                text: `${name} has successfully copied to your clip board!`,
                 type: 'info',
                 styling: 'bootstrap3',
                 nonblock: {nonblock: !0},
@@ -543,7 +546,7 @@ function copyLink() {
     } else {
         // Fallback for older browsers
         const tempInput = document.createElement("input");
-        tempInput.value = link;
+        tempInput.value = value;
         document.body.appendChild(tempInput);
         tempInput.select();
         try {
@@ -604,6 +607,8 @@ function userProfileOccupied(){
                     $(".userOccupied").removeClass("bg-red").addClass("bg-green");
             });
         });
-
     });
+}
+function validateInput(input) {
+    input.value = input.value.replace(/[^a-zA-Z0-9]/g, '');
 }

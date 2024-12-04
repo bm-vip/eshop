@@ -158,7 +158,9 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter,WalletModel,
 
         var balance = walletRepository.totalBalanceGroupedByCurrency(entity.getUser().getId());
         var subscriptionModel = subscriptionService.findByUserAndActivePackage(entity.getUser().getId());
-        for (BalanceModel balanceModel : balance) {
+        var balanceOptional = balance.stream().filter(x->x.getCurrency().equals(entity.getCurrency())).findAny();
+        if (balanceOptional.isPresent()) {
+            var balanceModel = balanceOptional.get();
             if(subscriptionModel.getSubscriptionPackage().getCurrency().equals(balanceModel.getCurrency()) && subscriptionModel.getSubscriptionPackage().getPrice().compareTo(balanceModel.getTotalAmount()) > 0) {
                 subscriptionService.logicalDeleteById(subscriptionModel.getId());
             }

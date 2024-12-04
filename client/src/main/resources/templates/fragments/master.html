@@ -162,7 +162,7 @@
                                         <span class="userOccupied badge bg-red pull-right">1%</span>
                                         <span th:text="#{profile}">Profile</span>
                                     </a>
-                                    <a class="dropdown-item referral-code-menu" href="javascript:copyLink()"><i class="copy-referral-code fas fa-copy pull-right"></i> <th:block th:text="#{copyReferralCode}"></th:block> </a>
+                                    <a class="dropdown-item referral-code-menu" href="javascript:copyLink('.referral-code', 'Referral code')"><i class="copy-referral-code fas fa-copy pull-right"></i> <th:block th:text="#{copyReferralCode}"></th:block> </a>
                                     <a class="dropdown-item"  href="javascript:logout()"><i class="fa fa-sign-out pull-right"></i> <th:block th:text="#{logout}"></th:block></a>
                                 </div>
                             </li>
@@ -200,7 +200,7 @@
                                 </ul>
                             </li>
 <!--                            <li class="nav-item" style="padding-right: 10px;">-->
-<!--                                <a class="referral-code" title="Referral code"></a> <a class="copy-referral-code fas fa-copy" href="javascript:copyLink()"></a><span  class="copiedMessage copied-message ">Copied!</span>-->
+<!--                                <a class="referral-code" title="Referral code"></a> <a class="copy-referral-code fas fa-copy" href="javascript:copyLink('.referral-code', 'Referral code')"></a><span  class="copiedMessage copied-message ">Copied!</span>-->
 <!--                            </li>-->
                         </ul>
                     </nav>

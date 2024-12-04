@@ -137,6 +137,8 @@ function loadInputByEntity(id) {
         $("#countrySelect2").html("<option value='" + get(() => entity.country.id) + "' selected>" + get(() => entity.country.name) + "</option>").trigger('change');
         $("#countrySelect2").val(get(() => entity.country.id)).trigger('change');
         $("#email").val(entity.email);
+        $("#name").val(entity.firstName);
+        $("#lastName").val(entity.lastName);
         $("#walletAddress").val(entity.walletAddress);
     });
 }
@@ -159,8 +161,8 @@ function loadSaveEntityByInput() {
     let model = {
         id: currentUser.id,
         userName: currentUser.userName,
-        firstName: currentUser.firstName,
-        lastName: currentUser.lastName,
+        firstName: $("#name").val(),
+        lastName: $("#lastName").val(),
         version: currentUser.version,
         email: $("#email").val(),
         country: {id: $("#countrySelect2").val()},
@@ -216,7 +218,7 @@ function updateUser() {
     }
 }
 function clearAll_() {
-    $("#walletAddress,#email").val('');
+    $("#walletAddress,#email,#name,#lastName").val('');
     $("#countrySelect2").val('').trigger('change');
     myDropzone.removeAllFiles(true);
 }

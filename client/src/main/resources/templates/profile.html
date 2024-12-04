@@ -79,7 +79,7 @@
                             <div class="col-md-12"><p id="email-label"></p></div>
                             <div class="col-md-12"><p id="country-label"></p></div>
                             <div class="col-md-12"><p id="wallet-label"></p></div>
-                            <div class="col-md-12"><p><strong><i class="fa fa-external-link"></i> Referral code:</strong> <a class="referral-code"></a> <a class="copy-referral-code fas fa-copy" href="javascript:copyLink()"></a><span class="copiedMessage copied-message ">Copied!</span></p></div>
+                            <div class="col-md-12"><p><strong><i class="fa fa-external-link"></i> Referral code:</strong> <a class="referral-code"></a> <a class="copy-referral-code fas fa-copy" href="javascript:copyLink('.referral-code', 'Referral code')"></a><span class="copiedMessage copied-message ">Copied!</span></p></div>
                         </div>
                         <div class="col-md-4 label dashed-boarder">
                             <div class="col-md-12"><p><strong>First name and last name has been filled?</strong> <span id="fullName-occupied" class="text-red">No</span></p></div>
@@ -109,45 +109,57 @@
                                 <div class="modal-body">
                                         <div class="row">
                                             <div class="col-md-6 form-group has-feedback">
+                                                <label th:text="#{name}"></label>
+                                                <input type="text" class="form-control" id="name" name="name" tabindex="1" oninput="validateInput(this)" autofocus>
+                                                <span class="fa fa-user form-control-feedback right" aria-hidden="true"></span>
+                                            </div>
+                                            <div class="col-md-6 form-group has-feedback">
+                                                <label th:text="#{lastName}"></label>
+                                                <input type="text" class="form-control" id="lastName" name="lastName" tabindex="2" oninput="validateInput(this)">
+                                                <span class="fa fa-user form-control-feedback right" aria-hidden="true"></span>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6 form-group has-feedback">
                                                 <label th:text="#{wallet} +' '+ #{address}"></label>
-                                                <input type="text" class="form-control" id="walletAddress" name="walletAddress" tabindex="1" autofocus>
+                                                <input type="text" class="form-control" id="walletAddress" name="walletAddress" tabindex="3">
                                                 <span class="fa fa-wallet form-control-feedback right" aria-hidden="true"></span>
                                             </div>
                                             <div class="col-md-6 form-group has-feedback">
                                                 <label th:text="#{email}"></label>
-                                                <input type="text" class="form-control" id="email" name="email" tabindex="2">
+                                                <input type="text" class="form-control" id="email" name="email" tabindex="4">
                                                 <span class="fa fa-envelope form-control-feedback right" aria-hidden="true"></span>
                                             </div>
                                         </div>
                                         <div class="row">
                                             <div class="col-md-6 form-group has-feedback">
                                                 <label th:text="#{password}"></label>
-                                                <input type="password" class="form-control" id="password" name="password" tabindex="3" autofocus>
+                                                <input type="password" class="form-control" id="password" name="password" tabindex="5" autofocus>
                                                 <span class="fa fa-eye-slash toggle-password form-control-feedback right" aria-hidden="true"></span>
                                             </div>
                                             <div class="col-md-6 form-group has-feedback">
                                                 <label th:text="#{repeatPassword}"></label>
-                                                <input type="password" class="form-control" id="repeatPassword" name="repeatPassword" tabindex="4">
+                                                <input type="password" class="form-control" id="repeatPassword" name="repeatPassword" tabindex="6">
                                                 <span class="fa fa-eye-slash toggle-password form-control-feedback right" aria-hidden="true"></span>
                                             </div>
                                         </div>
                                         <div class="row">
                                             <div class="col-md-6 form-group has-feedback">
                                                 <label th:text="#{country}"></label>
-                                                <th:block th:replace="fragments/select2 :: select2('5', #{country}, 'country', 'api/v1/country/findAllSelect','{name:params.term}',false,'edit-user-modal')"></th:block>
+                                                <th:block th:replace="fragments/select2 :: select2('7', #{country}, 'country', 'api/v1/country/findAllSelect','{name:params.term}',false,'edit-user-modal')"></th:block>
                                             </div>
                                             <div class="col-md-6 form-group has-feedback">
                                                 <label th:text="#{profile} + ' ' + #{image}"></label>
                                                 <form class="dropzone">
-                                                <div class="dz-message" th:text="#{dropFileHere}"></div>
+                                                <div tabindex="8" class="dz-message" th:text="#{dropFileHere}"></div>
                                                 </form>
                                             </div>
                                         </div>
 
                                 </div>
                                 <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                    <button type="button" class="btn btn-primary" id="updateUser" onclick="updateUser()">Save changes</button>
+                                    <button tabindex="9" type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                    <button tabindex="10" type="button" class="btn btn-primary" id="updateUser" onclick="updateUser()">Save changes</button>
                                 </div>
 
                             </div>
