@@ -33,11 +33,7 @@ public class LimitInterceptor implements HandlerInterceptor {
                     method.getAnnotation(Limited.class) :
                     method.getDeclaringClass().getAnnotation(Limited.class);
 
-            String ipAddress = request.getHeader("X-FORWARDED-FOR");
-            if (ipAddress == null) {
-                ipAddress = request.getRemoteAddr();
-            }
-
+            String ipAddress = getClientIp(request);
             String params = Arrays.stream(method.getParameterTypes()).map(Class::getSimpleName).collect(Collectors.joining(","));
             String key = method.getDeclaringClass().getSimpleName() + "." + method.getName() + "(" + params + ")-" + ipAddress;
 
@@ -65,6 +61,13 @@ public class LimitInterceptor implements HandlerInterceptor {
         }
 
         return true;
+    }
+    private String getClientIp(HttpServletRequest request) {
+        String xForwardedFor = request.getHeader("X-Forwarded-For");
+        if (xForwardedFor != null && !xForwardedFor.isEmpty()) {
+            return xForwardedFor.split(",")[0].trim();
+        }
+        return request.getRemoteAddr();
     }
 }
 

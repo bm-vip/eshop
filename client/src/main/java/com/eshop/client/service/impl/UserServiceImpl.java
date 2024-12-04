@@ -1,5 +1,6 @@
 package com.eshop.client.service.impl;
 
+import com.eshop.client.config.Limited;
 import com.eshop.client.config.MessageConfig;
 import com.eshop.client.entity.QUserEntity;
 import com.eshop.client.entity.UserEntity;
@@ -67,6 +68,7 @@ public class UserServiceImpl extends BaseServiceImpl<UserFilter,UserModel, UserE
 
     @Override
     @Cacheable(cacheNames = "client", key = "'User:findByUserNameOrEmail:' + #login")
+    @Limited(requestsPerMinutes = 3)
     public UserModel findByUserNameOrEmail(String login) {
         var entity = userRepository.findByUserNameOrEmail(login, login).orElseThrow(() -> new NotFoundException("User not found with username/email: " + login));
         var model = mapper.toModel(entity);

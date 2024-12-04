@@ -41,10 +41,10 @@ public class HoneypotAuthenticationFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
         MDC.put("traceId", UUID.randomUUID().toString());
-        String ipAddress = "77.77.101.228";//getClientIp(request);
+        String ipAddress = getClientIp(request);
         MDC.put("clientIp", ipAddress);
         boolean isLocalIp = false;
-        if(ipAddress.equals("127.0.0.1"))
+        if(ipAddress.equals("127.0.0.1") || ipAddress.equals("0:0:0:0:0:0:0:1"))
             isLocalIp = true;
 
         if(!isLocalIp) {

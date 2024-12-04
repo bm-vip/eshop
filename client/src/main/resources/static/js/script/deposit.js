@@ -50,7 +50,7 @@ columns = [{
 function onLoad() {
     $.getJSON("/api/v1/parameter/find-by-code/WALLET_ADDRESS", function (parameter) {
         $("#walletAddress").val(parameter.value);
-        $("#walletAddress-title").html(parameter.title);
+        $("#walletAddress-title").html(parameter.title + `&nbsp;<a class="fas fa-copy" href="javascript:copyValue($('#walletAddress').val(), 'Wallet address')"></a>`);
         initQrCode(parameter.value);
     });
 }
