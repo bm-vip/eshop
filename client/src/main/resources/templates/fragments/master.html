@@ -247,43 +247,44 @@
 <script type="text/javascript" th:src="#{direction} +'/bootstrap-progressbar/bootstrap-progressbar.min.js'"></script>
 <script type="text/javascript" th:src="#{direction} +'/build/js/custom.min.js'"></script>
 <th:block layout:fragment="footer"></th:block>
-<!--Start of Tawk.to Script-->
-<script type="text/javascript">
-    var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
-    Tawk_API.onLoad = function() {
-        // Set visitor information
-        Tawk_API.setAttributes({
-            'name'  : currentUser.selectTitle,
-            // 'email' : currentUser.email,
-            'id'    : currentUser.id
-        }, function(error) {
-            if(error) {
-                console.error('Error setting attributes:', error);
-            }
-        });
-    };
-    function resetTawkChat(userId) {
-        Tawk_API.reset();
+<!--&lt;!&ndash;Start of Tawk.to Script&ndash;&gt;-->
+<!--<script type="text/javascript">-->
+<!--    var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();-->
+<!--    Tawk_API.onLoad = function() {-->
+<!--        // Set visitor information-->
+<!--        Tawk_API.setAttributes({-->
+<!--            'name'  : currentUser.selectTitle,-->
+<!--            // 'email' : currentUser.email,-->
+<!--            'id'    : currentUser.id-->
+<!--        }, function(error) {-->
+<!--            if(error) {-->
+<!--                console.error('Error setting attributes:', error);-->
+<!--            }-->
+<!--        });-->
+<!--    };-->
+<!--    function resetTawkChat(userId) {-->
+<!--        Tawk_API.reset();-->
 
-        // Optional: Set new user details after reset
-        Tawk_API.setAttributes({
-            'id': userId
-        });
-    }
-    function logout(){
-        window.location.href = "/logout";
-        resetTawkChat(currentUser.id);
-    }
+<!--        // Optional: Set new user details after reset-->
+<!--        Tawk_API.setAttributes({-->
+<!--            'id': userId-->
+<!--        });-->
+<!--    }-->
+<!--    function logout(){-->
+<!--        window.location.href = "/logout";-->
+<!--        resetTawkChat(currentUser.id);-->
+<!--    }-->
 
-    (function(){
-        var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
-        s1.async=true;
-        s1.src='https://embed.tawk.to/673eff1a4304e3196ae6345f/1id71901j';
-        s1.charset='UTF-8';
-        s1.setAttribute('crossorigin','*');
-        s0.parentNode.insertBefore(s1,s0);
-    })();
-</script>
+<!--    (function(){-->
+<!--        var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];-->
+<!--        s1.async=true;-->
+<!--        s1.src='https://embed.tawk.to/673eff1a4304e3196ae6345f/1id71901j';-->
+<!--        s1.charset='UTF-8';-->
+<!--        s1.setAttribute('crossorigin','*');-->
+<!--        s0.parentNode.insertBefore(s1,s0);-->
+<!--    })();-->
+<!--</script>-->
 <!--End of Tawk.to Script-->
+<script src="//code.tidio.co/ruvh0vfgermrigskbhxnxa7ajtkghklv.js" async></script>
 </body>
 </html>
