@@ -58,14 +58,14 @@
                             "#3498DB",
                             "#26B99A",
                             "#9B59B6",
-                            "#6ceeda",
+                            "#5ECAE3FF",
                             "#E74C3C",
                         ],
                         hoverBackgroundColor: [
                             "#3498DB",
                             "#26B99A",
                             "#9B59B6",
-                            "#6ceeda",
+                            "#5ECAE3FF",
                             "#E74C3C",
                         ]
                     }]
