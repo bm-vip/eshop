@@ -54,7 +54,7 @@ spring:
     time-zone: "UTC"
   mail:
     host: smtp0101.titan.email
-    username: no-reply@arbitrage-broker.com
+    username: admin@arbitrage-broker.com
     password: ehb=9Qx@UVul41>
     port: 465
     protocol: smtp
