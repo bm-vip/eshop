@@ -248,10 +248,10 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter,WalletModel,
 
         // Replace placeholders with actual values
         emailContent = emailContent.replace("[user_first_name]", recipient.getSelectTitle())
-                .replace("[transaction_type]",model.getTransactionType().getTitle())
+                .replace("[transaction_type]", model.getTransactionType().getTitle())
                 .replace("[amount]", NumberFormat.getCurrencyInstance(Locale.US).format(model.getAmount()))
-                .replace("[transaction_hash]", model.getTransactionHash())
-                .replace("[wallet_address]", model.getAddress())
+                .replace("[transaction_hash]", getOrDefault(()->model.getTransactionHash(),"---"))
+                .replace("[wallet_address]", getOrDefault(()->model.getAddress(),"---"))
                 .replace("[YourAppName]", siteName)
                 .replace("[YourSiteUrl]", siteUrl);
 
