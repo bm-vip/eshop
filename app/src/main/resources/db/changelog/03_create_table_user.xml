@@ -149,6 +149,29 @@
         <sql endDelimiter="/">
             CREATE OR REPLACE FUNCTION update_tree_path() RETURNS TRIGGER AS $$
             DECLARE
+            parent_ids TEXT;
+            BEGIN
+            WITH RECURSIVE parent_cte AS (
+                SELECT id, parent_id
+                FROM tbl_user
+                WHERE id = NEW.id
+                UNION ALL
+                SELECT u.id, u.parent_id
+                FROM tbl_user u
+                         INNER JOIN parent_cte p ON u.id = p.parent_id
+            )
+            SELECT STRING_AGG(id::TEXT, ',') INTO parent_ids
+            FROM parent_cte
+            WHERE id != NEW.id;  -- Exclude the initial id
+            -- Set the new tree path as parent's path plus current id
+            NEW.tree_path := parent_ids;
+            RETURN NEW;
+            END;
+            $$ LANGUAGE plpgsql;/
+        </sql>
+        <sql endDelimiter="/">
+            CREATE OR REPLACE FUNCTION update_tree_path() RETURNS TRIGGER AS $$
+            DECLARE
             parent_path text;
             BEGIN
             IF NEW.parent_id IS NOT NULL THEN

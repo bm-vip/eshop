@@ -1,5 +1,6 @@
 package com.eshop.client.controller.impl;
 
+import com.eshop.client.config.Limited;
 import com.eshop.client.filter.UserFilter;
 import com.eshop.client.model.UserModel;
 import com.eshop.client.repository.CountryUsers;
@@ -29,6 +30,7 @@ public class UserRestController extends BaseRestControllerImpl<UserFilter, UserM
     }
 
     @PostMapping("/register")
+    @Limited(requestsPerMinutes = 3)
     public ResponseEntity<UserModel> register(@Valid @RequestBody UserModel model) {
         return ResponseEntity.ok(userService.register(model));
     }
