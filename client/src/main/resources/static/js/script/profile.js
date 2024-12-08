@@ -179,7 +179,7 @@ function loadSearchReferralEntity1ByInput() {
 }
 function loadSearchReferralEntity2ByInput() {
     return  {
-        treePath: currentUser.id + ",%,%"
+        treePath: currentUser.treePath + ",%,%"
     };
 }
 
