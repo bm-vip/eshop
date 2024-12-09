@@ -11,11 +11,16 @@ import com.eshop.app.mapping.WalletMapper;
 import com.eshop.app.model.*;
 import com.eshop.app.repository.WalletRepository;
 import com.eshop.app.service.*;
+import com.eshop.app.util.DateUtil;
+import com.eshop.app.util.SessionHolder;
 import com.eshop.exception.common.NotAcceptableException;
 import com.eshop.exception.common.NotFoundException;
 import com.eshop.exception.common.PaymentRequiredException;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
+import com.querydsl.core.types.dsl.DateTemplate;
+import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.SneakyThrows;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
@@ -27,11 +32,10 @@ import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.text.NumberFormat;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Locale;
-import java.util.Scanner;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
+import static com.eshop.app.util.DateUtil.toLocalDate;
 import static com.eshop.app.util.MapperHelper.get;
 import static com.eshop.app.util.MapperHelper.getOrDefault;
 
@@ -46,8 +50,10 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter,WalletModel,
     private final MessageConfig messages;
     private final ResourceLoader resourceLoader;
     private final NotificationService notificationService;
+    private final JPAQueryFactory queryFactory;
+    private final SessionHolder sessionHolder;
 
-    public WalletServiceImpl(WalletRepository repository, WalletMapper mapper, SubscriptionPackageService subscriptionPackageService, SubscriptionService subscriptionService, ParameterServiceImpl parameterService, UserService userService, MessageConfig messages, ResourceLoader resourceLoader, NotificationService notificationService) {
+    public WalletServiceImpl(WalletRepository repository, WalletMapper mapper, SubscriptionPackageService subscriptionPackageService, SubscriptionService subscriptionService, ParameterServiceImpl parameterService, UserService userService, MessageConfig messages, ResourceLoader resourceLoader, NotificationService notificationService, JPAQueryFactory queryFactory, SessionHolder sessionHolder) {
         super(repository, mapper);
         this.walletRepository = repository;
         this.subscriptionPackageService = subscriptionPackageService;
@@ -57,6 +63,8 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter,WalletModel,
         this.messages = messages;
         this.resourceLoader = resourceLoader;
         this.notificationService = notificationService;
+        this.queryFactory = queryFactory;
+        this.sessionHolder = sessionHolder;
     }
 
     @Override
@@ -85,7 +93,7 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter,WalletModel,
     @Override
     @Transactional
     public WalletModel create(WalletModel model) {
-        var balance = walletRepository.totalBalanceGroupedByCurrency(model.getUser().getId());
+        var balance = walletRepository.totalBalanceGroupedByCurrencyByUserId(model.getUser().getId());
         if(model.getTransactionType().equals(TransactionType.WITHDRAWAL)) {
             var balanceOptional = balance.stream().filter(x->x.getCurrency().equals(model.getCurrency())).findAny();
             if (balanceOptional.isPresent()) {
@@ -98,7 +106,7 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter,WalletModel,
         }
         var result =  super.create(model);
         if(model.isActive()) {
-            balance = walletRepository.totalBalanceGroupedByCurrency(model.getUser().getId());
+            balance = walletRepository.totalBalanceGroupedByCurrencyByUserId(model.getUser().getId());
             var currentSubscription = subscriptionService.findByUserAndActivePackage(model.getUser().getId());
             var balanceOptional = balance.stream().filter(x->x.getCurrency().equals(model.getCurrency())).findAny();
             if (balanceOptional.isPresent()) {
@@ -138,7 +146,7 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter,WalletModel,
     public WalletModel update(WalletModel model) {
         var result =  super.update(model);
         if(model.isActive()) {
-            var balance = walletRepository.totalBalanceGroupedByCurrency(model.getUser().getId());
+            var balance = walletRepository.totalBalanceGroupedByCurrencyByUserId(model.getUser().getId());
             var currentSubscription = subscriptionService.findByUserAndActivePackage(model.getUser().getId());
             var balanceOptional = balance.stream().filter(x->x.getCurrency().equals(model.getCurrency())).findAny();
             if (balanceOptional.isPresent()) {
@@ -177,7 +185,7 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter,WalletModel,
     public void deleteById(Long id) {
         WalletEntity entity = repository.findById(id).orElseThrow(() -> new NotFoundException("id: " + id));
 
-        var balance = walletRepository.totalBalanceGroupedByCurrency(entity.getUser().getId());
+        var balance = walletRepository.totalBalanceGroupedByCurrencyByUserId(entity.getUser().getId());
         var subscriptionModel = subscriptionService.findByUserAndActivePackage(entity.getUser().getId());
         var balanceOptional = balance.stream().filter(x->x.getCurrency().equals(entity.getCurrency())).findAny();
         if (balanceOptional.isPresent()) {
@@ -204,24 +212,24 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter,WalletModel,
     }
 
     @Override
-    public List<BalanceModel> totalBalanceGroupedByCurrency(UUID userId) {
-        return walletRepository.totalBalanceGroupedByCurrency(userId);
+    public List<BalanceModel> totalBalanceGroupedByCurrency() {
+        return walletRepository.totalBalanceGroupedByCurrency();
     }
     @Override
-    public List<BalanceModel> totalDepositGroupedByCurrency(UUID userId) {
-        return walletRepository.totalDepositGroupedByCurrency(userId);
+    public List<BalanceModel> totalDepositGroupedByCurrency() {
+        return walletRepository.totalDepositGroupedByCurrency();
     }
     @Override
-    public List<BalanceModel> totalWithdrawalGroupedByCurrency(UUID userId) {
-        return walletRepository.totalWithdrawalGroupedByCurrency(userId);
+    public List<BalanceModel> totalWithdrawalGroupedByCurrency() {
+        return walletRepository.totalWithdrawalGroupedByCurrency();
     }
     @Override
-    public List<BalanceModel> totalBonusGroupedByCurrency(UUID userId) {
-        return walletRepository.totalBonusGroupedByCurrency(userId);
+    public List<BalanceModel> totalBonusGroupedByCurrency() {
+        return walletRepository.totalBonusGroupedByCurrency();
     }
     @Override
-    public List<BalanceModel> totalRewardGroupedByCurrency(UUID userId) {
-        return walletRepository.totalRewardGroupedByCurrency(userId);
+    public List<BalanceModel> totalRewardGroupedByCurrency() {
+        return walletRepository.totalRewardGroupedByCurrency();
     }
 
 //    @Override
@@ -231,6 +239,25 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter,WalletModel,
 //                .map(obj -> new BalanceModel(CurrencyType.valueOf((String) obj[0]),(BigDecimal) obj[1]))
 //                .collect(Collectors.toList());
 //    }
+
+@Override
+public Map<Long, BigDecimal> findAllWithinDateRange(long startDate, long endDate, TransactionType transactionType) {
+    QWalletEntity path = QWalletEntity.walletEntity;
+    DateTemplate<Date> truncatedDate = Expressions.dateTemplate(Date.class, "date_trunc('day', {0})", path.createdDate);
+    var results = queryFactory.select(truncatedDate, path.amount.sum())
+            .from(path)
+            .where(truncatedDate.between(new Date(startDate),new Date(endDate)))
+            .where(path.transactionType.eq(transactionType))
+            .groupBy(truncatedDate)
+            .orderBy(truncatedDate.asc())
+            .fetch();
+    Map<Long, BigDecimal> map = results.stream()
+            .collect(Collectors.toMap(tuple -> tuple.get(truncatedDate).getTime(), tuple -> tuple.get(path.amount.sum())));
+
+    var allDates = toLocalDate(startDate).datesUntil(toLocalDate(endDate).plusDays(1)).map(DateUtil::toEpoch);
+
+    return allDates.collect(Collectors.toMap(epoch -> epoch, epoch -> map.getOrDefault(epoch, BigDecimal.ZERO)));
+}
 
     @SneakyThrows
     public void sendTransactionNotification(WalletModel model) {

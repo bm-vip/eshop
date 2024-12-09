@@ -9,56 +9,61 @@
     <div class="row top_tiles">
         <div class="animated flipInY col-lg-3 col-md-3 col-sm-6 col-xs-12">
             <div class="tile-stats">
-                <div class="icon"><i class="fa fa-building"></i></div>
-                <div id="totalCompanies" class="count">0</div>
-                <p>&nbsp;</p>
-                <p>&nbsp;</p>
-                <h3 th:text="#{totalCompanies}">تعداد کل شرکت ها</h3>
-            </div>
-        </div>
-        <div class="animated flipInY col-lg-3 col-md-3 col-sm-6 col-xs-12">
-            <div class="tile-stats">
-                <div class="icon"><i class="fa fa-download"></i></div>
-                <div id="totalStations" class="count">0</div>
-                <p>&nbsp;</p>
-                <h3 th:text="#{totalStations}">تعداد کل ایستگاه ها</h3>
-            </div>
-        </div>
-        <div class="animated flipInY col-lg-3 col-md-3 col-sm-6 col-xs-12">
-            <div class="tile-stats">
-                <div class="icon"><i class="fa fa-sun-o"></i></div>
+                <div class="icon"><i class="fa fa-users"></i></div>
                 <div id="totalUsers" class="count">0</div>
                 <p>&nbsp;</p>
-                <h3 th:text="#{totalUsers}">تعداد کل کاربران</h3>
+                <h3 th:text="#{totalUsers}"></h3>
             </div>
         </div>
         <div class="animated flipInY col-lg-3 col-md-3 col-sm-6 col-xs-12">
             <div class="tile-stats">
-                <div class="icon"><i class="fa fa-road"></i></div>
-                <div id="totalRoles" class="count">0</div>
+                <div class="icon"><i class="fa fa-wallet"></i></div>
+                <div id="totalBalance" class="count">0</div>
                 <p>&nbsp;</p>
-                <h3 th:text="#{totalRoles}">تعداد کل نقش ها</h3>
+                <h3 th:text="#{totalBalance}"></h3>
+            </div>
+        </div>
+        <div class="animated flipInY col-lg-3 col-md-3 col-sm-6 col-xs-12">
+            <div class="tile-stats">
+                <div class="icon"><i class="fa fa-gift"></i></div>
+                <div id="totalBonus" class="count">0</div>
+                <p>&nbsp;</p>
+                <h3 th:text="#{totalBonus}"></h3>
+            </div>
+        </div>
+        <div class="animated flipInY col-lg-3 col-md-3 col-sm-6 col-xs-12">
+            <div class="tile-stats">
+                <div class="icon"><i class="fa fa-chart-line"></i></div>
+                <div id="totalProfit" class="count">0</div>
+                <p>&nbsp;</p>
+                <h3 th:text="#{totalProfit}"></h3>
+            </div>
+        </div>
+        <div class="animated flipInY col-lg-3 col-md-3 col-sm-6 col-xs-12">
+            <div class="tile-stats">
+                <div class="icon"><i class="fa fa-hand-holding-usd"></i></div>
+                <div id="totalWithdrawal" class="count">0</div>
+                <p>&nbsp;</p>
+                <h3 th:text="#{totalWithdrawal}"></h3>
+            </div>
+        </div>
+        <div class="animated flipInY col-lg-3 col-md-3 col-sm-6 col-xs-12">
+            <div class="tile-stats">
+                <div class="icon"><i class="fa fa-piggy-bank"></i></div>
+                <div id="totalDeposit" class="count">0</div>
+                <p>&nbsp;</p>
+                <h3 th:text="#{totalDeposit}"></h3>
             </div>
         </div>
     </div>
 
     <div class="row">
-        <div class="col-md-12">
-            <div class="x_panel">
+        <div class="col-md-6 col-sm-6">
+            <div class="x_panel tile">
                 <div class="x_title">
-                    <h2 th:text="#{sentDataChart}"> نمودار ارسال اطلاعات<small th:text="#{groupByDay}"> به تفکیک روز</small></h2>
+                    <h2>Total Deposit and Total Withdrawal Activities <small>1 week a go</small></h2>
                     <ul class="nav navbar-right panel_toolbox">
                         <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
-                        </li>
-                        <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
-                               aria-expanded="false"><i class="fa fa-wrench"></i></a>
-                            <ul class="dropdown-menu" role="menu">
-                                <li><a href="#" th:text="#{settings1}">تنظیمات 1</a>
-                                </li>
-                                <li><a href="#" th:text="#{settings2}">تنظیمات 2</a>
-                                </li>
-                            </ul>
                         </li>
                         <li><a class="close-link"><i class="fa fa-close"></i></a>
                         </li>
@@ -66,12 +71,30 @@
                     <div class="clearfix"></div>
                 </div>
                 <div class="x_content">
-                    <canvas id="sentProgressBarChart"></canvas>
+                    <div id="chart_01" class="demo-placeholder"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-sm-6">
+            <div class="x_panel tile">
+                <div class="x_title">
+                    <h2>Referral Bonus and Total Profit Activities <small>1 week a go</small></h2>
+                    <ul class="nav navbar-right panel_toolbox">
+                        <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                        </li>
+                        <li><a class="close-link"><i class="fa fa-close"></i></a>
+                        </li>
+                    </ul>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="x_content">
+                    <div id="chart_02" class="demo-placeholder"></div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
 <th:block layout:fragment="footer">
     <script th:src="@{/js/lib/icheck.min.js}"></script>
     <script th:src="@{/js/lib/moment.min.js}"></script>

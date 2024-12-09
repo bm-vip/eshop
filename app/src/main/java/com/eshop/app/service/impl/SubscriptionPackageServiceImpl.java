@@ -48,7 +48,7 @@ public class SubscriptionPackageServiceImpl extends BaseServiceImpl<Subscription
     public SubscriptionPackageModel create(SubscriptionPackageModel model) {
         var result = super.create(model);
         userRepository.findAll().forEach(user -> {
-            var balance = walletRepository.totalBalanceGroupedByCurrency(user.getId());
+            var balance = walletRepository.totalBalanceGroupedByCurrencyByUserId(user.getId());
             var balanceOptional = balance.stream().filter(x->x.getCurrency().equals(model.getCurrency())).findAny();
             if (balanceOptional.isPresent()) {
                 var balanceModel = balanceOptional.get();

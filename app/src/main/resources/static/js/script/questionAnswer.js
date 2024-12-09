@@ -31,6 +31,18 @@ function loadEntityByInput() {
     return model;
 }
 
+function loadSearchEntityByInput() {
+    let filter = {
+        title: $("#title").val(),
+        displayOrder: $("#displayOrder").val(),
+        type: $("#type").val(),
+        answerType: $("#answerType").val(),
+        user: isNullOrEmpty($("#userSelect2").val())? null : {id: $("#userSelect2").val()},
+        active: isNullOrEmpty($("#active").val()) ? null : $("#active").val()
+    };
+    return filter;
+}
+
 columns = [{
     data: 'title'
 },{

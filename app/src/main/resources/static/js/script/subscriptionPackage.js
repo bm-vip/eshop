@@ -103,6 +103,24 @@ function loadEntityByInput() {
     };
     return model;
 }
+function loadSearchEntityByInput() {
+    let filter = {
+        duration: $("#duration").val(),
+        orderCount: $("#orderCount").val(),
+        price: $("#price").val().replace(/,/g, ""),
+        maxPrice: $("#maxPrice").val().replace(/,/g, ""),
+        currency: isNullOrEmpty($("#currency").val())? null : $("#currency").val(),
+        status: isNullOrEmpty($("#status").val()) ? null : $("#status").val(),
+        name: $("#name").val(),
+        minTradingReward: $("#minTradingReward").val(),
+        maxTradingReward: $("#maxTradingReward").val(),
+        parentReferralBonus: $("#parentReferralBonus").val(),
+        userProfitPercentage: $("#userProfitPercentage").val(),
+        siteProfitPercentage: $("#siteProfitPercentage").val(),
+        withdrawalDurationPerDay: $("#withdrawalDurationPerDay").val(),
+    };
+    return filter;
+}
 
 columns = [{
     data: 'name'

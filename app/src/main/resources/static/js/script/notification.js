@@ -24,6 +24,17 @@ function loadEntityByInput() {
     return model;
 }
 
+function loadSearchEntityByInput() {
+    let filter = {
+        sender: isNullOrEmpty($("#senderSelect2").val())? null : {id: $("#senderSelect2").val()},
+        subject: $("#subject").val(),
+        body: $("#body").val(),
+        recipients: arrayToJsonArray($("#recipientSelect2").val()),
+        allRecipients: $("#allRecipients").is(':checked')
+    };
+    return filter;
+}
+
 columns = [{
     data: 'sender',
     render: function (data) { return "{0} {1}".format(data.firstName, data.lastName) }

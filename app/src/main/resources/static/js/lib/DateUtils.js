@@ -99,3 +99,8 @@ function dateSpliter(dateString) {
         second: 0
     }
 }
+function addDays(date, days) {
+    var result = new Date(date);
+    result.setDate(result.getDate() + days);
+    return result;
+}

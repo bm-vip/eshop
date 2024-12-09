@@ -18,6 +18,15 @@ function loadEntityByInput() {
     };
     return model;
 }
+function loadSearchEntityByInput() {
+    let filter = {
+        user: isNullOrEmpty($("#userSelect2").val())? null : {id: $("#userSelect2").val()},
+        subscriptionPackageId: isNullOrEmpty($("#subscriptionPackageSelect2").val())? null : $("#subscriptionPackageSelect2").val(),
+        discountPercentage: $("#discountPercentage").val(),
+        status: $("#status").val()
+    };
+    return filter;
+}
 
 columns = [{
     data: 'user',

@@ -87,7 +87,7 @@ window.onload = function () {
         if (typeof loadTable === 'function') {
             loadTable();
         } else {
-            dataTable = initAjaxTable('.table:not(#myModal .table):eq(0)', columns, ajaxUrl + "/findAllTable", "loadEntityByInput");
+            dataTable = initAjaxTable('.table:not(#myModal .table):eq(0)', columns, ajaxUrl, "loadSearchEntityByInput");
             $.subscribe('reloadTable', dataTable.ajax.reload);
         }
     }

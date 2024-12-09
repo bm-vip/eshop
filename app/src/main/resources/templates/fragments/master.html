@@ -148,7 +148,7 @@
                                 </ul>
                             </li>
 
-                            <li class="sub_menu"><a th:href="@{/userManagement}"><i class="fa fa-user"></i>
+                            <li sec:authorize="hasRole('ADMIN')" class="sub_menu"><a th:href="@{/userManagement}"><i class="fa fa-user"></i>
                                 <th:block th:text="#{userManagement}"></th:block>
                             </a></li>
                             <li class="sub_menu"><a th:href="@{/wallet}"><i class="fa fa-wallet"></i>

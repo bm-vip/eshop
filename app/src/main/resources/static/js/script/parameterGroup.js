@@ -8,12 +8,19 @@ messages = {
     title: resources.pleaseEnter.format(resources.title)
 };
 function loadEntityByInput() {
-    var entity = {
+    var model = {
         id: isNullOrEmpty($("#hdf_id").val()) ? null : $("#hdf_id").val(),
         code: $("#code").val(),
         title: $("#title").val()
     };
-    return entity;
+    return model;
+}
+function loadSearchEntityByInput() {
+    var filter = {
+        code: $("#code").val(),
+        title: $("#title").val()
+    };
+    return filter;
 }
 columns = [{
     data: 'code'

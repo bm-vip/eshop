@@ -8,12 +8,10 @@ import com.eshop.app.enums.RoleType;
 import com.eshop.app.filter.UserFilter;
 import com.eshop.app.mapping.UserMapper;
 import com.eshop.app.model.*;
-import com.eshop.app.repository.CountryRepository;
 import com.eshop.app.repository.RoleRepository;
 import com.eshop.app.repository.UserRepository;
 import com.eshop.app.repository.WalletRepository;
 import com.eshop.app.service.NotificationService;
-import com.eshop.app.service.RoleService;
 import com.eshop.app.service.UserService;
 import com.eshop.app.util.ReferralCodeGenerator;
 import com.eshop.exception.common.BadRequestException;
@@ -33,8 +31,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -84,10 +80,10 @@ public class UserServiceImpl extends BaseServiceImpl<UserFilter,UserModel, UserE
     @Override
     public Page<UserModel> findAll(UserFilter filter, Pageable pageable) {
         return super.findAll(filter, pageable).map(m-> {
-            m.setDeposit(walletRepository.totalDepositGroupedByCurrency(m.getId()).stream().filter(f->f.getCurrency().equals(CurrencyType.USDT)).map(BalanceModel::getTotalAmount).findFirst().orElse(BigDecimal.ZERO));
-            m.setWithdrawal(walletRepository.totalWithdrawalGroupedByCurrency(m.getId()).stream().filter(f->f.getCurrency().equals(CurrencyType.USDT)).map(BalanceModel::getTotalAmount).findFirst().orElse(BigDecimal.ZERO));
-            m.setBonus(walletRepository.totalBonusGroupedByCurrency(m.getId()).stream().filter(f->f.getCurrency().equals(CurrencyType.USDT)).map(BalanceModel::getTotalAmount).findFirst().orElse(BigDecimal.ZERO));
-            m.setReward(walletRepository.totalRewardGroupedByCurrency(m.getId()).stream().filter(f->f.getCurrency().equals(CurrencyType.USDT)).map(BalanceModel::getTotalAmount).findFirst().orElse(BigDecimal.ZERO));
+            m.setDeposit(walletRepository.totalDepositGroupedByCurrencyByUserId(m.getId()).stream().filter(f->f.getCurrency().equals(CurrencyType.USDT)).map(BalanceModel::getTotalAmount).findFirst().orElse(BigDecimal.ZERO));
+            m.setWithdrawal(walletRepository.totalWithdrawalGroupedByCurrencyByUserId(m.getId()).stream().filter(f->f.getCurrency().equals(CurrencyType.USDT)).map(BalanceModel::getTotalAmount).findFirst().orElse(BigDecimal.ZERO));
+            m.setBonus(walletRepository.totalBonusGroupedByCurrencyByUserId(m.getId()).stream().filter(f->f.getCurrency().equals(CurrencyType.USDT)).map(BalanceModel::getTotalAmount).findFirst().orElse(BigDecimal.ZERO));
+            m.setReward(walletRepository.totalRewardGroupedByCurrencyByUserId(m.getId()).stream().filter(f->f.getCurrency().equals(CurrencyType.USDT)).map(BalanceModel::getTotalAmount).findFirst().orElse(BigDecimal.ZERO));
             return m;
         });
     }
@@ -97,10 +93,10 @@ public class UserServiceImpl extends BaseServiceImpl<UserFilter,UserModel, UserE
         var data = super.findAllTable(filter, pageable);
         if(!CollectionUtils.isEmpty(data.getData())) {
             for (UserModel m : data.getData()) {
-                m.setDeposit(walletRepository.totalDepositGroupedByCurrency(m.getId()).stream().filter(f->f.getCurrency().equals(CurrencyType.USDT)).map(BalanceModel::getTotalAmount).findFirst().orElse(BigDecimal.ZERO));
-                m.setWithdrawal(walletRepository.totalWithdrawalGroupedByCurrency(m.getId()).stream().filter(f->f.getCurrency().equals(CurrencyType.USDT)).map(BalanceModel::getTotalAmount).findFirst().orElse(BigDecimal.ZERO));
-                m.setBonus(walletRepository.totalBonusGroupedByCurrency(m.getId()).stream().filter(f->f.getCurrency().equals(CurrencyType.USDT)).map(BalanceModel::getTotalAmount).findFirst().orElse(BigDecimal.ZERO));
-                m.setReward(walletRepository.totalRewardGroupedByCurrency(m.getId()).stream().filter(f->f.getCurrency().equals(CurrencyType.USDT)).map(BalanceModel::getTotalAmount).findFirst().orElse(BigDecimal.ZERO));
+                m.setDeposit(walletRepository.totalDepositGroupedByCurrencyByUserId(m.getId()).stream().filter(f->f.getCurrency().equals(CurrencyType.USDT)).map(BalanceModel::getTotalAmount).findFirst().orElse(BigDecimal.ZERO));
+                m.setWithdrawal(walletRepository.totalWithdrawalGroupedByCurrencyByUserId(m.getId()).stream().filter(f->f.getCurrency().equals(CurrencyType.USDT)).map(BalanceModel::getTotalAmount).findFirst().orElse(BigDecimal.ZERO));
+                m.setBonus(walletRepository.totalBonusGroupedByCurrencyByUserId(m.getId()).stream().filter(f->f.getCurrency().equals(CurrencyType.USDT)).map(BalanceModel::getTotalAmount).findFirst().orElse(BigDecimal.ZERO));
+                m.setReward(walletRepository.totalRewardGroupedByCurrencyByUserId(m.getId()).stream().filter(f->f.getCurrency().equals(CurrencyType.USDT)).map(BalanceModel::getTotalAmount).findFirst().orElse(BigDecimal.ZERO));
             }
         }
         return data;
@@ -189,6 +185,7 @@ public class UserServiceImpl extends BaseServiceImpl<UserFilter,UserModel, UserE
                 builder.and(Expressions.booleanTemplate("tree_path like {0}", v));
             else builder.and(path.treePath.contains(v));
         });
+        filter.getRoles().ifPresent(v -> builder.and(path.roles.any().id.in(v)));
         filter.getWalletAddress().ifPresent(v -> builder.and(path.walletAddress.eq(v)));
         filter.getFirstName().ifPresent(v -> builder.and(path.firstName.toLowerCase().contains(v.toLowerCase())));
         filter.getLastName().ifPresent(v -> builder.and(path.lastName.toLowerCase().contains(v.toLowerCase())));

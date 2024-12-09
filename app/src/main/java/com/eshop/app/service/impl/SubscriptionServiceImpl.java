@@ -92,7 +92,7 @@ public class SubscriptionServiceImpl extends BaseServiceImpl<SubscriptionFilter,
         }
         entity.setFinalPrice(calculatePrice(subscriptionPackage.getPrice(), model.getDiscountPercentage()));
         if(model.getStatus().equals(EntityStatusType.Active)) {
-            var balanceList = walletRepository.totalBalanceGroupedByCurrency(entity.getUser().getId());
+            var balanceList = walletRepository.totalBalanceGroupedByCurrencyByUserId(entity.getUser().getId());
             var balance = balanceList.stream().filter(x->x.getCurrency().equals(subscriptionPackage.getCurrency())).findFirst();
             if(balance.isEmpty())
                 throw new PaymentRequiredException();
@@ -129,7 +129,7 @@ public class SubscriptionServiceImpl extends BaseServiceImpl<SubscriptionFilter,
             entity.setStatus(EntityStatusType.Passive);
         }
         if(model.getStatus().equals(EntityStatusType.Active)) {
-            var balanceList = walletRepository.totalBalanceGroupedByCurrency(entity.getUser().getId());
+            var balanceList = walletRepository.totalBalanceGroupedByCurrencyByUserId(entity.getUser().getId());
             var balance = balanceList.stream().filter(x->x.getCurrency().equals(entity.getSubscriptionPackage().getCurrency())).findFirst();
             if(balance.isEmpty())
                 throw new PaymentRequiredException();

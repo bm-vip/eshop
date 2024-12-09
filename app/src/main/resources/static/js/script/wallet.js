@@ -38,6 +38,19 @@ function loadEntityByInput() {
     };
     return model;
 }
+function loadSearchEntityByInput() {
+    let filter = {
+        amount: $("#amount").val().replace(/,/g, ""),
+        currency: isNullOrEmpty($("#currency").val())? null : $("#currency").val(),
+        transactionType: isNullOrEmpty($("#transactionType").val()) ? null : $("#transactionType").val(),
+        user: isNullOrEmpty($("#userSelect2").val())? null : {id: $("#userSelect2").val()},
+        userId: $("#userSelect2").val(),
+        transactionHash: $("#transactionHash").val(),
+        address: $("#address").val(),
+        active: isNullOrEmpty($("#status").val())? null : $("#status").val(),
+    };
+    return filter;
+}
 
 columns = [{
     data: 'amount',

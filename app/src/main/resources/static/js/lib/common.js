@@ -385,10 +385,10 @@ function tableOptions() {
         }
     };
 }
-function initAjaxTable(selector, fields, url, filterFunction) {
+function initAjaxTable(selector, columns, url, filterFunction) {
     let opts = tableOptions();
     opts.serverSide = true;
-    opts.columns = fields;
+    opts.columns = columns;
     opts.ajax = {
         'type': 'GET',
         'url': url,
@@ -404,11 +404,11 @@ function initAjaxTable(selector, fields, url, filterFunction) {
             }
             return requestParam;
         },
-        // "dataSrc": function(json) {
-        //     json.recordsTotal = json.totalElements;
-        //     json.recordsFiltered = json.totalElements;
-        //     return json.content;
-        // },
+        "dataSrc": function(json) {
+            json.recordsTotal = json.totalElements;
+            json.recordsFiltered = json.totalElements;
+            return json.content;
+        },
         'datatype': 'json',
         'error': function (xhr) {
             if(isNullOrEmpty(get(()=>xhr.responseJSON)))

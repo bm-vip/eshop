@@ -40,7 +40,7 @@ public class MailServiceImpl implements MailService {
             helper.setText(body, true);
             helper.setTo(to);
             helper.setSubject(subject);
-            helper.setFrom("no-reply@" + siteUrl, "Support");
+            helper.setFrom("admin@" + siteUrl, "Support");
             mailSender.send(mimeMessage);
         } catch (Exception e) {
             log.error("failed to send email. {}", e.getMessage());

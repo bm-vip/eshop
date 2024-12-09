@@ -22,6 +22,15 @@ function loadEntityByInput() {
     };
     return entity;
 }
+function loadSearchEntityByInput() {
+    var filter = {
+        parameterGroup: isNullOrEmpty($("#parameterGroupSelect2").val()) ? null :  {id: $("#parameterGroupSelect2").val()},
+        code: $("#code").val(),
+        value: $("#value").val(),
+        title: $("#title").val(),
+    };
+    return filter;
+}
 
 columns = [{
     data: 'title'

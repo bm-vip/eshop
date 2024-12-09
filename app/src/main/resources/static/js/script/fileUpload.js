@@ -31,6 +31,12 @@ function loadEntityByInput(isFormData) {
     };
 }
 
+function loadSearchEntityByInput() {
+    return {
+        name: $("#name").val()
+    };
+}
+
 Dropzone.autoDiscover = false;
 function onLoad() {
     let myDropzone = new Dropzone(".dropzone", {

@@ -37,7 +37,7 @@ messages = {
     }
 }
 function loadEntityByInput() {
-    let entity = {
+    let model = {
         id: isNullOrEmpty($("#hdf_id").val()) ? null : $("#hdf_id").val(),
         email: $("#email").val(),
         userName: $("#userName").val(),
@@ -51,7 +51,22 @@ function loadEntityByInput() {
         country: isNullOrEmpty($("#countrySelect2").val()) ? null : {id: $("#countrySelect2").val()},
         profileImageUrl:  $("#profileImageUrl").val(),
     };
-    return entity;
+    return model;
+}
+function loadSearchEntityByInput() {
+    let filter = {
+        email: $("#email").val(),
+        userName: $("#userName").val(),
+        parent: isNullOrEmpty($("#parentSelect2").val()) ? null : {id: $("#parentSelect2").val()},
+        firstName: $("#firstName").val(),
+        lastName: $("#lastName").val(),
+        active: $("#status").val(),
+        walletAddress: $("#walletAddress").val(),
+        roles: $("#roleSelect2").val(),
+        country: isNullOrEmpty($("#countrySelect2").val()) ? null : {id: $("#countrySelect2").val()},
+        profileImageUrl:  $("#profileImageUrl").val(),
+    };
+    return filter;
 }
 
 function loadInputByEntity(entity) {

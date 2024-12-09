@@ -16,6 +16,13 @@ function loadEntityByInput() {
     };
     return model;
 }
+function loadSearchEntityByInput() {
+    let filter = {
+        name: $("#name").val(),
+        logo: $("#logo").val(),
+    };
+    return filter;
+}
 
 columns = [{
     data: 'name'
