@@ -111,18 +111,16 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter,WalletModel,
             var balanceOptional = balance.stream().filter(x->x.getCurrency().equals(model.getCurrency())).findAny();
             if (balanceOptional.isPresent()) {
                 var balanceModel = balanceOptional.get();
-                var subscriptionPackage = subscriptionPackageService.findMatchedPackageByAmountAndCurrency(balanceModel.getTotalAmount(),balanceModel.getCurrency());
-                if(subscriptionPackage != null && (currentSubscription == null || !currentSubscription.getSubscriptionPackage().getId().equals(subscriptionPackage.getId()))) {
-                    subscriptionService.create(new SubscriptionModel().setSubscriptionPackage(subscriptionPackage).setUser(model.getUser()).setStatus(EntityStatusType.Active));
+                var nextSubscriptionPackage = subscriptionPackageService.findMatchedPackageByAmountAndCurrency(balanceModel.getTotalAmount(),balanceModel.getCurrency());
+                if(nextSubscriptionPackage != null && (currentSubscription == null || !currentSubscription.getSubscriptionPackage().getId().equals(nextSubscriptionPackage.getId()))) {
+                    currentSubscription = subscriptionService.create(new SubscriptionModel().setSubscriptionPackage(nextSubscriptionPackage).setUser(model.getUser()).setStatus(EntityStatusType.Active));
                 }
-
-                if(model.getTransactionType().equals(TransactionType.WITHDRAWAL) && getOrDefault(()-> model.getAmount().compareTo(currentSubscription.getSubscriptionPackage().getPrice()) >=0,false)){
-                    var subscriptionPackageModel = currentSubscription.getSubscriptionPackage();
-                    var withdrawalDate = subscriptionPackageModel.getCreatedDate().plusDays(subscriptionPackageModel.getWithdrawalDurationPerDay());
-                    if(withdrawalDate.isAfter(LocalDateTime.now()))
-                        throw new NotAcceptableException("Withdrawal is allowed only after " + withdrawalDate.toString());
+                final var newSubscription = currentSubscription;
+                if(model.getTransactionType().equals(TransactionType.WITHDRAWAL) && getOrDefault(()-> model.getAmount().compareTo(newSubscription.getSubscriptionPackage().getPrice()) >=0,false)){
+                    if(newSubscription.getRemainingWithdrawalPerDay() > 0)
+                        throw new NotAcceptableException(String.format("Withdrawal is allowed only after %d days", newSubscription.getRemainingWithdrawalPerDay()));
                 }
-                if(model.getTransactionType().equals(TransactionType.DEPOSIT) && walletRepository.countAllByUserIdAndTransactionTypeAndActiveTrue(model.getUser().getId(),TransactionType.DEPOSIT) == 1) {
+                if(model.getTransactionType().equals(TransactionType.DEPOSIT) && !walletRepository.existsByUserIdAndTransactionTypeAndActiveTrue(model.getUser().getId(),TransactionType.DEPOSIT)) {
                     var user = userService.findById(model.getUser().getId());
                     if (get(() -> user.getParent()) != null) {
                         WalletModel bonus1 = new WalletModel();
@@ -153,15 +151,14 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter,WalletModel,
                 var balanceModel = balanceOptional.get();
                 var subscriptionPackage = subscriptionPackageService.findMatchedPackageByAmountAndCurrency(balanceModel.getTotalAmount(),balanceModel.getCurrency());
                 if(subscriptionPackage != null && (currentSubscription == null || !currentSubscription.getSubscriptionPackage().getId().equals(subscriptionPackage.getId()))) {
-                    subscriptionService.create(new SubscriptionModel().setSubscriptionPackage(subscriptionPackage).setUser(model.getUser()).setStatus(EntityStatusType.Active));
+                    currentSubscription = subscriptionService.create(new SubscriptionModel().setSubscriptionPackage(subscriptionPackage).setUser(model.getUser()).setStatus(EntityStatusType.Active));
                 }
-                if(model.getTransactionType().equals(TransactionType.WITHDRAWAL) && getOrDefault(()-> model.getAmount().compareTo(currentSubscription.getSubscriptionPackage().getPrice()) >=0,false)){
-                    var subscriptionPackageModel = currentSubscription.getSubscriptionPackage();
-                    var withdrawalDate = subscriptionPackageModel.getCreatedDate().plusDays(subscriptionPackageModel.getWithdrawalDurationPerDay());
-                    if(withdrawalDate.isAfter(LocalDateTime.now()))
-                        throw new NotAcceptableException("Withdrawal is allowed only after " + withdrawalDate.toString());
+                final var newSubscription = currentSubscription;
+                if(model.getTransactionType().equals(TransactionType.WITHDRAWAL) && getOrDefault(()-> model.getAmount().compareTo(newSubscription.getSubscriptionPackage().getPrice()) >=0,false)){
+                    if(newSubscription.getRemainingWithdrawalPerDay() > 0)
+                        throw new NotAcceptableException(String.format("Withdrawal is allowed only after %d days.", newSubscription.getRemainingWithdrawalPerDay()));
                 }
-                if(model.getTransactionType().equals(TransactionType.DEPOSIT) && walletRepository.countAllByUserIdAndTransactionTypeAndActiveTrue(model.getUser().getId(),TransactionType.DEPOSIT) == 1) {
+                if(model.getTransactionType().equals(TransactionType.DEPOSIT) && !walletRepository.existsByUserIdAndTransactionTypeAndActiveTrue(model.getUser().getId(),TransactionType.DEPOSIT)) {
                     var user = userService.findById(model.getUser().getId());
                     if (get(() -> user.getParent()) != null) {
                         WalletModel bonus1 = new WalletModel();

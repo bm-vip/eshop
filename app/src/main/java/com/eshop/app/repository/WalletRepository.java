@@ -45,7 +45,7 @@ public interface WalletRepository extends BaseRepository<WalletEntity, Long> {
 	List<BalanceModel> totalProfitGroupedByCurrencyByUserId(UUID userId);
 
 	@Query("SELECT new com.eshop.app.model.BalanceModel(w.currency, "
-			+ "SUM(CASE WHEN w.transactionType = com.eshop.app.enums.TransactionType.DEPOSIT OR w.transactionType = com.eshop.app.enums.TransactionType.REWARD OR w.transactionType = com.eshop.app.enums.TransactionType.BONUS THEN w.amount ELSE 0 END) - "
+			+ "SUM(CASE WHEN w.transactionType = com.eshop.app.enums.TransactionType.DEPOSIT THEN w.amount ELSE 0 END) - "
 			+ "SUM(CASE WHEN w.transactionType = com.eshop.app.enums.TransactionType.WITHDRAWAL OR w.transactionType = com.eshop.app.enums.TransactionType.WITHDRAWAL_PROFIT THEN w.amount ELSE 0 END)) "
 			+ "FROM WalletEntity w join w.user u join u.roles r WHERE r.id = 2 AND w.active is true GROUP BY w.currency")
 	List<BalanceModel> totalBalanceGroupedByCurrency();
@@ -80,7 +80,7 @@ public interface WalletRepository extends BaseRepository<WalletEntity, Long> {
 			+ "SUM(CASE WHEN w.transactionType = com.eshop.app.enums.TransactionType.WITHDRAWAL_PROFIT THEN w.amount ELSE 0 END)) "
 			+ "FROM WalletEntity w join w.user u join u.roles r WHERE r.id = 2 AND w.active is true GROUP BY w.currency")
 	List<BalanceModel> totalProfitGroupedByCurrency();
-	long countAllByUserIdAndTransactionTypeAndActiveTrue(UUID userId, TransactionType transactionType);
+	boolean existsByUserIdAndTransactionTypeAndActiveTrue(UUID userId, TransactionType transactionType);
 
 //	@Query(value = "SELECT currency, SUM(totalAmount) AS totalAmount" +
 //			" FROM (" +
