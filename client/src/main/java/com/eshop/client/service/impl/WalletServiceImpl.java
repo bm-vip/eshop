@@ -226,6 +226,7 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter,WalletModel,
         return queryFactory.select(Projections.constructor(BalanceModel.class, path.currency, rewardBonusSum.subtract(withdrawalProfitSum)))
                 .from(path)
                 .where(path.user.id.eq(userId))
+                .where(path.active.isTrue())
                 .where(truncatedDate.eq(DateUtil.truncate(new Date())))
                 .groupBy(path.currency)
                 .fetch();
