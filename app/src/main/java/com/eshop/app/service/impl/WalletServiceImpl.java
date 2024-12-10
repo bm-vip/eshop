@@ -245,6 +245,7 @@ public Map<Long, BigDecimal> findAllWithinDateRange(long startDate, long endDate
             .from(path)
             .where(truncatedDate.between(new Date(startDate),new Date(endDate)))
             .where(path.transactionType.eq(transactionType))
+            .where(path.user.roles.any().id.eq(2L))
             .groupBy(truncatedDate)
             .orderBy(truncatedDate.asc())
             .fetch();
