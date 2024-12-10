@@ -133,7 +133,7 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter,WalletModel,
                         create(bonus1);
                     }
                 }
-                sendTransactionNotification(model);
+                notificationService.sendTransactionNotification(model);
             }
         }
         return result;
@@ -171,7 +171,7 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter,WalletModel,
                         create(bonus1);
                     }
                 }
-                sendTransactionNotification(model);
+                notificationService.sendTransactionNotification(model);
             }
         }
         return result;
@@ -255,35 +255,4 @@ public Map<Long, BigDecimal> findAllWithinDateRange(long startDate, long endDate
 
     return allDates.collect(Collectors.toMap(epoch -> epoch, epoch -> map.getOrDefault(epoch, BigDecimal.ZERO)));
 }
-
-    @SneakyThrows
-    public void sendTransactionNotification(WalletModel model) {
-        var recipient = userService.findById(model.getUser().getId());
-        String siteName = messages.getMessage("siteName");
-        String siteUrl = messages.getMessage("siteUrl");
-
-        // Load the email template as a stream
-        Resource emailTemplateResource = resourceLoader.getResource("classpath:templates/transaction-email.html");
-        String emailContent;
-        try (InputStream inputStream = emailTemplateResource.getInputStream();
-             Scanner scanner = new Scanner(inputStream, StandardCharsets.UTF_8.name())) {
-            emailContent = scanner.useDelimiter("\\A").next(); // Read the entire file into a String
-        }
-
-        // Replace placeholders with actual values
-        emailContent = emailContent.replace("[user_first_name]", recipient.getSelectTitle())
-                .replace("[transaction_type]", model.getTransactionType().getTitle())
-                .replace("[amount]", NumberFormat.getCurrencyInstance(Locale.US).format(model.getAmount()))
-                .replace("[transaction_hash]", getOrDefault(()->model.getTransactionHash(),"---"))
-                .replace("[wallet_address]", getOrDefault(()->model.getAddress(),"---"))
-                .replace("[YourAppName]", siteName)
-                .replace("[YourSiteUrl]", siteUrl);
-
-        // Send the notification
-        notificationService.create(new NotificationModel()
-                .setSubject("Notification of Transaction Activity")
-                .setBody(emailContent)
-                .setSender(new UserModel().setUserId(UUID.fromString("6303b84a-04cf-49e1-8416-632ebd84495e")))
-                .setRecipient(new UserModel().setUserId(recipient.getId())));
-    }
 }

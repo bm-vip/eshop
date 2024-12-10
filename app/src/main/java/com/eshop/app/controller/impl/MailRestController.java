@@ -19,6 +19,11 @@ import org.springframework.web.bind.annotation.*;
 public class MailRestController  {
 
     private MailService mailService;
+
+    public MailRestController(MailService mailService) {
+        this.mailService = mailService;
+    }
+
     @PostMapping
     public ResponseEntity<Void> send(@RequestBody MailModel mailModel) {
         mailService.send(mailModel.getTo(),mailModel.getSubject(), mailModel.getBody());
