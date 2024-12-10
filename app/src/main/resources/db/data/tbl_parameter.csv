@@ -1,4 +1,4 @@
 id,created_by,created_date,modified_by,modified_date,version,title,code,value,parameter_group_id
-1,administrator,2022-03-29 22:07:51.381060,administrator,2022-03-29 22:07:51.381060,0,Send only&nbsp;<strong>Tether USDT (TRC20)</strong>&nbsp;to this address.,WALLET_ADDRESS,xxx,1
+1,administrator,2022-03-29 22:07:51.381060,administrator,2022-03-29 22:07:51.381060,0,Send only&nbsp;<strong>Tether USDT (TRC20)</strong>&nbsp;to this address.,WALLET_ADDRESS,TXXyhmKFhBZ4zna9jWmbnvE3kLiVH8teY8,1
 2,administrator,2022-03-29 22:07:51.381060,administrator,2022-03-29 22:07:51.381060,0,first withdrawal delay,MIN_WITHDRAW,15,2
 3,administrator,2022-03-29 22:07:51.381060,administrator,2022-03-29 22:07:51.381060,0,first withdrawal delay,TRANSFER_FEE,2,2
