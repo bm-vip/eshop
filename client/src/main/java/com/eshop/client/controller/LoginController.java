@@ -23,7 +23,6 @@ import javax.validation.Valid;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 
-import static com.eshop.client.util.MapperHelper.get;
 import static com.eshop.client.util.StringUtils.generateFilterKey;
 import static com.eshop.client.util.StringUtils.generateIdKey;
 

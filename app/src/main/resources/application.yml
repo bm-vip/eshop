@@ -10,6 +10,18 @@ server:
     key-alias: arbitrage-broker.com
 # Spring Boot configuration
 spring:
+  mail:
+    host: smtp0101.titan.email
+    username: admin@arbitrage-broker.com
+    password: ehb=9Qx@UVul41>
+    port: 587
+    protocol: smtp
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
   application:
     name: eshop
     version: 0.0.1-SNAPSHOT
@@ -56,6 +68,7 @@ spring:
 #    enabled: false
 #  swagger-ui:
 #    enabled: false
+site.url: arbitrage-broker.com
 springdoc:
   api-docs:
     path: /api-docs

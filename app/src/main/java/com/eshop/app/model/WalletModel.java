@@ -5,11 +5,8 @@ import com.eshop.app.enums.TransactionType;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
-import java.util.Set;
 
 @Data
 @Accessors(chain = true)
