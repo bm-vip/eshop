@@ -90,7 +90,7 @@ public class LoginController {
     @Limited(requestsPerMinutes = 3)
     public String sendOTP(@Email @NotEmpty String email) {
         try {
-            mailService.sendOTP(email);
+            mailService.sendOTP(email,"Reset password OTP");
         } catch(Exception e) {
             return "redirect:/login?errorMsg=failedToSendEmail#send_otp";
         }

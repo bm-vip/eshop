@@ -387,6 +387,10 @@ function tableOptions() {
 }
 function initAjaxTable(selector, columns, url, filterFunction) {
     let opts = tableOptions();
+    let customTableOptions_function = window["customTableOptions"];
+    if (typeof customTableOptions_function === 'function') {
+        opts = customTableOptions_function();
+    }
     opts.serverSide = true;
     opts.columns = columns;
     opts.ajax = {

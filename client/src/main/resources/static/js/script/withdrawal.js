@@ -41,9 +41,19 @@ columns = [{
     render: function (data) { return toLocalizingDateString(data, true) }
 }];
 
+function customTableOption(){
+    let tbl_option = tableOptions();
+    tbl_option.order = [[5, 'asc']];
+    return tbl_option;
+}
+
 function onLoad() {
     $.getJSON("/api/v1/user/" + currentUser.id, function (user) {
         $("#walletAddress").val(user.walletAddress);
+    });
+    $.getJSON("/api/v1/parameter/find-by-group-code/BUSINESS_RULES", function (data) {
+        $("#withdraw-notice .alert-content").append(`<li>${resources.withdrawalNotice.format(data.find(x => x.code == 'MIN_WITHDRAW').value ?? '15')}</li>`);
+        $("#withdraw-notice .alert-content").append(`<li>${resources.transferFee.format(data.find(x => x.code == 'TRANSFER_FEE').value ?? '2')}</li>`);
     });
 }
 
@@ -95,9 +105,9 @@ function afterSubmitForm(entity) {
             else show_error(header.responseJSON.error + ' (' + header.responseJSON.status + ') <br>' + header.responseJSON.message);
         }
     });
-    $("#deposit-alert").remove();
-    let infoElement = `<div id="deposit-alert" class="alert alert-info">
-    <button onclick="$('#deposit-alert').hide()" class="close">&times;</button>
+    $("#withdraw-alert").remove();
+    let infoElement = `<div id="withdraw-alert" class="alert alert-info">
+    <button onclick="$('#withdraw-alert').hide()" class="close">&times;</button>
     <div class="alert-content">${resources.withdrawalAlert}</div>
 </div>`;
     $(".btn-primary").after(infoElement);

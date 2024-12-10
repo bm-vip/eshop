@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @Tag(name = "Parameter Rest Service v1")
 @RequestMapping(value = "/api/v1/parameter")
@@ -31,5 +33,9 @@ public class ParameterRestController extends BaseRestControllerImpl<ParameterFil
     @GetMapping("find-by-code/{code}")
     public ResponseEntity<ParameterModel> findByCode(@PathVariable String code){
         return ResponseEntity.ok(parameterService.findByCode(code));
+    }
+    @GetMapping("find-by-group-code/{code}")
+    public ResponseEntity<List<ParameterModel>> findAllByParameterGroupCode(@PathVariable String code){
+        return ResponseEntity.ok(parameterService.findAllByParameterGroupCode(code));
     }
 }

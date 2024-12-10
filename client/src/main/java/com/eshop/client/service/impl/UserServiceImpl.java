@@ -11,9 +11,11 @@ import com.eshop.client.mapping.UserMapper;
 import com.eshop.client.model.*;
 import com.eshop.client.repository.*;
 import com.eshop.client.service.NotificationService;
+import com.eshop.client.service.OneTimePasswordService;
 import com.eshop.client.service.RoleService;
 import com.eshop.client.service.UserService;
 import com.eshop.client.util.ReferralCodeGenerator;
+import com.eshop.client.util.SessionHolder;
 import com.eshop.exception.common.BadRequestException;
 import com.eshop.exception.common.NotFoundException;
 import com.querydsl.core.BooleanBuilder;
@@ -54,8 +56,10 @@ public class UserServiceImpl extends BaseServiceImpl<UserFilter,UserModel, UserE
     private final ResourceLoader resourceLoader;
     private final NotificationService notificationService;
     private final WalletRepository walletRepository;
+    private final OneTimePasswordService oneTimePasswordService;
+    private final SessionHolder sessionHolder;
 
-    public UserServiceImpl(UserRepository userRepository, UserMapper userMapper, RoleRepository roleRepository, BCryptPasswordEncoder bCryptPasswordEncoder, MessageConfig messages, ResourceLoader resourceLoader, NotificationService notificationService, CountryRepository countryRepository, WalletRepository walletRepository) {
+    public UserServiceImpl(UserRepository userRepository, UserMapper userMapper, RoleRepository roleRepository, BCryptPasswordEncoder bCryptPasswordEncoder, MessageConfig messages, ResourceLoader resourceLoader, NotificationService notificationService, CountryRepository countryRepository, WalletRepository walletRepository, OneTimePasswordService oneTimePasswordService, SessionHolder sessionHolder) {
         super(userRepository, userMapper);
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
@@ -64,6 +68,8 @@ public class UserServiceImpl extends BaseServiceImpl<UserFilter,UserModel, UserE
         this.resourceLoader = resourceLoader;
         this.notificationService = notificationService;
         this.walletRepository = walletRepository;
+        this.oneTimePasswordService = oneTimePasswordService;
+        this.sessionHolder = sessionHolder;
     }
 
     @Override
@@ -90,6 +96,18 @@ public class UserServiceImpl extends BaseServiceImpl<UserFilter,UserModel, UserE
     @Cacheable(cacheNames = "client", key = "'User:findAllUserCountByCountry'")
     public List<CountryUsers> findAllUserCountByCountry() {
         return userRepository.findAllUserCountByCountry();
+    }
+
+    @Override
+    public boolean verifyEmail(UUID id, String otp) {
+        boolean verify = oneTimePasswordService.verify(sessionHolder.getCurrentUser().getId(), otp);
+        if(verify) {
+            userRepository.findById(id).ifPresent(user -> {
+                user.setEmailVerified(true);
+                userRepository.save(user);
+            });
+        }
+        return verify;
     }
 
     @Override
@@ -206,6 +224,7 @@ public class UserServiceImpl extends BaseServiceImpl<UserFilter,UserModel, UserE
         filter.getHasParent().ifPresent(v-> { if(v) builder.and(path.parent.isNotNull()); else builder.and(path.parent.isNull());});
         filter.getProfileImageUrl().ifPresent(v -> builder.and(path.profileImageUrl.eq(v)));
         filter.getCountryId().ifPresent(v -> builder.and(path.country.id.eq(v)));
+        filter.getEmailVerified().ifPresent(v-> builder.and(path.emailVerified.eq(v)));
        
         return builder;
     }

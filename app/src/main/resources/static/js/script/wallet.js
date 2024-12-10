@@ -78,7 +78,11 @@ columns = [{
     sortable: false,
     render: function (data) { return "<a class='btn btn-default fa fa-pencil' id='" + data + "'></a> <a class='btn btn-danger fa fa-trash' id='" + data + "'></a>" }
 }];
-
+function customTableOptions(){
+    let tbl_option = tableOptions();
+    tbl_option.order = [[6, 'asc']];
+    return tbl_option;
+}
 function loadInputByEntity(model) {
     $("#hdf_id").val(model.id);
     $("#userSelect2").html("<option value='" + get(() => model.user.id) + "' selected>" + get(() => "{0} {1}".format(model.user.firstName, model.user.lastName)) + "</option>").trigger('change');

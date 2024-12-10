@@ -227,4 +227,12 @@
                 EXECUTE FUNCTION update_child_count();/
         </sql>
     </changeSet>
+    <changeSet id="12" author="administrator">
+        <addColumn tableName="tbl_user">
+            <column name="email_verified" type="bool" defaultValueBoolean="false"></column>
+        </addColumn>
+        <addColumn tableName="tbl_user_aud">
+            <column name="email_verified" type="bool"></column>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>

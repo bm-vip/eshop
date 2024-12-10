@@ -376,6 +376,10 @@ function tableOptions() {
 }
 function initAjaxTable(selector, columns, url, filterFunction) {
     let opts = tableOptions();
+    let customTableOptions_function = window["customTableOptions"];
+    if (typeof customTableOptions_function === 'function') {
+        opts = customTableOptions_function();
+    }
     opts.serverSide = true;
     opts.columns = columns;
     opts.ajax = {
@@ -573,6 +577,10 @@ function userProfileOccupied(){
         userOccupied += 10;
         $("#email-occupied").removeClass('text-red').addClass('text-green').text("Yes");
     }
+    if(currentUser.emailVerified) {
+        userOccupied += 10;
+        $("#email-verified").removeClass('text-red').addClass('text-green').text("Yes");
+    }
     if(!isNullOrEmpty(currentUser.profileImageUrl)) {
         userOccupied += 10;
         $("#profileImageUrl-occupied").removeClass('text-red').addClass('text-green').text("Yes");
@@ -587,7 +595,7 @@ function userProfileOccupied(){
     }
     $.get(`api/v1/wallet/exists?userId=${currentUser.id}&transactionType=DEPOSIT`,function(anyDeposit){
         if(anyDeposit) {
-            userOccupied += 20;
+            userOccupied += 10;
             $("#anyDeposit-occupied").removeClass('text-red').addClass('text-green').text("Yes");
         }
         $.get(`api/v1/arbitrage/exists?userId=${currentUser.id}`,function(anyArbitrage){

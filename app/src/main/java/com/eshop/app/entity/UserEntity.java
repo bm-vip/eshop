@@ -68,6 +68,9 @@ public class UserEntity extends BaseEntity<UUID> {
 	@JoinTable(name = "tbl_user_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
 	private Set<RoleEntity> roles;
 
+	@Column(name = "email_verified")
+	private boolean emailVerified;
+
 	@Override
 	public String getSelectTitle() {
 		StringBuilder builder = new StringBuilder();

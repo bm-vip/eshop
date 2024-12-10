@@ -9,6 +9,7 @@ import java.util.UUID;
 @Repository
 public interface UserRepository extends BaseRepository<UserEntity, UUID> {
 	 Optional<UserEntity> findByUserName(String userName);
+	 Optional<UserEntity> findByEmail(String email);
 	 boolean existsByUid(String uid);
 	 Optional<UserEntity> findByUid(String uid);
 	 Optional<UserEntity> findByUserNameOrEmail(String userName, String email);

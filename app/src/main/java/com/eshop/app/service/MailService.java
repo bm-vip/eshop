@@ -1,6 +1,4 @@
-package com.eshop.client.service;
-
-import com.eshop.client.model.UserModel;
+package com.eshop.app.service;
 
 import javax.validation.constraints.Email;
 

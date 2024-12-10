@@ -54,7 +54,11 @@ columns = [{
     sortable: false,
     render: function (data, type, row) { return `<a class="btn btn-default fa fa-pencil" id="${data}" data-bs-toggle="tooltip" title="Edit"></a> <a class="btn btn-danger fa fa-trash" id="${data}" data-bs-toggle="tooltip" title="Delete"></a> <a class="btn btn-info fa fa-list-alt" data-toggle="modal" data-target=".bs-example-modal-lg" id="${data}" modal-title="${row.subject}" data-bs-toggle="tooltip" title="${resources.body}"></a>` }
 }];
-
+function customTableOptions(){
+    let tbl_option = tableOptions();
+    tbl_option.order = [[3, 'asc']];
+    return tbl_option;
+}
 function loadInputByEntity(model) {
     $("#hdf_id").val(model.id);
     $("#senderSelect2").html("<option value='" + get(() => model.sender.id) + "' selected>" + get(() => "{0} {1}".format(model.sender.firstName, model.sender.lastName)) + "</option>").trigger('change');

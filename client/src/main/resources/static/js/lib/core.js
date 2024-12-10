@@ -33,7 +33,6 @@ window.onload = function () {
         })
     );
 
-
     $(".table:not(#myModal .table)").on("click", ".fa-pencil", function () {
         let fn = window["loadInputByEntity"];
         if (typeof fn === 'function') {

@@ -56,7 +56,7 @@
                             </div>
                             <div class="col-md-6 form-group has-feedback">
                                 <label th:text="#{amount}"></label>
-                                <input type="number" tabindex="2" class="form-control" id="amount" th:name="amount" th:value="${amount ?: ''}">
+                                <input type="number" tabindex="2" placeholder="Min 15 USD" class="form-control" id="amount" th:name="amount" th:value="${amount ?: ''}">
                                 <span class="fa fa-dollar-sign form-control-feedback right" aria-hidden="true"></span>
                             </div>
                             <div class="col-md-6 form-group has-feedback">
@@ -68,6 +68,10 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <button tabindex="3" type="submit" class="btn btn-primary btn-block"><i class="fa fa-send"></i>&nbsp;<span th:text="#{send}"></span></button>
+                                <div id="withdraw-notice" class="alert alert-info">
+                                    <button onclick="$('#withdraw-notice').hide()" class="close">&times;</button>
+                                    <div class="alert-content"></div>
+                                </div>
                             </div>
                         </div>
                     </div>

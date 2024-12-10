@@ -41,6 +41,7 @@ public class UserModel extends BaseModel<UUID> {
     private BigDecimal withdrawal;
     private BigDecimal bonus;
     private BigDecimal reward;
+    private boolean emailVerified;
 
     public UserModel setUserId(UUID id) {
         setId(id);

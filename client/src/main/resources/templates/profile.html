@@ -84,10 +84,11 @@
                         <div class="col-md-4 label  dashed-boarder">
                             <div class="col-md-12"><p><strong>(10%) First name and last name has been filled?</strong> <span id="fullName-occupied" class="text-red">No</span></p></div>
                             <div class="col-md-12"><p><strong>(10%) Email has been filled?</strong> <span id="email-occupied" class="text-red">No</span></p></div>
+                            <div class="col-md-12"><p><strong>(10%) Email has been verified?</strong> <span id="email-verified" class="text-red">No</span></p></div>
                             <div class="col-md-12"><p><strong>(10%) Profile image has been filled?</strong> <span id="profileImageUrl-occupied" class="text-red">No</span></p></div>
                             <div class="col-md-12"><p><strong>(10%) Country has been filled?</strong> <span id="country-occupied" class="text-red">No</span></p></div>
                             <div class="col-md-12"><p><strong>(10%) Wallet address has been filled?</strong> <span id="walletAddress-occupied" class="text-red">No</span></p></div>
-                            <div class="col-md-12"><p><strong>(20%) Any amount has been deposited?</strong> <span id="anyDeposit-occupied" class="text-red">No</span></p></div>
+                            <div class="col-md-12"><p><strong>(10%) Any amount has been deposited?</strong> <span id="anyDeposit-occupied" class="text-red">No</span></p></div>
                             <div class="col-md-12"><p><strong>(10%) Any arbitrage has been made?</strong> <span id="anyArbitrage-occupied" class="text-red">No</span></p></div>
                             <div class="col-md-12"><p><strong>(20%) Any referral?</strong> <span id="anyReferral-occupied" class="text-red">No</span></p></div>
                         </div>
@@ -126,9 +127,8 @@
                                                 <span class="fa fa-wallet form-control-feedback right" aria-hidden="true"></span>
                                             </div>
                                             <div class="col-md-6 form-group has-feedback">
-                                                <label th:text="#{email}"></label>
-                                                <input type="text" class="form-control" id="email" name="email" tabindex="4">
-                                                <span class="fa fa-envelope form-control-feedback right" aria-hidden="true"></span>
+                                                <label th:text="#{country}"></label>
+                                                <th:block th:replace="fragments/select2 :: select2('4', #{country}, 'country', 'api/v1/country/findAllSelect','{name:params.term}',false,'edit-user-modal')"></th:block>
                                             </div>
                                         </div>
                                         <div class="row">
@@ -144,14 +144,10 @@
                                             </div>
                                         </div>
                                         <div class="row">
-                                            <div class="col-md-6 form-group has-feedback">
-                                                <label th:text="#{country}"></label>
-                                                <th:block th:replace="fragments/select2 :: select2('7', #{country}, 'country', 'api/v1/country/findAllSelect','{name:params.term}',false,'edit-user-modal')"></th:block>
-                                            </div>
-                                            <div class="col-md-6 form-group has-feedback">
+                                            <div class="col-md-12 form-group has-feedback">
                                                 <label th:text="#{profile} + ' ' + #{image}"></label>
                                                 <form class="dropzone">
-                                                <div tabindex="8" class="dz-message" th:text="#{dropFileHere}"></div>
+                                                <div tabindex="7" class="dz-message" th:text="#{dropFileHere}"></div>
                                                 </form>
                                             </div>
                                         </div>

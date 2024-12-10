@@ -48,18 +48,14 @@ public class UserServiceImpl extends BaseServiceImpl<UserFilter,UserModel, UserE
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
-    private final MessageConfig messages;
-    private final ResourceLoader resourceLoader;
     private final NotificationService notificationService;
     private final WalletRepository walletRepository;
 
-    public UserServiceImpl(UserRepository userRepository, UserMapper userMapper, RoleRepository roleRepository, BCryptPasswordEncoder bCryptPasswordEncoder, MessageConfig messages, ResourceLoader resourceLoader, NotificationService notificationService, WalletRepository walletRepository) {
+    public UserServiceImpl(UserRepository userRepository, UserMapper userMapper, RoleRepository roleRepository, BCryptPasswordEncoder bCryptPasswordEncoder, NotificationService notificationService, WalletRepository walletRepository) {
         super(userRepository, userMapper);
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
-        this.messages = messages;
-        this.resourceLoader = resourceLoader;
         this.notificationService = notificationService;
         this.walletRepository = walletRepository;
     }
@@ -122,8 +118,13 @@ public class UserServiceImpl extends BaseServiceImpl<UserFilter,UserModel, UserE
         }
         entity.setUid(getUid());
         var createdUser = mapper.toModel(repository.save(entity));
-        sendWelcomeNotification(createdUser.getId());
+        notificationService.sendWelcomeNotification(createdUser.getId());
         return createdUser;
+    }
+
+    @Override
+    public UserModel findByEmail(String email) {
+        return mapper.toModel(userRepository.findByEmail(email).orElseThrow(() -> new NotFoundException("No such email: " + email)));
     }
 
     private String getUid() {
@@ -161,7 +162,7 @@ public class UserServiceImpl extends BaseServiceImpl<UserFilter,UserModel, UserE
 
         entity.setUid(getUid());
         var createdUser = mapper.toModel(repository.save(entity));
-        sendWelcomeNotification(createdUser.getId());
+        notificationService.sendWelcomeNotification(createdUser.getId());
         return createdUser;
     }
 
@@ -192,24 +193,8 @@ public class UserServiceImpl extends BaseServiceImpl<UserFilter,UserModel, UserE
         filter.getHasParent().ifPresent(v-> { if(v) builder.and(path.parent.isNotNull()); else builder.and(path.parent.isNull());});
         filter.getProfileImageUrl().ifPresent(v -> builder.and(path.profileImageUrl.eq(v)));
         filter.getCountryId().ifPresent(v -> builder.and(path.country.id.eq(v)));
+        filter.getEmailVerified().ifPresent(v-> builder.and(path.emailVerified.eq(v)));
 
         return builder;
-    }
-    @SneakyThrows
-    public void sendWelcomeNotification(UUID recipientId) {
-        var recipient = findById(recipientId);
-        String siteName = messages.getMessage("siteName");
-        String siteUrl = messages.getMessage("siteUrl");
-        Resource emailTemplateResource = resourceLoader.getResource("classpath:templates/welcome-email.html");
-        String emailContent = new String(Files.readAllBytes(Paths.get(emailTemplateResource.getURI())));
-        emailContent = emailContent.replace("[user_first_name]", recipient.getFirstName());
-        emailContent = emailContent.replace("[YourAppName]", siteName);
-        emailContent = emailContent.replace("[YourSiteUrl]", siteUrl);
-
-        notificationService.create(new NotificationModel()
-                .setSubject(String.format("Welcome to %s!", siteName))
-                .setBody(emailContent)
-                .setSender(new UserModel().setUserId(UUID.fromString("6303b84a-04cf-49e1-8416-632ebd84495e")))
-                .setRecipient(new UserModel().setUserId(recipientId)));
     }
 }

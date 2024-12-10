@@ -27,6 +27,7 @@ public class UserFilter {
     private String profileImageUrl;
     private Long countryId;
     private Set<Long> roles;
+    private Boolean emailVerified;
 
     public Optional<UUID> getId() {
         return Optional.ofNullable(id);
@@ -113,5 +114,9 @@ public class UserFilter {
 
     public Optional<Long> getCountryId() {
         return Optional.ofNullable(countryId);
+    }
+
+    public Optional<Boolean> getEmailVerified() {
+        return Optional.ofNullable(emailVerified);
     }
 }

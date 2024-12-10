@@ -34,6 +34,11 @@ public class UserRestController extends BaseRestControllerImpl<UserFilter, UserM
     public ResponseEntity<UserModel> register(@Valid @RequestBody UserModel model) {
         return ResponseEntity.ok(userService.register(model));
     }
+    @GetMapping("/verify-email/{userId}/{otp}")
+    @Limited(requestsPerMinutes = 3)
+    public ResponseEntity<Boolean> verifyEmail(@PathVariable UUID userId,@PathVariable String otp) {
+        return ResponseEntity.ok(userService.verifyEmail(userId, otp));
+    }
     @GetMapping("/total-count")
     public ResponseEntity<String> totalCount(){
         return ResponseEntity.ok("2M");

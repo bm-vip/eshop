@@ -9,4 +9,5 @@ public interface UserService extends BaseService<UserFilter, UserModel, UUID> {
     UserModel findByUserNameOrEmail(String login);
     UserModel findByUserName(String userName);
     UserModel register(UserModel model);
+    UserModel findByEmail(String email);
 }

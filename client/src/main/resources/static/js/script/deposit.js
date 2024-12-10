@@ -46,6 +46,12 @@ columns = [{
     data: 'modifiedDate',
     render: function (data) { return toLocalizingDateString(data, true) }
 }];
+function customTableOptions(){
+    let tbl_option = tableOptions();
+    tbl_option.order = [[5, 'asc']];
+    return tbl_option;
+}
+
 
 function onLoad() {
     $.getJSON("/api/v1/parameter/find-by-code/WALLET_ADDRESS", function (parameter) {

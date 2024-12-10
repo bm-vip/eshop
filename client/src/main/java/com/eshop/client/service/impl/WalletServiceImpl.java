@@ -2,7 +2,6 @@ package com.eshop.client.service.impl;
 
 import com.eshop.client.entity.QWalletEntity;
 import com.eshop.client.entity.WalletEntity;
-import com.eshop.client.enums.CurrencyType;
 import com.eshop.client.enums.RoleType;
 import com.eshop.client.enums.TransactionType;
 import com.eshop.client.filter.WalletFilter;
@@ -11,11 +10,10 @@ import com.eshop.client.model.BalanceModel;
 import com.eshop.client.model.SubscriptionPackageModel;
 import com.eshop.client.model.WalletModel;
 import com.eshop.client.repository.WalletRepository;
-import com.eshop.client.service.SubscriptionService;
-import com.eshop.client.service.WalletService;
+import com.eshop.client.service.*;
 import com.eshop.client.util.DateUtil;
 import com.eshop.client.util.SessionHolder;
-import com.eshop.exception.common.BadRequestException;
+import com.eshop.exception.common.ExpectationException;
 import com.eshop.exception.common.NotAcceptableException;
 import com.eshop.exception.common.NotFoundException;
 import com.eshop.exception.common.PaymentRequiredException;
@@ -31,9 +29,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -41,6 +36,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static com.eshop.client.util.DateUtil.toLocalDate;
+import static com.eshop.client.util.StringUtils.generateIdKey;
 
 @Service
 public class WalletServiceImpl extends BaseServiceImpl<WalletFilter,WalletModel, WalletEntity, Long> implements WalletService {
@@ -49,13 +45,19 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter,WalletModel,
     private final SubscriptionService subscriptionService;
     private final JPAQueryFactory queryFactory;
     private final SessionHolder sessionHolder;
+    private final String minWithdrawAmount;
+    private final UserService userService;
+    private final MailService mailService;
 
-    public WalletServiceImpl(WalletRepository repository, WalletMapper mapper, SubscriptionService subscriptionService, JPAQueryFactory queryFactory, SessionHolder sessionHolder) {
+    public WalletServiceImpl(WalletRepository repository, WalletMapper mapper, SubscriptionService subscriptionService, JPAQueryFactory queryFactory, SessionHolder sessionHolder, ParameterService parameterService, UserService userService, MailService mailService) {
         super(repository, mapper);
         this.walletRepository = repository;
         this.subscriptionService = subscriptionService;
         this.queryFactory = queryFactory;
         this.sessionHolder = sessionHolder;
+        this.minWithdrawAmount = parameterService.findByCode("MIN_WITHDRAW").getValue();
+        this.userService = userService;
+        this.mailService = mailService;
     }
 
     @Override
@@ -85,6 +87,11 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter,WalletModel,
     @Override
     @Transactional
     public WalletModel create(WalletModel model, String allKey) {
+        var user = userService.findById(model.getUser().getId(), generateIdKey("User",model.getUser().getId()));
+//        if(!user.isEmailVerified()) {
+//            mailService.sendVerification(user.getEmail(),"Email verification link");
+//            throw new ExpectationException("Please verify your email before make this transaction.");
+//        }
         var totalBalance = walletRepository.totalBalanceGroupedByCurrency(model.getUser().getId());
         if(model.getTransactionType().equals(TransactionType.WITHDRAWAL)) {
             for (BalanceModel balanceModel : totalBalance) {
@@ -109,8 +116,8 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter,WalletModel,
             } else {
                 // withdrawal profit
                 model.setTransactionType(TransactionType.WITHDRAWAL_PROFIT);
-                if (model.getAmount().compareTo(new BigDecimal(15)) < 0)
-                    throw new NotAcceptableException(String.format("You need to request more than 15 %s.", currentSubscriptionPackage.getCurrency().getTitle()));
+                if (model.getAmount().compareTo(new BigDecimal(minWithdrawAmount)) < 0)
+                    throw new NotAcceptableException(String.format("You need to request more than %s %s.", minWithdrawAmount, currentSubscriptionPackage.getCurrency().getTitle()));
                 if (model.getAmount().compareTo(totalProfit.getTotalAmount()) > 0)
                     throw new NotAcceptableException(String.format("Insufficient balance, You are not allowed to withdraw more than %s of the total profit.", totalProfit.getTotalAmount()));
             }
@@ -136,6 +143,11 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter,WalletModel,
     @Override
     @Transactional
     public WalletModel update(WalletModel model, String key, String allKey) {
+        var user = userService.findById(model.getUser().getId(), generateIdKey("User",model.getUser().getId()));
+//        if(!user.isEmailVerified()) {
+//            mailService.sendVerification(user.getEmail(),"Email verification link");
+//            throw new ExpectationException("Please verify your email before make this transaction.");
+//        }
         model.setActive(false);
         var result =  super.update(model, key, allKey);
 //        if(model.isActive()) {

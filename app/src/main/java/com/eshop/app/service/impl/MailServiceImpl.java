@@ -1,9 +1,10 @@
-package com.eshop.client.service.impl;
+package com.eshop.app.service.impl;
 
-import com.eshop.client.config.MessageConfig;
-import com.eshop.client.service.MailService;
-import com.eshop.client.service.OneTimePasswordService;
-import com.eshop.client.service.UserService;
+import com.eshop.app.service.MailService;
+import com.eshop.app.config.MessageConfig;
+import com.eshop.app.service.MailService;
+import com.eshop.app.service.OneTimePasswordService;
+import com.eshop.app.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;

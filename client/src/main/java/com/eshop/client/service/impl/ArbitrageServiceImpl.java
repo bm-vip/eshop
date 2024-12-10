@@ -11,8 +11,10 @@ import com.eshop.client.model.ArbitrageModel;
 import com.eshop.client.model.CoinUsageDTO;
 import com.eshop.client.repository.*;
 import com.eshop.client.service.ArbitrageService;
+import com.eshop.client.service.MailService;
 import com.eshop.client.service.ParameterService;
 import com.eshop.client.util.DateUtil;
+import com.eshop.exception.common.ExpectationException;
 import com.eshop.exception.common.NotAcceptableException;
 import com.eshop.exception.common.NotFoundException;
 import com.querydsl.core.BooleanBuilder;
@@ -37,6 +39,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static com.eshop.client.util.MapperHelper.get;
+import static com.eshop.client.util.StringUtils.generateIdKey;
 
 
 @Service
@@ -52,9 +55,10 @@ public class ArbitrageServiceImpl extends BaseServiceImpl<ArbitrageFilter, Arbit
     private final UserRepository userRepository;
     private final String walletAddressValue;
     private final JPAQueryFactory queryFactory;
+    private final MailService mailService;
 
     @Autowired
-    public ArbitrageServiceImpl(ArbitrageRepository repository, ArbitrageMapper mapper, SubscriptionPackageRepository subscriptionPackageRepository, SubscriptionRepository subscriptionRepository, ParameterService parameterService, WalletRepository walletRepository, UserRepository userRepository, ArbitrageRepository arbitrageRepository, JPAQueryFactory queryFactory) {
+    public ArbitrageServiceImpl(ArbitrageRepository repository, ArbitrageMapper mapper, SubscriptionPackageRepository subscriptionPackageRepository, SubscriptionRepository subscriptionRepository, ParameterService parameterService, WalletRepository walletRepository, UserRepository userRepository, ArbitrageRepository arbitrageRepository, JPAQueryFactory queryFactory, MailService mailService) {
         super(repository, mapper);
         this.repository = repository;
         this.mapper = mapper;
@@ -66,6 +70,7 @@ public class ArbitrageServiceImpl extends BaseServiceImpl<ArbitrageFilter, Arbit
         this.userRepository = userRepository;
         this.arbitrageRepository = arbitrageRepository;
         this.queryFactory = queryFactory;
+        this.mailService = mailService;
     }
 
     @Override
@@ -100,6 +105,10 @@ public class ArbitrageServiceImpl extends BaseServiceImpl<ArbitrageFilter, Arbit
         var balanceList = walletRepository.totalBalanceGroupedByCurrency(model.getUser().getId());
         var balance = balanceList.stream().filter(x->x.getCurrency().equals(subscription.getSubscriptionPackage().getCurrency())).findFirst();
         var user = userRepository.findById(model.getUser().getId()).orElseThrow(()->new NotFoundException("user not found"));
+//        if(!user.isEmailVerified()) {
+//            mailService.sendVerification(user.getEmail(),"Email verification link");
+//            throw new ExpectationException("Please verify your email before make this transaction.");
+//        }
         var reward = subscription.getSubscriptionPackage().getReward(balance.get().getTotalAmount());
 
         if(reward.compareTo(BigDecimal.ZERO) == 1) {

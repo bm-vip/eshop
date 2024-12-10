@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -43,7 +44,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.addFilterBefore(honeypotFilter, UsernamePasswordAuthenticationFilter.class).authorizeRequests()
                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                 .antMatchers("/pnotify/**","/bootstrap-3.3.7/**","/logout","/access-denied","/notfound","/login","/actuator/**").permitAll()
-                .antMatchers("/dashboard","/wallet","/coin","/exchange","/questionAnswer","/notification","/fileUpload/**","/subscription","/subscriptionPackage","/api/v1/user/**","/api/v1/coin/**","/api/v1/exchange/**","/api/v1/role/**","/api/v1/wallet/**","/api/v1/notification/**","/api/v1/question/**","/api/v1/answer/**","/api/v1/subscription-package/**","/api/v1/subscription-package-detail/**","/api/v1/subscription/**","/api/v1/files/**","/api/v1/common/**","/api/v1/arbitrage/**").hasAnyRole(RoleType.name(RoleType.ADMIN), RoleType.name(RoleType.SUPER_WISER))
+                .antMatchers(HttpMethod.GET,"/api/v1/user/**","/api/v1/parameter/**","/api/v1/parameter-group/**").hasAnyRole(RoleType.name(RoleType.ADMIN), RoleType.name(RoleType.SUPER_WISER))
+                .antMatchers("/dashboard","/wallet","/coin","/exchange","/questionAnswer","/notification","/fileUpload/**","/subscription","/subscriptionPackage","/api/v1/coin/**","/api/v1/exchange/**","/api/v1/role/**","/api/v1/wallet/**","/api/v1/notification/**","/api/v1/question/**","/api/v1/answer/**","/api/v1/subscription-package/**","/api/v1/subscription-package-detail/**","/api/v1/subscription/**","/api/v1/files/**","/api/v1/common/**","/api/v1/arbitrage/**").hasAnyRole(RoleType.name(RoleType.ADMIN), RoleType.name(RoleType.SUPER_WISER))
                 .antMatchers("/**").hasRole(RoleType.name(RoleType.ADMIN))
                 .anyRequest().authenticated()
                 .and().csrf().disable().formLogin()

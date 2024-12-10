@@ -1,12 +1,4 @@
 id,created_by,created_date,modified_by,modified_date,version,title,code,value,parameter_group_id
 1,administrator,2022-03-29 22:07:51.381060,administrator,2022-03-29 22:07:51.381060,0,Send only&nbsp;<strong>Tether USDT (TRC20)</strong>&nbsp;to this address.,WALLET_ADDRESS,xxx,1
-2,administrator,2022-03-29 22:07:51.381060,administrator,2022-03-29 22:07:51.381060,0,first withdrawal delay,FIRST_WITHDRAWAL_DELAY,90,2
-3,administrator,2022-03-29 22:07:51.381060,administrator,2022-03-29 22:07:51.381060,0,maximum time withdrawal for user wit no referral,NO_REFERRAL_MAX_WITHDRAWAL,2,2
-4,administrator,2022-03-29 22:07:51.381060,administrator,2022-03-29 22:07:51.381060,0,the delay between each withdrawal,EACH_WITHDRAWAL_DELAY,15,2
-5,administrator,2022-03-29 22:07:51.381060,administrator,2022-03-29 22:07:51.381060,0,App server base address to fetch images,SERVER_ADDRESS,https://192.236.198.244:2024,3
-6,administrator,2022-03-29 22:07:51.381060,administrator,2022-03-29 22:07:51.381060,0,50~99,REFERRAL_DEPOSIT_BONUS_50,1,4
-7,administrator,2022-03-29 22:07:51.381060,administrator,2022-03-29 22:07:51.381060,0,100~599,REFERRAL_DEPOSIT_BONUS_100,2.5,4
-8,administrator,2022-03-29 22:07:51.381060,administrator,2022-03-29 22:07:51.381060,0,600~1999,REFERRAL_DEPOSIT_BONUS_600,5,4
-9,administrator,2022-03-29 22:07:51.381060,administrator,2022-03-29 22:07:51.381060,0,2000~4999,REFERRAL_DEPOSIT_BONUS_2100,9,4
-10,administrator,2022-03-29 22:07:51.381060,administrator,2022-03-29 22:07:51.381060,0,5000~9999,REFERRAL_DEPOSIT_BONUS_5100,12,4
-11,administrator,2022-03-29 22:07:51.381060,administrator,2022-03-29 22:07:51.381060,0,10000~99999,REFERRAL_DEPOSIT_BONUS_10100,20,4
+2,administrator,2022-03-29 22:07:51.381060,administrator,2022-03-29 22:07:51.381060,0,first withdrawal delay,MIN_WITHDRAW,15,2
+3,administrator,2022-03-29 22:07:51.381060,administrator,2022-03-29 22:07:51.381060,0,first withdrawal delay,TRANSFER_FEE,2,2
