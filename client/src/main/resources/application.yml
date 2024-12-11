@@ -55,7 +55,7 @@ spring:
   mail:
     host: smtp0101.titan.email
     username: admin@arbitrage-broker.com
-    password: ehb=9Qx@UVul41>
+    password: B_m31012
     port: 587
     protocol: smtp
     properties:
