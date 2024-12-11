@@ -36,6 +36,7 @@ public class SubscriptionPackageFilter {
     private Integer withdrawalDurationPerDay;
     private Integer userProfitPercentage;
     private Integer siteProfitPercentage;
+    private Boolean active;
 
     public Optional<Long> getId() {
         return Optional.ofNullable(id);
@@ -140,5 +141,9 @@ public class SubscriptionPackageFilter {
 
     public Optional<Integer> getSiteProfitPercentage() {
         return Optional.ofNullable(siteProfitPercentage);
+    }
+
+    public Optional<Boolean> getActive() {
+        return Optional.ofNullable(active);
     }
 }

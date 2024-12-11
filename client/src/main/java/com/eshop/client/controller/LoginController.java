@@ -4,16 +4,16 @@ package com.eshop.client.controller;
 import com.eshop.client.config.Limited;
 import com.eshop.client.config.MessageConfig;
 import com.eshop.client.enums.RoleType;
+import com.eshop.client.filter.SubscriptionPackageFilter;
 import com.eshop.client.model.ResetPassModel;
 import com.eshop.client.model.UserModel;
-import com.eshop.client.service.MailService;
-import com.eshop.client.service.NotificationService;
-import com.eshop.client.service.OneTimePasswordService;
+import com.eshop.client.service.*;
 import com.eshop.client.service.impl.UserServiceImpl;
 import com.eshop.client.util.SessionHolder;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
@@ -39,6 +39,9 @@ public class LoginController {
     final MailService mailService;
     final OneTimePasswordService oneTimePasswordService;
     final NotificationService notificationService;
+    final ArbitrageService arbitrageService;
+    final SubscriptionPackageService subscriptionPackageService;
+    final SubscriptionService subscriptionService;
 
     @RequestMapping(value = "/{name}", method = RequestMethod.GET)
     public ModelAndView loadPage(@PathVariable String name) {
@@ -57,6 +60,18 @@ public class LoginController {
         request.getParameterMap().forEach((key, value) -> {
             modelAndView.addObject(key, value[0]);
         });
+        if(name.equals("arbitrage")) {
+            var limit = arbitrageService.purchaseLimit(user.getId());
+            var filter = new SubscriptionPackageFilter();
+            filter.setActive(true);
+            PageRequest pageable = PageRequest.of(0, 100, Sort.by(Sort.Order.asc("price")));
+            var subscriptionPackages = subscriptionPackageService.findAll(filter, pageable,generateFilterKey("SubscriptionPackage","findAll",filter, pageable));
+            var subscription = subscriptionService.findByUserAndActivePackage(user.getId());
+
+            modelAndView.addObject("tradeButtonText", "Trade " + limit == null ? "Now" : limit);
+            modelAndView.addObject("subscription", subscription);
+            modelAndView.addObject("subscriptionPackages", subscriptionPackages);
+        }
         return modelAndView;
     }
 
