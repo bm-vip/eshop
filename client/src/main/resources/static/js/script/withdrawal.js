@@ -52,8 +52,7 @@ function onLoad() {
         $("#walletAddress").val(user.walletAddress);
     });
     $.getJSON("/api/v1/parameter/find-by-group-code/BUSINESS_RULES", function (data) {
-        $("#withdraw-notice .alert-content").append(`<li>${resources.withdrawalNotice.format(data.find(x => x.code == 'MIN_WITHDRAW').value ?? '15')}</li>`);
-        $("#withdraw-notice .alert-content").append(`<li>${resources.transferFee.format(data.find(x => x.code == 'TRANSFER_FEE').value ?? '2')}</li>`);
+        $("#withdraw-notice .alert-content").html(`<li>${resources.withdrawalNotice.format(data.find(x => x.code == 'MIN_WITHDRAW').value ?? '15')}</li><li>${resources.transferFee.format(data.find(x => x.code == 'TRANSFER_FEE').value ?? '2')}</li>`);
     });
 }
 

@@ -35,6 +35,7 @@ import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
+import java.util.Random;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -188,7 +189,9 @@ public class ArbitrageServiceImpl extends BaseServiceImpl<ArbitrageFilter, Arbit
         if(CollectionUtils.isEmpty(todayArbitrages))
             return null;
         var allowedDate = todayArbitrages.get(0).getCreatedDate().plusMinutes(20L);
-        if(todayArbitrages.size() > 30L) {
+        Random random = new Random();
+        int randomNumber = random.nextInt((45-30) + 1) + 30;
+        if(todayArbitrages.size() > randomNumber) {
             return "tomorrow";
         }
         var last21Minutes = todayArbitrages.stream().filter(x->x.getCreatedDate().isAfter(LocalDateTime.now().minusMinutes(21))).collect(Collectors.toList());

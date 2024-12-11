@@ -70,7 +70,10 @@
                                 <button tabindex="3" type="submit" class="btn btn-primary btn-block"><i class="fa fa-send"></i>&nbsp;<span th:text="#{send}"></span></button>
                                 <div id="withdraw-notice" class="alert alert-info">
                                     <button onclick="$('#withdraw-notice').hide()" class="close">&times;</button>
-                                    <div class="alert-content"></div>
+                                    <div class="alert-content">
+                                        <li th:text="#{withdrawalNotice}"></li>
+                                        <li th:text="#{transferFee}"></li>
+                                    </div>
                                 </div>
                             </div>
                         </div>
