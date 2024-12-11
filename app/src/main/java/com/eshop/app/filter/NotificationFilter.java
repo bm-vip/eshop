@@ -3,6 +3,7 @@ package com.eshop.app.filter;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -12,6 +13,7 @@ public class NotificationFilter {
     private Long id;
     private UUID senderId;
     private UUID recipientId;
+    private List<UUID> recipients;
     private String subject;
     private String body;
     private Boolean read;
@@ -45,5 +47,9 @@ public class NotificationFilter {
 
     public Optional<Boolean> getRead() {
         return Optional.ofNullable(read);
+    }
+
+    public Optional<List<UUID>> getRecipients() {
+        return Optional.ofNullable(recipients);
     }
 }

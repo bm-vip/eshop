@@ -21,7 +21,8 @@ public interface ArbitrageRepository extends BaseRepository<ArbitrageEntity, Lon
             "a.coin.name, " +
             "COUNT(a.coin.name)) " +
             "FROM ArbitrageEntity a " +
+            "WHERE a.createdDate > :date " +
             "GROUP BY a.coin.name " +
             "ORDER BY COUNT(a.coin.name) DESC")
-    Page<CoinUsageDTO> findMostUsedCoins(Pageable pageable);
+    Page<CoinUsageDTO> findMostUsedCoins(LocalDateTime date, Pageable pageable);
 }

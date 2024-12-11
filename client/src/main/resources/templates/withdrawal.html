@@ -71,8 +71,11 @@
                                 <div id="withdraw-notice" class="alert alert-info">
                                     <button onclick="$('#withdraw-notice').hide()" class="close">&times;</button>
                                     <div class="alert-content">
-                                        <li th:text="#{withdrawalNotice}"></li>
-                                        <li th:text="#{transferFee}"></li>
+                                        <i class="fa fa-info-circle" style="font-size:17px"></i>
+                                        <ul style="margin: 0">
+                                            <li th:text="#{withdrawalNotice}"></li>
+                                            <li th:text="#{transferFee}"></li>
+                                        </ul>
                                     </div>
                                 </div>
                             </div>

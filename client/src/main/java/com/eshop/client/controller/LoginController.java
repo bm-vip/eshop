@@ -68,9 +68,9 @@ public class LoginController {
             var subscriptionPackages = subscriptionPackageService.findAll(filter, pageable,generateFilterKey("SubscriptionPackage","findAll",filter, pageable));
             var subscription = subscriptionService.findByUserAndActivePackage(user.getId());
 
-            modelAndView.addObject("tradeButtonText", "Trade " + limit == null ? "Now" : limit);
-            modelAndView.addObject("subscription", subscription);
-            modelAndView.addObject("subscriptionPackages", subscriptionPackages);
+            modelAndView.addObject("purchaseLimit", limit);
+            modelAndView.addObject("selectedSubscriptionPackageId", subscription == null ? 0L : subscription.getSubscriptionPackage().getId());
+            modelAndView.addObject("subscriptionPackages", subscriptionPackages.getContent());
         }
         return modelAndView;
     }

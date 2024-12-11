@@ -81,6 +81,7 @@ public class NotificationServiceImpl extends BaseServiceImpl<NotificationFilter,
         filter.getId().ifPresent(v -> builder.and(path.id.eq(v)));
         filter.getSenderId().ifPresent(v -> builder.and(path.sender.id.eq(v)));
         filter.getRecipientId().ifPresent(v -> builder.and(path.recipient.id.eq(v)));
+        filter.getRecipients().ifPresent(v -> builder.and(path.recipient.id.in(v)));
         filter.getSubject().ifPresent(v -> builder.and(path.subject.toLowerCase().contains(v.toLowerCase())));
         filter.getBody().ifPresent(v -> builder.and(path.body.toLowerCase().contains(v.toLowerCase())));
         filter.getRead().ifPresent(v -> builder.and(path.read.eq(v)));

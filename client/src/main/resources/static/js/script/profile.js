@@ -184,38 +184,37 @@ function loadSearchReferralEntity2ByInput() {
 }
 
 function updateUser() {
-    if (!isNullOrEmpty($("#password").val()) && $("#password").val() == $("#repeatPassword").val()) {
-        let entity = loadSaveEntityByInput();
-        $.blockUI(blockUiOptions());
-        $("#updateUser").attr("disabled", 'disabled');
-        $.ajax({
-            type: "PATCH",
-            url: ajaxUrl,
-            dataType: "json",
-            contentType: "application/json;charset=utf-8",
-            data: JSON.stringify(entity),
-            success: function (data) {
-                $.unblockUI();
-                $("#updateUser").removeAttr("disabled");
-                if (data.error == null) {
-                    clearAll();
-                    show_success(resources.saveSuccess);
-                    loadLabelByEntity(currentUser.id);
-                } else {
-                    show_error(data.error);
-                }
-            },
-            error: function (header, status, error) {
-                $.unblockUI();
-                $("#updateUser").removeAttr("disabled");
-                if(isNullOrEmpty(get(() => header.responseJSON)))
-                    show_error('ajax answer post returned error: ' + error.responseText);
-                else show_error(header.responseJSON.error + ' (' + header.responseJSON.status + ') <br>' + header.responseJSON.message);
-            }
-        });
-    } else {
+    if (!isNullOrEmpty($("#password").val()) && !isNullOrEmpty($("#repeatPassword").val()) && $("#password").val() != $("#repeatPassword").val()) {
         alert("password is not equal to repeat password");
     }
+    let entity = loadSaveEntityByInput();
+    $.blockUI(blockUiOptions());
+    $("#updateUser").attr("disabled", 'disabled');
+    $.ajax({
+        type: "PATCH",
+        url: ajaxUrl,
+        dataType: "json",
+        contentType: "application/json;charset=utf-8",
+        data: JSON.stringify(entity),
+        success: function (data) {
+            $.unblockUI();
+            $("#updateUser").removeAttr("disabled");
+            if (data.error == null) {
+                clearAll();$('input:password').val('');
+                show_success(resources.saveSuccess);
+                loadLabelByEntity(currentUser.id);
+            } else {
+                show_error(data.error);
+            }
+        },
+        error: function (header, status, error) {
+            $.unblockUI();
+            $("#updateUser").removeAttr("disabled");
+            if(isNullOrEmpty(get(() => header.responseJSON)))
+                show_error('ajax answer post returned error: ' + error.responseText);
+            else show_error(header.responseJSON.error + ' (' + header.responseJSON.status + ') <br>' + header.responseJSON.message);
+        }
+    });
 }
 function clearAll_() {
     $("#walletAddress,#email,#name,#lastName").val('');

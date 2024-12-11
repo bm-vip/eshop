@@ -18,7 +18,6 @@ function loadEntityByInput() {
 }
 function loadSearchEntityByInput() {
     let filter = {
-        id: isNullOrEmpty($("#hdf_id").val()) ? null : $("#hdf_id").val(),
         name: $("#name").val(),
         logo: $("#logo").val(),
     };

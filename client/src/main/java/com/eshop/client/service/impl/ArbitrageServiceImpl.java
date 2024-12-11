@@ -173,7 +173,7 @@ public class ArbitrageServiceImpl extends BaseServiceImpl<ArbitrageFilter, Arbit
     @Cacheable(cacheNames = "client", key = "'Arbitrage:findMostUsedCoins:' + #pageSize")
     public Page<CoinUsageDTO> findMostUsedCoins(int pageSize) {
         long count = repository.count();
-        return repository.findMostUsedCoins(PageRequest.ofSize(pageSize)).map(m->{
+        return repository.findMostUsedCoins(LocalDateTime.now().minusDays(7),PageRequest.ofSize(pageSize)).map(m->{
             m.setUsagePercentage(m.getUsageCount()*100L/count);
             return m;
         });

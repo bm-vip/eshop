@@ -37,7 +37,7 @@ function loadSearchEntityByInput() {
         displayOrder: $("#displayOrder").val(),
         type: $("#type").val(),
         answerType: $("#answerType").val(),
-        user: isNullOrEmpty($("#userSelect2").val())? null : {id: $("#userSelect2").val()},
+        userId: isNullOrEmpty($("#userSelect2").val())? null : $("#userSelect2").val(),
         active: isNullOrEmpty($("#active").val()) ? null : $("#active").val()
     };
     return filter;

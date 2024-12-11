@@ -26,11 +26,10 @@ function loadEntityByInput() {
 
 function loadSearchEntityByInput() {
     let filter = {
-        sender: isNullOrEmpty($("#senderSelect2").val())? null : {id: $("#senderSelect2").val()},
+        senderId: isNullOrEmpty($("#senderSelect2").val())? null : $("#senderSelect2").val(),
         subject: $("#subject").val(),
         body: $("#body").val(),
-        recipients: arrayToJsonArray($("#recipientSelect2").val()),
-        allRecipients: $("#allRecipients").is(':checked')
+        recipients: arrayToJsonArray($("#recipientSelect2").val())
     };
     return filter;
 }
