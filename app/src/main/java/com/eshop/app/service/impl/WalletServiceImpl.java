@@ -120,7 +120,7 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter,WalletModel,
                     if(newSubscription.getRemainingWithdrawalPerDay() > 0)
                         throw new NotAcceptableException(String.format("Withdrawal is allowed only after %d days", newSubscription.getRemainingWithdrawalPerDay()));
                 }
-                if(model.getTransactionType().equals(TransactionType.DEPOSIT) && !walletRepository.existsByUserIdAndTransactionTypeAndActiveTrue(model.getUser().getId(),TransactionType.DEPOSIT)) {
+                if(model.getTransactionType().equals(TransactionType.DEPOSIT) && walletRepository.countByUserIdAndTransactionTypeAndActiveTrue(model.getUser().getId(),TransactionType.DEPOSIT) == 1) {
                     var user = userService.findById(model.getUser().getId());
                     if (get(() -> user.getParent()) != null) {
                         WalletModel bonus1 = new WalletModel();
@@ -158,7 +158,7 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter,WalletModel,
                     if(newSubscription.getRemainingWithdrawalPerDay() > 0)
                         throw new NotAcceptableException(String.format("Withdrawal is allowed only after %d days.", newSubscription.getRemainingWithdrawalPerDay()));
                 }
-                if(model.getTransactionType().equals(TransactionType.DEPOSIT) && !walletRepository.existsByUserIdAndTransactionTypeAndActiveTrue(model.getUser().getId(),TransactionType.DEPOSIT)) {
+                if(model.getTransactionType().equals(TransactionType.DEPOSIT) && walletRepository.countByUserIdAndTransactionTypeAndActiveTrue(model.getUser().getId(),TransactionType.DEPOSIT) == 1) {
                     var user = userService.findById(model.getUser().getId());
                     if (get(() -> user.getParent()) != null) {
                         WalletModel bonus1 = new WalletModel();
