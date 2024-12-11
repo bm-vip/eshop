@@ -497,9 +497,9 @@ function jsonToUrlSearchParams(json) {
 }
 
 function copyLink(id, text) {
-    let link = $(id).attr('href');
+    let link = $(id).attr('link');
     if(isNullOrEmpty(link))
-        link = $(id).attr('link');
+        link = $(id).attr('href');
     copyValue(link, text);
 }
 function copyValue(value, name) {
