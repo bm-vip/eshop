@@ -44,5 +44,9 @@ public class CoinServiceImpl extends BaseServiceImpl<CoinFilter, CoinModel, Coin
     public CoinModel findByRandom() {
         return mapper.toModel(repository.findByRandom());
     }
+    @Override
+    public List<CoinModel> findAllByRandom(int count) {
+        return mapper.toModel(repository.findAllByRandom(count));
+    }
 
 }

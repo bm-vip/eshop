@@ -5018,7 +5018,7 @@ $(document).ready(function () {
     init_daterangepicker_single_call();
     init_daterangepicker_reservation();
     init_SmartWizard();
-    init_EasyPieChart();
+    // init_EasyPieChart();
     init_charts();
     init_echarts();
     init_morris_charts();

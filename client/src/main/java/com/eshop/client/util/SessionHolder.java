@@ -34,4 +34,7 @@ public class SessionHolder {
     public SecurityContextHolderAwareRequestWrapper getRequestWrapper() {
         return new SecurityContextHolderAwareRequestWrapper(request, "");
     }
+    public ObjectMapper getObjectMapper() {
+        return objectMapper;
+    }
 }

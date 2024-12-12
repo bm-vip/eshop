@@ -6,14 +6,14 @@
     <link rel="stylesheet" type="text/css" th:href="#{direction} +'/iCheck/skins/flat/green.css'"/>
     <link rel="stylesheet" type="text/css" th:href="#{direction} +'/bootstrap-progressbar/css/bootstrap-progressbar-3.3.4.min.css'"/>
     <style>
-        .disabled{
+        .disabled {
             filter: grayscale(100%);
             pointer-events: none;
         }
     </style>
 </th:block>
 <div layout:fragment="content">
-    <input type="hidden" id="selectedSubscriptionPackageId" name="selectedSubscriptionPackageId" th:value="${selectedSubscriptionPackageId}" />
+    <input type="hidden" id="selectedSubscription" name="selectedSubscription" th:value="${selectedSubscription}" />
     <input type="hidden" id="purchaseLimit" name="purchaseLimit" th:value="${purchaseLimit}" />
     <div class="page-title">
         <div class="title_left">
@@ -61,8 +61,8 @@
                                                     </div>
                                                 </div>
                                                 <div class="pricing_footer">
-                                                    <a th:href="'javascript:trade(' + ${s.id} + ');'" th:class="'btn btn-success btn-block ' + ${selectedSubscriptionPackageId != s.id ? 'disabled' : ''}" th:attr="aria-disabled=${selectedSubscriptionPackageId != s.id}" role="button" th:text="|Trade ${purchaseLimit == null ? 'Now' : purchaseLimit}|"></a>
-                                                    <a th:href="'javascript:loadPages(\'deposit?amount=' + ${#numbers.formatDecimal(s.price, 0, 'NONE', 0, 'POINT')} +'\')'" th:class="'btn btn-primary btn-block ' + ${selectedSubscriptionPackageId == s.id ? 'disabled' : ''}" th:attr="aria-disabled=${selectedSubscriptionPackageId == s.id}" role="button">Purchase<span></span></a>
+                                                    <a th:id="'trade-btn-' + ${s.id}" th:href="'javascript:trade(' + ${s.id} + ');'" th:class="'btn btn-success btn-block ' + ${selectedSubscriptionPackageId != s.id ? 'disabled' : ''}" th:attr="aria-disabled=${selectedSubscriptionPackageId != s.id}" role="button" th:text="|Trade ${purchaseLimit == null ? 'Now' : purchaseLimit}|"></a>
+                                                    <a th:href="'javascript:loadPages(\'deposit?amount=' + ${#numbers.formatDecimal(s.price, 0, 'NONE', 0, 'POINT')} +'\')'" th:class="'btn btn-primary btn-block ' + ${selectedSubscriptionPackageId >= s.id ? 'disabled' : ''}" th:attr="aria-disabled=${selectedSubscriptionPackageId >= s.id}" role="button">Purchase<span></span></a>
                                                 </div>
                                             </div>
                                         </div>
@@ -76,11 +76,11 @@
         </div>
     </div>
 
-    <div id="trading-content" class="row" style="display: none">
+    <div id="trading-content" class="row" th:style="${selectedSubscriptionPackageId == null} ? 'display:none;' : 'display:block;'">
         <div class="col-md-12 col-sm-12  ">
             <div class="x_panel">
                 <div class="x_title">
-                    <h2>Trading Orders</h2>
+                    <h2>Trading Orders <small th:text="${selectedSubscriptionPackageName}">Subscription package name</small></h2>
                     <ul class="nav navbar-right panel_toolbox">
                         <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
                         </li>
@@ -90,6 +90,30 @@
 
                 <div class="x_content">
                     <div id="trading-order" class="row">
+                        <th:block th:if="${coinExchanges != null && coinExchanges.size > 0}">
+                            <th:block th:each="c: ${coinExchanges}">
+                                <div class="col-md-3 widget widget_tally_box">
+                                    <div class="x_panel">
+                                        <div class="x_title">
+                                            <h2 th:text="'Order ' + ${c.index}"></h2>
+                                            <div class="clearfix"></div>
+                                        </div>
+                                        <div class="x_content">
+                                            <div style="text-align: center; margin-bottom: 17px">
+                                                 <span th:id="'order-' + ${c.index}" class="chart" data-percent="100">
+                                                      <span class="percent"></span>
+                                                 </span>
+                                            </div>
+                                            <h3 class="name_title"><img width="40px" th:src="${c.coin.logo}"/> <th:block th:text="${c.coin.name}"></th:block></h3>
+                                            <p>From exchange <img width="20px" th:src="${c.exchanges[0].logo}"/> <th:block th:text="${c.exchanges[0].name}"></th:block> to <img width="20px" th:src="${c.exchanges[1].logo}"/> <th:block th:text="${c.exchanges[1].name}"></th:block></p>
+
+                                            <div class="divider"></div>
+                                            <a th:id="'buy-btn-' + ${c.index}" th:href="|javascript:buy(${c.index}, ${c.exchanges[0].id}, ${c.coin.id}, ${selectedSubscriptionId})|"  class="btn btn-primary btn-block" role="button">Buy/Sell</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </th:block>
+                        </th:block>
                     </div>
                 </div>
             </div>

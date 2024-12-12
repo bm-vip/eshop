@@ -1,34 +1,56 @@
+let selectedSubscription = {};
+let purchaseLimit = $("#purchaseLimit").val();
 $(function () {
-    if (parseInt($("#selectedSubscriptionPackageId").val()) > 0) {
-        trade($("#selectedSubscriptionPackageId").val(), function () {
-            $("#subscription-package-content .collapse-link").click();
-            $("#trading-content").show();
-        });
+    if (!isNullOrEmpty($("#selectedSubscription").val())) {
+        selectedSubscription = JSON.parse($("#selectedSubscription").val());
+        $("#subscription-package-content .collapse-link").click();
+        // $("#trading-content").show();
+    }
+    if(!isNullOrEmpty(purchaseLimit)){
+        $("#trading-order").html(`<div id="purchase-limit-notice" class="col-12 alert alert-warning">
+                                    <button onclick="$('#purchase-limit-notice').hide()" class="close">&times;</button>
+                                    <div class="alert-content">
+                                        <i class="fa fa-warning" style="font-size:17px"></i>
+                                        <ul style="margin: 0">
+                                            <li>You have reached the purchase limitation, please try after ${purchaseLimit}</li>                                           
+                                        </ul>
+                                    </div>
+                                </div>`);
     }
 });
 async function trade(id, callback) {
-    let purchaseLimit = $("#purchaseLimit").val();
+    $("#trade-btn-"+ id).attr("disabled", "disabled").attr("aria-disabled",true).addClass("disabled");
+    purchaseLimit = await (await fetch("/api/v1/arbitrage/purchase-limit/" + currentUser.id)).text();
     if(!isNullOrEmpty(purchaseLimit)) {
-        show_warning(`You have reached the purchase limitation, please try ${purchaseLimit}`);
+        show_warning(`You have reached the purchase limitation, please try after ${purchaseLimit}`);
         $(`#subscription-package-item-${id} .btn-success`).text('Trade ' + purchaseLimit);
+        $("#trading-order").html(`<div id="purchase-limit-notice" class="col-12 alert alert-warning">
+                                    <button onclick="$('#purchase-limit-notice').hide()" class="close">&times;</button>
+                                    <div class="alert-content">
+                                        <i class="fa fa-warning" style="font-size:17px"></i>
+                                        <ul style="margin: 0">
+                                            <li>You have reached the purchase limitation, please try after ${purchaseLimit}</li>                                           
+                                        </ul>
+                                    </div>
+                                </div>`);
         return;
     } else {
         $(`#subscription-package-item-${id} .btn-success`).text(resources.tradeNow);
     }
-    if(parseInt($("#selectedSubscriptionPackageId").val()) == 0) {
+    if(!isNullOrEmpty($("#selectedSubscription").val()) && !$("#trading-content").is(":visible")) {
         $("#subscription-package-content .collapse-link").click();
         $("#trading-content").show();
-        goToByScroll("#trading-content");
+        // goToByScroll("#trading-content");
     }
     //create trading orders
-    let subscription = await (await fetch("/api/v1/subscription/find-active-by-user/" + currentUser.id)).json();
-    const orderCount = get(() => subscription.subscriptionPackage.orderCount, 0);
+    $("#trading-content .x_title h2 small").text(selectedSubscription.subscriptionPackage.name)
+    const orderCount = get(() => selectedSubscription.subscriptionPackage.orderCount, 0);
     if (orderCount > 0) {
         $("#trading-order").empty();
         for (let i = 0; i < orderCount; i++) {
             let coin = await (await fetch('api/v1/coin/buy/' + currentUser.id)).json();
             let exchanges = await (await fetch('api/v1/exchange/buy/' + currentUser.id)).json();
-            const orderElement = `              
+            const orderElement = `
             <div class="col-md-3 widget widget_tally_box">
                 <div class="x_panel">
                     <div class="x_title">
@@ -47,7 +69,7 @@ async function trade(id, callback) {
                         <p>From exchange <img width="20px" src="${exchanges[0].logo}"/> ${exchanges[0].name} to <img width="20px" src="${exchanges[1].logo}"/> ${exchanges[1].name}</p>
 
                         <div class="divider"></div>
-                        <a id="buy-btn-${i + 1}" href="javascript:buy(${i + 1}, ${exchanges[0].id}, ${coin.id}, ${subscription.id});" class="btn btn-primary btn-block" role="button">Buy/Sell</a> 
+                        <a id="buy-btn-${i + 1}" href="javascript:buy(${i + 1}, ${exchanges[0].id}, ${coin.id}, ${selectedSubscription.id});" class="btn btn-primary btn-block" role="button">Buy/Sell</a>
                     </div>
                 </div>
             </div>`;
@@ -58,6 +80,7 @@ async function trade(id, callback) {
             callback();
         }
     }
+    $("#trade-btn-"+ id).removeAttr("disabled").attr("aria-disabled",false).removeClass("disabled");
 }
 function buy(index, exchangeId, coinId, subscriptionId) {
     $("#buy-btn-" + index).addClass("disabled").attr("aria-disabled", "true");

@@ -5,12 +5,12 @@ import com.eshop.client.config.Limited;
 import com.eshop.client.config.MessageConfig;
 import com.eshop.client.enums.RoleType;
 import com.eshop.client.filter.SubscriptionPackageFilter;
-import com.eshop.client.model.ResetPassModel;
-import com.eshop.client.model.UserModel;
+import com.eshop.client.model.*;
 import com.eshop.client.service.*;
 import com.eshop.client.service.impl.UserServiceImpl;
 import com.eshop.client.util.SessionHolder;
 import lombok.AllArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -22,6 +22,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
+
+import java.util.ArrayList;
 
 import static com.eshop.client.util.StringUtils.generateFilterKey;
 import static com.eshop.client.util.StringUtils.generateIdKey;
@@ -42,7 +44,10 @@ public class LoginController {
     final ArbitrageService arbitrageService;
     final SubscriptionPackageService subscriptionPackageService;
     final SubscriptionService subscriptionService;
+    final CoinService coinService;
+    final ExchangeService exchangeService;
 
+    @SneakyThrows
     @RequestMapping(value = "/{name}", method = RequestMethod.GET)
     public ModelAndView loadPage(@PathVariable String name) {
         if (name == null || name.isEmpty() || name.equals("favicon.ico"))
@@ -69,8 +74,34 @@ public class LoginController {
             var subscription = subscriptionService.findByUserAndActivePackage(user.getId());
 
             modelAndView.addObject("purchaseLimit", limit);
-            modelAndView.addObject("selectedSubscriptionPackageId", subscription == null ? 0L : subscription.getSubscriptionPackage().getId());
+            modelAndView.addObject("selectedSubscriptionPackageId", subscription == null ? null : subscription.getSubscriptionPackage().getId());
+            modelAndView.addObject("selectedSubscriptionPackageName", subscription == null ? null : subscription.getSubscriptionPackage().getName());
+            modelAndView.addObject("selectedSubscriptionId", subscription == null ? null : subscription.getId());
+            modelAndView.addObject("selectedSubscription", subscription == null ? null : sessionHolder.getObjectMapper().writeValueAsString(subscription));
             modelAndView.addObject("subscriptionPackages", subscriptionPackages.getContent());
+            if(limit == null && subscription!=null && subscription.getSubscriptionPackage().getOrderCount()>0) {
+                var coins = coinService.findAllByRandom(subscription.getSubscriptionPackage().getOrderCount());
+                var exchanges = exchangeService.findAllByRandom(subscription.getSubscriptionPackage().getOrderCount()*2);
+
+                var result = new ArrayList<CoinExchangeModel>();
+                int exchangeIndex = 0;
+                for (int i = 0; i < coins.size(); i++) {
+                    var selectedExchanges = new ArrayList<ExchangeModel>();
+
+                    // Pick the next 2 exchanges (if available)
+                    for (int j = 0; j < 2 && exchangeIndex < exchanges.size(); j++) {
+                        selectedExchanges.add(exchanges.get(exchangeIndex++));
+                    }
+
+                    // Create the CoinExchangeModel
+                    var model = new CoinExchangeModel();
+                    model.setCoin(coins.get(i));
+                    model.setIndex(i + 1);
+                    model.setExchanges(selectedExchanges);
+                    result.add(model);
+                }
+                modelAndView.addObject("coinExchanges", result);
+            }
         }
         return modelAndView;
     }

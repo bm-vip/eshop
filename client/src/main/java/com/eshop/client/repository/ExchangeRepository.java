@@ -10,4 +10,6 @@ import java.util.List;
 public interface ExchangeRepository extends BaseRepository<ExchangeEntity, Long> {
     @Query(value = "SELECT * FROM tbl_exchange ORDER BY RANDOM() LIMIT 2", nativeQuery = true)
     List<ExchangeEntity> findByRandom();
+    @Query(value = "SELECT * FROM tbl_exchange ORDER BY RANDOM() LIMIT ?", nativeQuery = true)
+    List<ExchangeEntity> findAllByRandom(int count);
 }
