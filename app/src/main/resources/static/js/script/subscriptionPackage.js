@@ -218,7 +218,7 @@ function onLoad() {
         searchable: false,
         sortable: false,
         render: function (data) { return `<a class="btn btn-default fa fa-pencil" id="${data}" data-bs-toggle="tooltip" title="Edit"></a> <a class="btn btn-danger fa fa-trash" id="${data}" data-bs-toggle="tooltip" title="Delete"></a>` }
-    }], "/api/v1/subscription-package-detail/findAllTable", "loadSearchDetailEntityByInput");
+    }], "/api/v1/subscription-package-detail", "loadSearchDetailEntityByInput");
     $.subscribe('reloadDetailTable', detailDataTable.ajax.reload);
 
     $('#myModal form').validate({
