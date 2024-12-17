@@ -29,7 +29,7 @@ function loadSearchEntityByInput() {
         senderId: isNullOrEmpty($("#senderSelect2").val())? null : $("#senderSelect2").val(),
         subject: $("#subject").val(),
         body: $("#body").val(),
-        recipients: arrayToJsonArray($("#recipientSelect2").val())
+        recipients: $("#recipientSelect2").val()
     };
     return filter;
 }

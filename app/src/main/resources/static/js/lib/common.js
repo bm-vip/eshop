@@ -473,6 +473,34 @@ function setSwitchery(selector, checked) {
     }
 }
 
+// function jsonToUrlSearchParams(obj, prefix = '') {
+//     let params = new URLSearchParams();
+//
+//     function flattenObject(obj, currentPrefix = '') {
+//         for (const key in obj) {
+//             if (obj.hasOwnProperty(key)) {
+//                 const value = obj[key];
+//                 const newPrefix = currentPrefix ? `${currentPrefix}.${key}` : key;
+//
+//                 if (value && typeof value === 'object') {
+//                     if (Array.isArray(value)) {
+//                         value.forEach((item) => {
+//                             flattenObject({ [key]: item }, newPrefix);
+//                         });
+//                     } else {
+//                         flattenObject(value, newPrefix);
+//                     }
+//                 } else if (!isNullOrEmpty(value)) {
+//                     params.append(newPrefix, value);
+//                 }
+//             }
+//         }
+//     }
+//
+//     flattenObject(obj, prefix);
+//     return params.toString();
+// }
+
 function flattenObject(obj, prefix = '') {
     const result = {};
     for (const key in obj) {
@@ -498,5 +526,19 @@ function jsonToUrlSearchParams(json) {
         }
     }
     return params.toString();
+}
+
+function objectToQueryString(obj) {
+    return Object.entries(obj)
+        .map(([key, value]) => {
+            // If the value is an array, treat it as multiple occurrences of the same parameter
+            if (Array.isArray(value)) {
+                return value.map(item => `${encodeURIComponent(key)}=${encodeURIComponent(item)}`).join('&');
+            }
+            // For non-array values, use a simple key-value pair
+            return `${encodeURIComponent(key)}=${encodeURIComponent(value)}`;
+        })
+        .filter(part => part !== '')
+        .join('&');
 }
 
