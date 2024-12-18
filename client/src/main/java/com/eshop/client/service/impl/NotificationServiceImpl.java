@@ -45,6 +45,7 @@ public class NotificationServiceImpl extends BaseServiceImpl<NotificationFilter,
         if(entity.getRecipient().getId().equals(sessionHolder.getCurrentUser().getId()))
             entity.setRead(true);
         repository.save(entity);
+        clearCache(key);
         return mapper.toModel(entity);
     }
 

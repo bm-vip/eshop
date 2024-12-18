@@ -75,7 +75,7 @@ public abstract class BaseServiceImpl<F, M extends BaseModel<ID>, E extends Base
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     @Cacheable(cacheNames = "client", key = "#key")
     public M findById(ID id, String key) {
         return mapper.toModel(repository.findById(id)

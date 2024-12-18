@@ -1,7 +1,7 @@
 function onLoad(){
     const id = getURLParameter("id");
     if(!isNullOrEmpty(id)){
-        loadContent(id);
+        loadContent(id,"#inbox-body");
     }
     $.getJSON("api/v1/notification/findAll-by-recipientId/" + currentUser.id + "?sort=read,desc", function (data) {
         data.content.forEach(function (notif){
@@ -39,16 +39,8 @@ function onLoad(){
 
 function loadContent(id, target){
     $.getJSON(`${ajaxUrl}/${id}`, function (data) {
-        $(target).html(`<div class="mail_heading row">
-                                    <div class="col-md-8">
-                                        <div class="btn-group">
-                                            <button class="btn btn-sm btn-primary" type="button"><i class="fa fa-reply"></i> Reply</button>
-                                            <button class="btn btn-sm btn-default" type="button"  data-placement="top" data-toggle="tooltip" data-original-title="Forward"><i class="fa fa-share"></i></button>
-                                            <button class="btn btn-sm btn-default" type="button" data-placement="top" data-toggle="tooltip" data-original-title="Print"><i class="fa fa-print"></i></button>
-                                            <button class="btn btn-sm btn-default" type="button" data-placement="top" data-toggle="tooltip" data-original-title="Trash"><i class="fa fa-trash-o"></i></button>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4 text-right">
+        $(target).html(`<div class="mail_heading row">                                  
+                                    <div class="col-md-12 text-left">
                                         <p class="date"> ${toDateTimeString(data.createdDate)}</p>
                                     </div>
                                     <div class="col-md-12">
@@ -73,21 +65,12 @@ function loadContent(id, target){
                                 </div>
                                 <div class="view-mail">
                                     <p>${data.body} </p>                                   
-                                </div>
-                                
-                                <div class="btn-group">
-                                    <button class="btn btn-sm btn-primary" type="button"><i class="fa fa-reply"></i> Reply</button>
-                                    <button class="btn btn-sm btn-default" type="button"  data-placement="top" data-toggle="tooltip" data-original-title="Forward"><i class="fa fa-share"></i></button>
-                                    <button class="btn btn-sm btn-default" type="button" data-placement="top" data-toggle="tooltip" data-original-title="Print"><i class="fa fa-print"></i></button>
-                                    <button class="btn btn-sm btn-default" type="button" data-placement="top" data-toggle="tooltip" data-original-title="Trash"><i class="fa fa-trash-o"></i></button>
                                 </div>`);
     })
 }
 function loadSaveEntityByInput() {
     let model = {
         sender: {id: currentUser.id},
-        // recipient: isNullOrEmpty($('#recipientSelect2').val()) ? null : {id: $('#recipientSelect2').val()},
-        recipient:{id:2},
         subject: $('#subject').val(),
         body: $('#body').val()
     };
@@ -99,7 +82,7 @@ function sendNotification() {
     $("#sendNotification").attr("disabled", 'disabled');
     $.ajax({
         type: "POST",
-        url: ajaxUrl,
+        url: ajaxUrl+"/support",
         dataType: "json",
         contentType: "application/json;charset=utf-8",
         data: JSON.stringify(entity),
