@@ -43,11 +43,9 @@ public class LoginController {
     @GetMapping(value = {"", "/"})
     public String index() {
         var requestWrapper = sessionHolder.getRequestWrapper();
-        String targetUrl = "/access-denied";
-        if (requestWrapper.isUserInRole(RoleType.ADMIN) || requestWrapper.isUserInRole(RoleType.SUPER_WISER))
-            targetUrl = "redirect:/dashboard";
-        else if (requestWrapper.isUserInRole(RoleType.USER) || requestWrapper.isUserInRole(RoleType.GUEST))
-            targetUrl = "redirect:/company";
+        String targetUrl = "redirect:/dashboard";
+        if (requestWrapper.isUserInRole(RoleType.USER))
+            targetUrl = "/access-denied";
         return targetUrl;
     }
 

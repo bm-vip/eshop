@@ -74,4 +74,14 @@
                                  constraintName="fk_tbl_notification_on_recipient" referencedColumnNames="id"
                                  referencedTableName="tbl_user"/>
     </changeSet>
+    <changeSet id="14-6" author="administrator">
+        <addColumn tableName="tbl_notification">
+            <column name="role" type="VARCHAR(255)" defaultValue="ROLE_SUPER_WISER">
+                <constraints nullable="false"></constraints>
+            </column>
+        </addColumn>
+        <addColumn tableName="tbl_notification_aud">
+            <column name="role" type="VARCHAR(255)"/>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>

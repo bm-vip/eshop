@@ -91,6 +91,9 @@ public class SubscriptionServiceImpl extends BaseServiceImpl<SubscriptionFilter,
             entity.setExpireDate(LocalDateTime.now().plusDays(subscriptionPackage.getDuration()));
         }
         entity.setFinalPrice(calculatePrice(subscriptionPackage.getPrice(), model.getDiscountPercentage()));
+        var user = userRepository.findById(model.getUser().getId()).orElseThrow(()-> new NotFoundException("No such user found with " + model.getUser().getId()));
+        entity.setRole(user.getRole());
+
         if(model.getStatus().equals(EntityStatusType.Active)) {
             var balanceList = walletRepository.totalBalanceGroupedByCurrency(entity.getUser().getId());
             var balance = balanceList.stream().filter(x->x.getCurrency().equals(subscriptionPackage.getCurrency())).findFirst();

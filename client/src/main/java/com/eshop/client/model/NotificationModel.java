@@ -12,6 +12,7 @@ public class NotificationModel extends BaseModel<Long> {
     private String subject;
     private String body;
     private boolean read = false;
+    private String role;
     public String getCreatedDateAgo(){
         return DateUtil.timeAgo(this.createdDate);
     }

@@ -1,6 +1,5 @@
 package com.eshop.app.service.impl;
 
-import com.eshop.app.config.MessageConfig;
 import com.eshop.app.entity.QUserEntity;
 import com.eshop.app.entity.UserEntity;
 import com.eshop.app.enums.CurrencyType;
@@ -14,15 +13,13 @@ import com.eshop.app.repository.WalletRepository;
 import com.eshop.app.service.NotificationService;
 import com.eshop.app.service.UserService;
 import com.eshop.app.util.ReferralCodeGenerator;
+import com.eshop.app.util.SessionHolder;
 import com.eshop.exception.common.BadRequestException;
 import com.eshop.exception.common.NotFoundException;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.Expressions;
-import lombok.SneakyThrows;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.ResourceLoader;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -32,8 +29,6 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Optional;
@@ -50,14 +45,16 @@ public class UserServiceImpl extends BaseServiceImpl<UserFilter,UserModel, UserE
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final NotificationService notificationService;
     private final WalletRepository walletRepository;
+    private final SessionHolder sessionHolder;
 
-    public UserServiceImpl(UserRepository userRepository, UserMapper userMapper, RoleRepository roleRepository, BCryptPasswordEncoder bCryptPasswordEncoder, NotificationService notificationService, WalletRepository walletRepository) {
+    public UserServiceImpl(UserRepository userRepository, UserMapper userMapper, RoleRepository roleRepository, BCryptPasswordEncoder bCryptPasswordEncoder, NotificationService notificationService, WalletRepository walletRepository, SessionHolder sessionHolder) {
         super(userRepository, userMapper);
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.notificationService = notificationService;
         this.walletRepository = walletRepository;
+        this.sessionHolder = sessionHolder;
     }
     @Override
     @Cacheable(cacheNames = "${cache.prefix:app}", key = "'User:findByUserNameOrEmail:' + #login")
@@ -116,6 +113,8 @@ public class UserServiceImpl extends BaseServiceImpl<UserFilter,UserModel, UserE
         if (StringUtils.hasLength(model.getReferralCode())) {
             userRepository.findByUid(model.getReferralCode()).ifPresent(p -> entity.setParent(p));
         }
+        var parent = findById(model.getParent().getId());
+        entity.setRole(parent.getRole());
         entity.setUid(getUid());
         var createdUser = mapper.toModel(repository.save(entity));
         notificationService.sendWelcomeNotification(createdUser.getId());
@@ -161,6 +160,7 @@ public class UserServiceImpl extends BaseServiceImpl<UserFilter,UserModel, UserE
             entity.setPassword(bCryptPasswordEncoder.encode("12345"));
 
         entity.setUid(getUid());
+        entity.setRole(sessionHolder.getCurrentUser().getRole());
         var createdUser = mapper.toModel(repository.save(entity));
         notificationService.sendWelcomeNotification(createdUser.getId());
         return createdUser;
@@ -173,6 +173,7 @@ public class UserServiceImpl extends BaseServiceImpl<UserFilter,UserModel, UserE
 
         if(!RoleType.hasRole(RoleType.ADMIN)) {
             builder.and(path.roles.any().role.ne(RoleType.ADMIN));
+            builder.and(path.role.eq(RoleType.firstRole()));
         }
         filter.getId().ifPresent(v -> builder.and(path.id.eq(v)));
         filter.getTitle().ifPresent(v -> builder.and(path.firstName.toLowerCase().contains(v.toLowerCase())).or(path.lastName.toLowerCase().contains(v.toLowerCase())));

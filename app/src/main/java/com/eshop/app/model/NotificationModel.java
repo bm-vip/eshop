@@ -15,5 +15,6 @@ public class NotificationModel extends BaseModel<Long> {
     private boolean allRecipients;
     private String subject;
     private String body;
+    private String role;
     private boolean read = false;
 }

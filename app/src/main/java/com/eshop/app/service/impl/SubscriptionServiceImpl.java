@@ -17,6 +17,7 @@ import com.eshop.app.service.ParameterService;
 import com.eshop.app.service.SubscriptionService;
 import com.eshop.app.service.UserService;
 import com.eshop.app.util.DateUtil;
+import com.eshop.app.util.SessionHolder;
 import com.eshop.exception.common.BadRequestException;
 import com.eshop.exception.common.NotFoundException;
 import com.eshop.exception.common.PaymentRequiredException;
@@ -42,14 +43,16 @@ public class SubscriptionServiceImpl extends BaseServiceImpl<SubscriptionFilter,
     private final UserService userService;
     private final WalletRepository walletRepository;
     private final ParameterService parameterService;
+    private final SessionHolder sessionHolder;
 
-    public SubscriptionServiceImpl(SubscriptionRepository repository, SubscriptionMapper mapper, SubscriptionPackageRepository subscriptionPackageRepository, UserService userService, WalletRepository walletRepository, ParameterService parameterService) {
+    public SubscriptionServiceImpl(SubscriptionRepository repository, SubscriptionMapper mapper, SubscriptionPackageRepository subscriptionPackageRepository, UserService userService, WalletRepository walletRepository, ParameterService parameterService, SessionHolder sessionHolder) {
         super(repository, mapper);
         this.subscriptionRepository = repository;
         this.subscriptionPackageRepository = subscriptionPackageRepository;
         this.userService = userService;
         this.walletRepository = walletRepository;
         this.parameterService = parameterService;
+        this.sessionHolder = sessionHolder;
     }
     @Override
     public JpaRepository<SubscriptionEntity,Long> getRepository() {
@@ -63,8 +66,8 @@ public class SubscriptionServiceImpl extends BaseServiceImpl<SubscriptionFilter,
 
         if(!RoleType.hasRole(RoleType.ADMIN)) {
             builder.and(path.user.roles.any().role.ne(RoleType.ADMIN));
+            builder.and(path.role.eq(RoleType.firstRole()));
         }
-
         filter.getId().ifPresent(v -> builder.and(path.id.eq(v)));
         filter.getUserId().ifPresent(v -> builder.and(path.user.id.eq(v)));
         filter.getSubscriptionPackageId().ifPresent(v -> builder.and(path.subscriptionPackage.id.eq(v)));
@@ -84,6 +87,7 @@ public class SubscriptionServiceImpl extends BaseServiceImpl<SubscriptionFilter,
         var entity = mapper.toEntity(model);
         var subscriptionPackage = subscriptionPackageRepository.findById(model.getSubscriptionPackage().getId()).orElseThrow(()-> new NotFoundException("No such subscriptionPackage with " + model.getSubscriptionPackage().getId()));
 
+        entity.setRole(sessionHolder.getCurrentUser().getRole());
         entity.setStatus(EntityStatusType.Pending);
         if(subscriptionPackage.getDuration() <= 0)
             entity.setExpireDate(DateUtil.toLocalDateTime(4102444800000L));
@@ -182,6 +186,7 @@ public class SubscriptionServiceImpl extends BaseServiceImpl<SubscriptionFilter,
             parentWallet.setCurrency(entity.getSubscriptionPackage().getCurrency());
             parentWallet.setTransactionType(TransactionType.BONUS);
             parentWallet.setAddress(walletAddressValue);
+            parentWallet.setRole(entity.getUser().getRole());
             walletRepository.save(parentWallet);
         }
     }

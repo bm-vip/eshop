@@ -114,14 +114,14 @@
                     <div class="menu_section">
 
                         <ul class="nav side-menu">
-                            <li sec:authorize="hasAnyRole('SUPER_WISER','ADMIN')"><a><i class="fa fa-home"></i>
+                            <li sec:authorize="hasAnyRole('SUPER_WISER','MANAGER','ADMIN')"><a><i class="fa fa-home"></i>
                                 <th:block th:text="#{home}"></th:block>
                                 <span class="fa fa-chevrnon-down"></span></a>
                                 <ul class="nav child_menu">
                                     <li><a th:href="@{/dashboard}" th:text="#{dashboard}"></a></li>
                                 </ul>
                             </li>
-                            <li sec:authorize="hasAnyRole('SUPER_WISER','ADMIN')"><a><i class="fa fa-database"></i>
+                            <li sec:authorize="hasAnyRole('SUPER_WISER','MANAGER','ADMIN')"><a><i class="fa fa-database"></i>
                                 <th:block th:text="#{baseInfo}"></th:block>
                                 <span class="fa fa-chevron-down"></span></a>
                                 <ul class="nav child_menu">
@@ -139,7 +139,7 @@
                                     <li><a th:href="@{/parameters}" th:text="#{parameters}"></a></li>
                                 </ul>
                             </li>
-                            <li sec:authorize="hasAnyRole('SUPER_WISER','ADMIN')"><a><i class="fa fa-box"></i>
+                            <li sec:authorize="hasAnyRole('SUPER_WISER','MANAGER','ADMIN')"><a><i class="fa fa-box"></i>
                                 <th:block th:text="#{subscription}"></th:block>
                                 <span class="fa fa-chevron-down"></span></a>
                                 <ul class="nav child_menu">

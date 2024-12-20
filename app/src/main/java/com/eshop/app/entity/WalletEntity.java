@@ -39,6 +39,7 @@ public class WalletEntity extends BaseEntity<Long> {
 	private UserEntity user;
 
 	private boolean active;
+	private String role;
 
 	@Override
 	public String getSelectTitle() {

@@ -44,6 +44,7 @@ public class UserModel extends BaseModel<UUID> {
     private BigDecimal bonus;
     private BigDecimal reward;
     private boolean emailVerified;
+    private String role;
 
     public UserModel setUserId(UUID id) {
         setId(id);

@@ -30,11 +30,9 @@ public class SuccessLoginConfig implements AuthenticationSuccessHandler {
         MDC.put("userId",userModel.getId().toString());
 
         SecurityContextHolderAwareRequestWrapper requestWrapper = new SecurityContextHolderAwareRequestWrapper(request, "");
-        String targetUrl = "/access-denied";
-        if (requestWrapper.isUserInRole(RoleType.ADMIN) || requestWrapper.isUserInRole(RoleType.SUPER_WISER))
-            targetUrl = "/dashboard";
-        else if (requestWrapper.isUserInRole(RoleType.USER) || requestWrapper.isUserInRole(RoleType.GUEST))
-            targetUrl = "/userManagement";
+        String targetUrl = "/dashboard";
+        if (requestWrapper.isUserInRole(RoleType.USER))
+            targetUrl = "/access-denied";
         redirectStrategy.sendRedirect(request, response, targetUrl);
     }
 }

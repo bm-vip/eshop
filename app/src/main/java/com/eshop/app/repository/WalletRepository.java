@@ -47,39 +47,39 @@ public interface WalletRepository extends BaseRepository<WalletEntity, Long> {
 	@Query("SELECT new com.eshop.app.model.BalanceModel(w.currency, "
 			+ "SUM(CASE WHEN w.transactionType = com.eshop.app.enums.TransactionType.DEPOSIT THEN w.amount ELSE 0 END) - "
 			+ "SUM(CASE WHEN w.transactionType = com.eshop.app.enums.TransactionType.WITHDRAWAL OR w.transactionType = com.eshop.app.enums.TransactionType.WITHDRAWAL_PROFIT THEN w.amount ELSE 0 END)) "
-			+ "FROM WalletEntity w join w.user u join u.roles r WHERE r.id = 2 AND w.active is true GROUP BY w.currency")
-	List<BalanceModel> totalBalanceGroupedByCurrency();
+			+ "FROM WalletEntity w join w.user u join u.roles r WHERE r.id in (1,2) AND (:role is null or w.role=:role) AND w.active is true GROUP BY w.currency")
+	List<BalanceModel> totalBalanceGroupedByCurrency(String role);
 
 	@Query("SELECT new com.eshop.app.model.BalanceModel(w.currency, SUM(w.amount)) "
 			+ "FROM WalletEntity w join w.user u join u.roles r "
-			+ "WHERE r.id = 2 AND w.transactionType = com.eshop.app.enums.TransactionType.DEPOSIT "
+			+ "WHERE r.id = 2 AND (:role is null or w.role=:role) AND w.transactionType = com.eshop.app.enums.TransactionType.DEPOSIT "
 			+ "AND w.active is true "
 			+ "GROUP BY w.currency")
-	List<BalanceModel> totalDepositGroupedByCurrency();
+	List<BalanceModel> totalDepositGroupedByCurrency(String role);
 	@Query("SELECT new com.eshop.app.model.BalanceModel(w.currency, SUM(w.amount)) "
 			+ "FROM WalletEntity w join w.user u join u.roles r "
-			+ "WHERE r.id = 2 AND (w.transactionType = com.eshop.app.enums.TransactionType.WITHDRAWAL OR w.transactionType = com.eshop.app.enums.TransactionType.WITHDRAWAL_PROFIT) "
+			+ "WHERE r.id in (1,2) AND (:role is null or w.role=:role) AND (w.transactionType = com.eshop.app.enums.TransactionType.WITHDRAWAL OR w.transactionType = com.eshop.app.enums.TransactionType.WITHDRAWAL_PROFIT) "
 			+ "AND w.active is true "
 			+ "GROUP BY w.currency")
-	List<BalanceModel> totalWithdrawalGroupedByCurrency();
+	List<BalanceModel> totalWithdrawalGroupedByCurrency(String role);
 	@Query("SELECT new com.eshop.app.model.BalanceModel(w.currency, SUM(w.amount)) "
 			+ "FROM WalletEntity w join w.user u join u.roles r "
-			+ "WHERE r.id = 2 AND w.transactionType = com.eshop.app.enums.TransactionType.BONUS "
+			+ "WHERE r.id = 2 AND w.role=:role AND w.transactionType = com.eshop.app.enums.TransactionType.BONUS "
 			+ "AND w.active is true "
 			+ "GROUP BY w.currency")
-	List<BalanceModel> totalBonusGroupedByCurrency();
+	List<BalanceModel> totalBonusGroupedByCurrency(String role);
 	@Query("SELECT new com.eshop.app.model.BalanceModel(w.currency, SUM(w.amount)) "
 			+ "FROM WalletEntity w join w.user u join u.roles r "
-			+ "WHERE r.id = 2 AND w.transactionType = com.eshop.app.enums.TransactionType.REWARD "
+			+ "WHERE r.id = 2 AND (:role is null or w.role=:role) AND w.transactionType = com.eshop.app.enums.TransactionType.REWARD "
 			+ "AND w.active is true "
 			+ "GROUP BY w.currency")
-	List<BalanceModel> totalRewardGroupedByCurrency();
+	List<BalanceModel> totalRewardGroupedByCurrency(String role);
 
 	@Query("SELECT new com.eshop.app.model.BalanceModel(w.currency, "
 			+ "SUM(CASE WHEN w.transactionType = com.eshop.app.enums.TransactionType.REWARD OR w.transactionType = com.eshop.app.enums.TransactionType.BONUS THEN w.amount ELSE 0 END) - "
 			+ "SUM(CASE WHEN w.transactionType = com.eshop.app.enums.TransactionType.WITHDRAWAL_PROFIT THEN w.amount ELSE 0 END)) "
-			+ "FROM WalletEntity w join w.user u join u.roles r WHERE r.id = 2 AND w.active is true GROUP BY w.currency")
-	List<BalanceModel> totalProfitGroupedByCurrency();
+			+ "FROM WalletEntity w join w.user u join u.roles r WHERE r.id = 2 AND (:role is null or w.role=:role) AND w.active is true GROUP BY w.currency")
+	List<BalanceModel> totalProfitGroupedByCurrency(String role);
 	long countByUserIdAndTransactionTypeAndActiveTrue(UUID userId, TransactionType transactionType);//because it will call after create and activation
 
 //	@Query(value = "SELECT currency, SUM(totalAmount) AS totalAmount" +

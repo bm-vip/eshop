@@ -33,6 +33,7 @@ public class NotificationEntity extends BaseEntity<Long> implements LogicalDelet
     private boolean read;
     @Column(nullable = false)
     private boolean deleted;
+    private String role;
 
     @Override
     public String getSelectTitle() {

@@ -8,11 +8,13 @@ import com.eshop.client.enums.CurrencyType;
 import com.eshop.client.enums.RoleType;
 import com.eshop.client.filter.UserFilter;
 import com.eshop.client.mapping.UserMapper;
-import com.eshop.client.model.*;
+import com.eshop.client.model.BalanceModel;
+import com.eshop.client.model.NotificationModel;
+import com.eshop.client.model.PageModel;
+import com.eshop.client.model.UserModel;
 import com.eshop.client.repository.*;
 import com.eshop.client.service.NotificationService;
 import com.eshop.client.service.OneTimePasswordService;
-import com.eshop.client.service.RoleService;
 import com.eshop.client.service.UserService;
 import com.eshop.client.util.ReferralCodeGenerator;
 import com.eshop.client.util.SessionHolder;
@@ -20,7 +22,6 @@ import com.eshop.exception.common.BadRequestException;
 import com.eshop.exception.common.NotFoundException;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
-import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import lombok.SneakyThrows;
 import org.springframework.cache.annotation.CacheEvict;
@@ -38,8 +39,6 @@ import org.springframework.util.StringUtils;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.*;
 
 import static com.eshop.client.util.MapperHelper.get;
@@ -152,7 +151,10 @@ public class UserServiceImpl extends BaseServiceImpl<UserFilter,UserModel, UserE
         var role = roleRepository.findByRole(RoleType.USER).get();
         entity.setRoles(new HashSet<>(Arrays.asList(role)));
         if (StringUtils.hasLength(model.getReferralCode())) {
-            userRepository.findByUid(model.getReferralCode()).ifPresent(p -> entity.setParent(p));
+            userRepository.findByUid(model.getReferralCode()).ifPresent(p -> {
+                entity.setParent(p);
+                entity.setRole(p.getRole());
+            });
         }
         entity.setUid(getUid());
         var createdUser = mapper.toModel(repository.save(entity));

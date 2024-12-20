@@ -42,6 +42,7 @@ public class SubscriptionEntity extends BaseEntity<Long> implements LogicalDelet
     @Column(name = "status")
     @Enumerated(value = EnumType.STRING)
     private EntityStatusType status;
+    private String role;
     @Override
     public String getSelectTitle() {
         return getOrDefault(()->user.getSelectTitle(),"") + " | " + getOrDefault(()->subscriptionPackage.getSelectTitle(),"");

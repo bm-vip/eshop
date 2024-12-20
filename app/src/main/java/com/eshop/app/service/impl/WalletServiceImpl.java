@@ -47,24 +47,18 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter,WalletModel,
     private final SubscriptionService subscriptionService;
     private final ParameterServiceImpl parameterService;
     private final UserService userService;
-    private final MessageConfig messages;
-    private final ResourceLoader resourceLoader;
     private final NotificationService notificationService;
     private final JPAQueryFactory queryFactory;
-    private final SessionHolder sessionHolder;
 
-    public WalletServiceImpl(WalletRepository repository, WalletMapper mapper, SubscriptionPackageService subscriptionPackageService, SubscriptionService subscriptionService, ParameterServiceImpl parameterService, UserService userService, MessageConfig messages, ResourceLoader resourceLoader, NotificationService notificationService, JPAQueryFactory queryFactory, SessionHolder sessionHolder) {
+    public WalletServiceImpl(WalletRepository repository, WalletMapper mapper, SubscriptionPackageService subscriptionPackageService, SubscriptionService subscriptionService, ParameterServiceImpl parameterService, UserService userService, NotificationService notificationService, JPAQueryFactory queryFactory) {
         super(repository, mapper);
         this.walletRepository = repository;
         this.subscriptionPackageService = subscriptionPackageService;
         this.subscriptionService = subscriptionService;
         this.parameterService = parameterService;
         this.userService = userService;
-        this.messages = messages;
-        this.resourceLoader = resourceLoader;
         this.notificationService = notificationService;
         this.queryFactory = queryFactory;
-        this.sessionHolder = sessionHolder;
     }
 
     @Override
@@ -74,8 +68,8 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter,WalletModel,
 
         if(!RoleType.hasRole(RoleType.ADMIN)) {
             builder.and(path.user.roles.any().role.ne(RoleType.ADMIN));
+            builder.and(path.role.eq(RoleType.firstRole()));
         }
-
         filter.getId().ifPresent(value -> builder.and(path.id.eq(value)));
         filter.getAmount().ifPresent(value -> builder.and(path.amount.eq(value)));
         filter.getAmountFrom().ifPresent(value -> builder.and(path.amount.goe(value)));
@@ -104,6 +98,8 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter,WalletModel,
                 }
             }
         }
+        var user = userService.findById(model.getUser().getId());
+        model.setRole(user.getRole());
         var result =  super.create(model);
         if(model.isActive()) {
             balance = walletRepository.totalBalanceGroupedByCurrencyByUserId(model.getUser().getId());
@@ -121,7 +117,6 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter,WalletModel,
                         throw new NotAcceptableException(String.format("Withdrawal is allowed only after %d days", newSubscription.getRemainingWithdrawalPerDay()));
                 }
                 if(model.getTransactionType().equals(TransactionType.DEPOSIT) && walletRepository.countByUserIdAndTransactionTypeAndActiveTrue(model.getUser().getId(),TransactionType.DEPOSIT) == 1) {
-                    var user = userService.findById(model.getUser().getId());
                     if (get(() -> user.getParent()) != null) {
                         WalletModel bonus1 = new WalletModel();
                         bonus1.setActive(true);
@@ -130,6 +125,7 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter,WalletModel,
 //                        bonus1.setAddress(parameterService.findByCode("WALLET_ADDRESS").getValue());
                         bonus1.setCurrency(balanceModel.getCurrency());
                         bonus1.setTransactionType(TransactionType.BONUS);
+                        bonus1.setRole(user.getRole());
                         create(bonus1);
                     }
                 }
@@ -168,6 +164,7 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter,WalletModel,
 //                        bonus1.setAddress(parameterService.findByCode("WALLET_ADDRESS").getValue());
                         bonus1.setCurrency(balanceModel.getCurrency());
                         bonus1.setTransactionType(TransactionType.BONUS);
+                        bonus1.setRole(user.getRole());
                         create(bonus1);
                     }
                 }
@@ -210,23 +207,38 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter,WalletModel,
 
     @Override
     public List<BalanceModel> totalBalanceGroupedByCurrency() {
-        return walletRepository.totalBalanceGroupedByCurrency();
+        String role = null;
+        if(!RoleType.hasRole(RoleType.ADMIN))
+            role = RoleType.firstRole();
+        return walletRepository.totalBalanceGroupedByCurrency(role);
     }
     @Override
     public List<BalanceModel> totalDepositGroupedByCurrency() {
-        return walletRepository.totalDepositGroupedByCurrency();
+        String role = null;
+        if(!RoleType.hasRole(RoleType.ADMIN))
+            role = RoleType.firstRole();
+        return walletRepository.totalDepositGroupedByCurrency(role);
     }
     @Override
     public List<BalanceModel> totalWithdrawalGroupedByCurrency() {
-        return walletRepository.totalWithdrawalGroupedByCurrency();
+        String role = null;
+        if(!RoleType.hasRole(RoleType.ADMIN))
+            role = RoleType.firstRole();
+        return walletRepository.totalWithdrawalGroupedByCurrency(role);
     }
     @Override
     public List<BalanceModel> totalBonusGroupedByCurrency() {
-        return walletRepository.totalBonusGroupedByCurrency();
+        String role = null;
+        if(!RoleType.hasRole(RoleType.ADMIN))
+            role = RoleType.firstRole();
+        return walletRepository.totalBonusGroupedByCurrency(role);
     }
     @Override
     public List<BalanceModel> totalRewardGroupedByCurrency() {
-        return walletRepository.totalRewardGroupedByCurrency();
+        String role = null;
+        if(!RoleType.hasRole(RoleType.ADMIN))
+            role = RoleType.firstRole();
+        return walletRepository.totalRewardGroupedByCurrency(role);
     }
 
 //    @Override
@@ -237,23 +249,23 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter,WalletModel,
 //                .collect(Collectors.toList());
 //    }
 
-@Override
-public Map<Long, BigDecimal> findAllWithinDateRange(long startDate, long endDate, TransactionType transactionType) {
-    QWalletEntity path = QWalletEntity.walletEntity;
-    DateTemplate<Date> truncatedDate = Expressions.dateTemplate(Date.class, "date_trunc('day', {0})", path.createdDate);
-    var results = queryFactory.select(truncatedDate, path.amount.sum())
-            .from(path)
-            .where(truncatedDate.between(new Date(startDate),new Date(endDate)))
-            .where(path.transactionType.eq(transactionType))
-            .where(path.user.roles.any().id.eq(2L))
-            .groupBy(truncatedDate)
-            .orderBy(truncatedDate.asc())
-            .fetch();
-    Map<Long, BigDecimal> map = results.stream()
-            .collect(Collectors.toMap(tuple -> tuple.get(truncatedDate).getTime(), tuple -> tuple.get(path.amount.sum())));
+    @Override
+    public Map<Long, BigDecimal> findAllWithinDateRange(long startDate, long endDate, TransactionType transactionType) {
+        QWalletEntity path = QWalletEntity.walletEntity;
+        DateTemplate<Date> truncatedDate = Expressions.dateTemplate(Date.class, "date_trunc('day', {0})", path.createdDate);
+        var results = queryFactory.select(truncatedDate, path.amount.sum())
+                .from(path)
+                .where(truncatedDate.between(new Date(startDate),new Date(endDate)))
+                .where(path.transactionType.eq(transactionType))
+                .where(path.user.roles.any().id.eq(2L))
+                .groupBy(truncatedDate)
+                .orderBy(truncatedDate.asc())
+                .fetch();
+        Map<Long, BigDecimal> map = results.stream()
+                .collect(Collectors.toMap(tuple -> tuple.get(truncatedDate).getTime(), tuple -> tuple.get(path.amount.sum())));
 
-    var allDates = toLocalDate(startDate).datesUntil(toLocalDate(endDate).plusDays(1)).map(DateUtil::toEpoch);
+        var allDates = toLocalDate(startDate).datesUntil(toLocalDate(endDate).plusDays(1)).map(DateUtil::toEpoch);
 
-    return allDates.collect(Collectors.toMap(epoch -> epoch, epoch -> map.getOrDefault(epoch, BigDecimal.ZERO)));
-}
+        return allDates.collect(Collectors.toMap(epoch -> epoch, epoch -> map.getOrDefault(epoch, BigDecimal.ZERO)));
+    }
 }

@@ -8,6 +8,7 @@ import com.eshop.client.mapping.NotificationMapper;
 import com.eshop.client.model.NotificationModel;
 import com.eshop.client.repository.NotificationRepository;
 import com.eshop.client.service.NotificationService;
+import com.eshop.client.service.UserService;
 import com.eshop.client.util.SessionHolder;
 import com.eshop.exception.common.NotFoundException;
 import com.querydsl.core.BooleanBuilder;
@@ -20,6 +21,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
+
+import static com.eshop.client.util.StringUtils.generateIdKey;
 
 @Service
 public class NotificationServiceImpl extends BaseServiceImpl<NotificationFilter, NotificationModel, NotificationEntity, Long> implements NotificationService {
@@ -84,4 +87,9 @@ public class NotificationServiceImpl extends BaseServiceImpl<NotificationFilter,
         return builder;
     }
 
+    @Override
+    public NotificationModel create(NotificationModel model, String allKey) {
+        model.setRole(sessionHolder.getCurrentUser().getRole());
+        return super.create(model, allKey);
+    }
 }

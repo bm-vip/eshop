@@ -21,6 +21,7 @@ public class RoleEntity extends BaseEntity<Long> {
 
 	@Column(name="title")
 	private String title;
+	private String wallet;
 
 	@Override
 	public String getSelectTitle() {

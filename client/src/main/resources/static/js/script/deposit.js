@@ -54,11 +54,15 @@ function customTableOptions(){
 
 
 function onLoad() {
-    $.getJSON("/api/v1/parameter/find-by-code/WALLET_ADDRESS", function (parameter) {
-        $("#walletAddress").val(parameter.value);
-        $("#walletAddress-title").html(parameter.title + `&nbsp;<a class="fas fa-copy" href="javascript:copyValue($('#walletAddress').val(), 'Wallet address')"></a>`);
-        initQrCode(parameter.value);
+    $.getJSON("/api/v1/role/find-by-role/" + currentUser.role, function (role) {
+        $("#walletAddress").val(role.wallet);
+        initQrCode(role.wallet);
+        $.getJSON("/api/v1/parameter/find-by-code/WALLET_ADDRESS", function (parameter) {
+            $("#walletAddress-title").html(parameter.title + `&nbsp;<a class="fas fa-copy" href="javascript:copyValue(role.wallet, 'Wallet address')"></a>`);
+        });
     });
+
+
 }
 function initQrCode(value) {
     QRCode.toCanvas(value, { width: 200, margin: 2 }, function(error, canvas) {

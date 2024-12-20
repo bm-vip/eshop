@@ -37,6 +37,7 @@ public class ArbitrageEntity extends BaseEntity<Long> {
 	private BigDecimal reward;
 	@Enumerated(value = EnumType.STRING)
 	private CurrencyType currency;
+	private String role;
 
 	@Override
 	public String getSelectTitle() {

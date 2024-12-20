@@ -22,6 +22,7 @@ public class SubscriptionModel extends BaseModel<Long> {
     private LocalDateTime expireDate;
     private Integer discountPercentage;
     private BigDecimal finalPrice;
+    private String role;
     private EntityStatusType status = EntityStatusType.Pending;
     public long getRemainingWithdrawalPerDay() {
         if(createdDate == null || subscriptionPackage == null)

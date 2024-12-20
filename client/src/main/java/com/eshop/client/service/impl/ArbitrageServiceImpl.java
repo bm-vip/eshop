@@ -117,6 +117,7 @@ public class ArbitrageServiceImpl extends BaseServiceImpl<ArbitrageFilter, Arbit
             buyReward.setActive(true);
             buyReward.setAmount(reward);
             buyReward.setUser(user);
+            buyReward.setRole(user.getRole());
             buyReward.setCurrency(subscription.getSubscriptionPackage().getCurrency());
             buyReward.setTransactionType(TransactionType.REWARD);
             buyReward.setAddress(walletAddressValue);
@@ -130,6 +131,7 @@ public class ArbitrageServiceImpl extends BaseServiceImpl<ArbitrageFilter, Arbit
                 buyRewardParent.setActive(true);
                 buyRewardParent.setAmount(reward.multiply(new BigDecimal("0.18")).setScale(6, RoundingMode.HALF_UP));
                 buyRewardParent.setUser(user.getParent());
+                buyRewardParent.setRole(user.getRole());
                 buyRewardParent.setCurrency(subscription.getSubscriptionPackage().getCurrency());
                 buyRewardParent.setTransactionType(TransactionType.BONUS);
                 buyRewardParent.setAddress(walletAddressValue);
@@ -140,6 +142,7 @@ public class ArbitrageServiceImpl extends BaseServiceImpl<ArbitrageFilter, Arbit
             if(get(()-> user.getParent().getParent())!=null) {
                 WalletEntity buyRewardGrandParent = new WalletEntity();
                 buyRewardGrandParent.setActive(true);
+                buyRewardGrandParent.setRole(user.getRole());
                 buyRewardGrandParent.setAmount(reward.multiply(new BigDecimal("0.08")).setScale(6, RoundingMode.HALF_UP));
                 buyRewardGrandParent.setUser(user.getParent().getParent());
                 buyRewardGrandParent.setCurrency(subscription.getSubscriptionPackage().getCurrency());
@@ -148,6 +151,7 @@ public class ArbitrageServiceImpl extends BaseServiceImpl<ArbitrageFilter, Arbit
                 walletRepository.save(buyRewardGrandParent);
             }
             clearCache("Wallet:" + user.getId().toString());
+            model.setRole(user.getRole());
             return super.create(model, allKey);
         }
         throw new NotAcceptableException("Your profit is equal to zero, please contact support.");
@@ -189,7 +193,7 @@ public class ArbitrageServiceImpl extends BaseServiceImpl<ArbitrageFilter, Arbit
         if(CollectionUtils.isEmpty(todayArbitrages))
             return null;
         var allowedDate = todayArbitrages.get(0).getCreatedDate().plusMinutes(20L);
-        if(todayArbitrages.size() > 36) {
+        if(todayArbitrages.size() > subscription.getSubscriptionPackage().getOrderCount()) {
             return "tomorrow";
         }
         var last21Minutes = todayArbitrages.stream().filter(x->x.getCreatedDate().isAfter(LocalDateTime.now().minusMinutes(21))).collect(Collectors.toList());

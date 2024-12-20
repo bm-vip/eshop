@@ -22,5 +22,6 @@ public class WalletModel extends BaseModel<Long> {
     private UserModel user;
     private String address;
     private boolean active = false;
+    private String role;
 
 }

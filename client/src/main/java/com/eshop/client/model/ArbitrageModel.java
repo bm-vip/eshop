@@ -23,4 +23,5 @@ public class ArbitrageModel extends BaseModel<Long> {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private BigDecimal reward;
     private CurrencyType currency;
+    private String role;
 }

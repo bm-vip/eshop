@@ -112,6 +112,9 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter,WalletModel,
             if(model.getAmount().compareTo(currentSubscription.getFinalPrice()) >= 0 || model.getAmount().compareTo(totalProfit.getTotalAmount()) > 0) {
                 if(currentSubscription.getRemainingWithdrawalPerDay() > 0L)
                     throw new NotAcceptableException(String.format("You can withdraw your funds after %d days.",currentSubscription.getRemainingWithdrawalPerDay()));
+                if(user.getChildCount() < currentSubscriptionPackage.getOrderCount()) {
+                    throw new NotAcceptableException(String.format("To withdraw your funds you need to have at least %d referrals.", currentSubscriptionPackage.getOrderCount()));
+                }
                 model.setTransactionType(TransactionType.WITHDRAWAL);
             } else {
                 // withdrawal profit
@@ -126,6 +129,7 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter,WalletModel,
             //please deposit more than the subscription amount
         }
         model.setActive(false);
+        model.setRole(user.getRole());
         var result =  super.create(model, allKey);
 //        if(model.isActive()) {
 //            balance = walletRepository.findBalanceGroupedByCurrency(model.getUser().getId());

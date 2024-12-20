@@ -217,4 +217,14 @@
         <addUniqueConstraint tableName="tbl_subscription_package" columnNames="name,duration" constraintName="uc_subscription_package_name_duration"></addUniqueConstraint>
         <addUniqueConstraint tableName="tbl_subscription_package_detail" columnNames="subscription_package_id,amount" constraintName="uc_subscription_package_detail_amount_subscription_package_id"></addUniqueConstraint>
     </changeSet>
+    <changeSet id="08-10" author="administrator">
+        <addColumn tableName="tbl_subscription">
+            <column name="role" type="VARCHAR(255)" defaultValue="ROLE_SUPER_WISER">
+                <constraints nullable="false"></constraints>
+            </column>
+        </addColumn>
+        <addColumn tableName="tbl_subscription_aud">
+            <column name="role" type="VARCHAR(255)"/>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>

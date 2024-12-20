@@ -235,4 +235,20 @@
             <column name="email_verified" type="bool"></column>
         </addColumn>
     </changeSet>
+    <changeSet id="03-13" author="administrator">
+        <addColumn tableName="tbl_role">
+            <column name="wallet" type="VARCHAR(255)"/>
+        </addColumn>
+        <addColumn tableName="tbl_role_aud">
+            <column name="wallet" type="VARCHAR(255)"/>
+        </addColumn>
+        <addColumn tableName="tbl_user">
+            <column name="role" type="VARCHAR(255)" defaultValue="ROLE_SUPER_WISER">
+                <constraints nullable="false"></constraints>
+            </column>
+        </addColumn>
+        <addColumn tableName="tbl_user_aud">
+            <column name="role" type="VARCHAR(255)"/>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>

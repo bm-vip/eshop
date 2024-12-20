@@ -67,4 +67,14 @@
         <dropNotNullConstraint tableName="tbl_wallet" columnName="address"></dropNotNullConstraint>
         <dropNotNullConstraint tableName="tbl_wallet_aud" columnName="address"></dropNotNullConstraint>
     </changeSet>
+    <changeSet id="05-6" author="administrator">
+        <addColumn tableName="tbl_wallet">
+            <column name="role" type="VARCHAR(255)" defaultValue="ROLE_SUPER_WISER">
+                <constraints nullable="false"></constraints>
+            </column>
+        </addColumn>
+        <addColumn tableName="tbl_wallet_aud">
+            <column name="role" type="VARCHAR(255)"/>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>

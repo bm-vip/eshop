@@ -4,6 +4,7 @@ package com.eshop.app.service.impl;
 import com.eshop.app.config.MessageConfig;
 import com.eshop.app.entity.NotificationEntity;
 import com.eshop.app.entity.QNotificationEntity;
+import com.eshop.app.enums.RoleType;
 import com.eshop.app.filter.NotificationFilter;
 import com.eshop.app.mapping.NotificationMapper;
 import com.eshop.app.model.NotificationModel;
@@ -77,6 +78,9 @@ public class NotificationServiceImpl extends BaseServiceImpl<NotificationFilter,
     public Predicate queryBuilder(NotificationFilter filter) {
         BooleanBuilder builder = new BooleanBuilder();
         QNotificationEntity path = QNotificationEntity.notificationEntity;
+        if(!RoleType.hasRole(RoleType.ADMIN)) {
+            builder.and(path.role.eq(RoleType.firstRole()));
+        }
 
         filter.getId().ifPresent(v -> builder.and(path.id.eq(v)));
         filter.getSenderId().ifPresent(v -> builder.and(path.sender.id.eq(v)));
@@ -91,9 +95,10 @@ public class NotificationServiceImpl extends BaseServiceImpl<NotificationFilter,
 
     @Override
     public NotificationModel create(NotificationModel model) {
+        model.setRole(sessionHolder.getCurrentUser().getRole());
         if (model.isAllRecipients()) {
-            userRepository.findAll().forEach(user->{
-                model.setRecipient(new UserModel().setUserId(user.getId()));
+            userRepository.findAll().forEach(u->{
+                model.setRecipient(new UserModel().setUserId(u.getId()));
                 super.create(model);
             });
         }

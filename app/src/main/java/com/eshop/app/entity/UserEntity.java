@@ -70,6 +70,7 @@ public class UserEntity extends BaseEntity<UUID> {
 
 	@Column(name = "email_verified")
 	private boolean emailVerified;
+	private String role;
 
 	@Override
 	public String getSelectTitle() {

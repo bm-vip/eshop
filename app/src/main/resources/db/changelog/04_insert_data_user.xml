@@ -47,4 +47,7 @@
         <sql dbms="postgresql">select setval('seq_role', max(id)+1) from tbl_role</sql>
         <sql dbms="h2">alter sequence seq_role restart with (select max(id)+1 from tbl_role)</sql>
     </changeSet>
+    <changeSet id="04-5" author="administrator">
+        <sql endDelimiter="/">UPDATE public.tbl_role SET role = 'ROLE_MANAGER', title = 'manager' WHERE id = 4;/</sql>
+    </changeSet>
 </databaseChangeLog>

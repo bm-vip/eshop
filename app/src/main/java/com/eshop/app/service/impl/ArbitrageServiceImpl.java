@@ -2,6 +2,7 @@ package com.eshop.app.service.impl;
 
 import com.eshop.app.entity.ArbitrageEntity;
 import com.eshop.app.entity.QArbitrageEntity;
+import com.eshop.app.enums.RoleType;
 import com.eshop.app.filter.ArbitrageFilter;
 import com.eshop.app.mapping.ArbitrageMapper;
 import com.eshop.app.model.ArbitrageModel;
@@ -32,6 +33,9 @@ public class ArbitrageServiceImpl extends BaseServiceImpl<ArbitrageFilter, Arbit
     public Predicate queryBuilder(ArbitrageFilter filter) {
         QArbitrageEntity p = QArbitrageEntity.arbitrageEntity;
         BooleanBuilder builder = new BooleanBuilder();
+        if(!RoleType.hasRole(RoleType.ADMIN)) {
+            builder.and(p.role.eq(RoleType.firstRole()));
+        }
         filter.getId().ifPresent(v->builder.and(p.id.eq(v)));
         filter.getCreatedDateFrom().ifPresent(v-> builder.and(p.createdDate.goe(v)));
         filter.getCreatedDateTo().ifPresent(v-> builder.and(p.createdDate.loe(v)));
