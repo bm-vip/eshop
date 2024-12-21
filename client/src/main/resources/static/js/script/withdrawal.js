@@ -29,10 +29,6 @@ columns = [{
     data: 'currency'
 },{
     data: 'transactionType'
-}, {
-    data: 'transactionHash'
-},{
-    data: 'address'
 },{
     data: 'active',
     render: function (data) { return data ? `<span class='grteen'>${resources.active}</span>` :  `<span class='red'>${resources.inactive}</span>`}
@@ -41,9 +37,9 @@ columns = [{
     render: function (data) { return toLocalizingDateString(data, true) }
 }];
 
-function customTableOption(){
+function customTableOptions(){
     let tbl_option = tableOptions();
-    tbl_option.order = [[5, 'asc']];
+    tbl_option.order = [[4, 'asc']];
     return tbl_option;
 }
 
