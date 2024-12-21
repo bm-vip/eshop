@@ -363,4 +363,5 @@ function initModal(element) {
     $("#myModal #hdf_subscriptionPackageId").val(element.attr('id'));
     $("#myModal .modal-header #myModalLabel small").text(element.attr('modal-title'));
     $.publish("reloadDetailTable");
+    $("#myModal .table").DataTable().columns.adjust().responsive.recalc();
 }

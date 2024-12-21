@@ -137,7 +137,11 @@ public class NotificationServiceImpl extends BaseServiceImpl<NotificationFilter,
         String siteName = messages.getMessage("siteName");
         String siteUrl = messages.getMessage("siteUrl");
         Resource emailTemplateResource = resourceLoader.getResource("classpath:templates/welcome-email.html");
-        String emailContent = new String(Files.readAllBytes(Paths.get(emailTemplateResource.getURI())));
+        String emailContent;
+        try (InputStream inputStream = emailTemplateResource.getInputStream();
+             Scanner scanner = new Scanner(inputStream, StandardCharsets.UTF_8.name())) {
+            emailContent = scanner.useDelimiter("\\A").next(); // Read the entire file into a String
+        }
         emailContent = emailContent.replace("[user_first_name]", recipient.getFirstName());
         emailContent = emailContent.replace("[YourAppName]", siteName);
         emailContent = emailContent.replace("[YourSiteUrl]", siteUrl);

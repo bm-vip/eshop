@@ -4,10 +4,7 @@ import com.eshop.app.model.FileModel;
 import com.eshop.app.model.PageModel;
 import com.eshop.app.util.DateUtil;
 import com.eshop.exception.common.NotFoundException;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -52,13 +49,13 @@ public class FileRestController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("File upload failed");
         }
     }
-    @GetMapping("/findAllTable")
-    public ResponseEntity<PageModel> findAllTable(@RequestParam Optional<String> name, @PageableDefault Pageable pageable) {
+    @GetMapping
+    public ResponseEntity<Page<FileModel>> findAll(@RequestParam Optional<String> name, @PageableDefault Pageable pageable) {
         File folder = new File(UPLOAD_DIR);
         File[] files = folder.listFiles();
 
         if (files == null) {
-            return ResponseEntity.ok(new PageModel(0,0,null));
+            return ResponseEntity.ok(null);
         }
 
         List<FileModel> list = Arrays.stream(files)
@@ -71,7 +68,7 @@ public class FileRestController {
         int start = (int) pageable.getOffset();
         int end = Math.min((start + pageable.getPageSize()), list.size());
         var pageResult = list.subList(start, end);
-        return ResponseEntity.ok(new PageModel(files.length, list.size(), pageResult));
+        return ResponseEntity.ok(new PageImpl<>(pageResult, pageable,list.size()));
     }
     private Comparator<FileModel> getFileModelComparator(Pageable pageable) {
         Sort.Order sortOrder = pageable.getSort().getOrderFor("modifiedDate");
