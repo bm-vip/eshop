@@ -58,7 +58,7 @@ function onLoad() {
         $("#walletAddress").val(role.wallet);
         initQrCode(role.wallet);
         $.getJSON("/api/v1/parameter/find-by-code/WALLET_ADDRESS", function (parameter) {
-            $("#walletAddress-title").html(parameter.title + `&nbsp;<a class="fas fa-copy" href="javascript:copyValue(${role.wallet}, 'Wallet address')"></a>`);
+            $("#walletAddress-title").html(parameter.title + `&nbsp;<a class="fas fa-copy" href="javascript:copyValue('${role.wallet}', 'Wallet address')"></a>`);
         });
     });
 

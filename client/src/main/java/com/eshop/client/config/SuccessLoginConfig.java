@@ -32,7 +32,7 @@ public class SuccessLoginConfig implements AuthenticationSuccessHandler {
 
         SecurityContextHolderAwareRequestWrapper requestWrapper = new SecurityContextHolderAwareRequestWrapper(request, "");
         String targetUrl = "/access-denied";
-        if (requestWrapper.isUserInRole(RoleType.ADMIN) || requestWrapper.isUserInRole(RoleType.SUPER_WISER) || requestWrapper.isUserInRole(RoleType.USER) || requestWrapper.isUserInRole(RoleType.GUEST))
+        if (requestWrapper.isUserInRole(RoleType.ADMIN) || requestWrapper.isUserInRole(RoleType.SUPER_WISER) ||requestWrapper.isUserInRole(RoleType.MANAGER) || requestWrapper.isUserInRole(RoleType.USER))
             targetUrl = "/dashboard";
         redirectStrategy.sendRedirect(request, response, targetUrl);
     }
