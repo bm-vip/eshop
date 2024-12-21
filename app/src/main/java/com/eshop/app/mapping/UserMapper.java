@@ -31,6 +31,9 @@ public interface UserMapper extends BaseMapper<UserModel, UserEntity> {
     UserEntity updateEntity(UserModel model, @MappingTarget UserEntity entity);
 
     @Named("mapParentSafely")
+    @Mappings({
+            @Mapping(target = "parent", ignore = true)
+    })
     default UserModel mapParentSafely(UserEntity parentEntity) {
         try {
             return parentEntity != null ? toModel(parentEntity) : null;

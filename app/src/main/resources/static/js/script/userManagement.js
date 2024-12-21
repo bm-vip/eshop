@@ -80,7 +80,7 @@ function loadInputByEntity(entity) {
     entity.roles.forEach(role => $("#roleSelect2").append("<option value='" + role.id + "'>" + role.title + "</option>").trigger('change'));
     $("#roleSelect2").val(entity.roles.map(r => r.id)).trigger('change');
     $('#status').val(entity.active + '');
-    $("#parentSelect2").html("<option value='" + get(() => entity.parent.id) + "' selected>" + get(() => entity.parent.name) + "</option>").trigger('change');
+    $("#parentSelect2").html("<option value='" + get(() => entity.parent.id) + "' selected>" + get(() => entity.parent.selectTitle	) + "</option>").trigger('change');
     $("#parentSelect2").val(get(() => entity.parent.id)).trigger('change');
     $("#countrySelect2").html("<option value='" + get(() => entity.country.id) + "' selected>" + get(() => entity.country.name) + "</option>").trigger('change');
     $("#countrySelect2").val(get(() => entity.country.id)).trigger('change');
