@@ -160,7 +160,7 @@ public class UserServiceImpl extends BaseServiceImpl<UserFilter,UserModel, UserE
             entity.setPassword(bCryptPasswordEncoder.encode("12345"));
 
         entity.setUid(getUid());
-        entity.setRole(sessionHolder.getCurrentUser().getRole());
+        entity.setRole(model.getRoles().stream().findFirst().get().getRole());
         var createdUser = mapper.toModel(repository.save(entity));
         notificationService.sendWelcomeNotification(createdUser.getId());
         return createdUser;
