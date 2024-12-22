@@ -37,7 +37,7 @@
                             </div>
                             <div class="col-md-6 form-group">
                                 <label th:text="#{recipient}"></label>
-                                <th:block th:replace="fragments/select2 :: select2('2',#{recipient}, 'recipient', '/api/v1/user/findAllSelect','{name:params.term}',true, null)"></th:block>
+                                <th:block th:replace="fragments/select2 :: select2('2',#{recipient}, 'recipient', '/api/v1/user/findAllSelect','{title:params.term}',true, null)"></th:block>
                             </div>
                         </div>
                         <div class="row">
