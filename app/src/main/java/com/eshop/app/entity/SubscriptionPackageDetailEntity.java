@@ -7,6 +7,7 @@ import javax.persistence.*;
 import java.math.BigDecimal;
 
 import static com.eshop.app.util.MapperHelper.getOrDefault;
+import static javax.persistence.FetchType.EAGER;
 import static javax.persistence.FetchType.LAZY;
 
 @Data
@@ -20,7 +21,7 @@ public class SubscriptionPackageDetailEntity extends BaseEntity<Long> {
     @SequenceGenerator(name = "seq_subscription_package_detail", sequenceName = "seq_subscription_package_detail", allocationSize = 1, initialValue = 1)
     @Column(name = "id")
     private Long id;
-    @ManyToOne(fetch = LAZY)
+    @ManyToOne(fetch = EAGER)
     @JoinColumn(name = "subscription_package_id", nullable = false)
     private SubscriptionPackageEntity subscriptionPackage;
     @Column(nullable = false)
