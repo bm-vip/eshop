@@ -50,8 +50,8 @@ public interface BaseRestController<F, M, ID extends Serializable> {
     @Operation(summary = "${api.baseRest.create}", description = "${api.baseRest.create.desc}")
     ResponseEntity<M> create(@Validated(Create.class) @RequestBody M model);
 
-    @PatchMapping("{id}")
+    @PatchMapping("/{id}")
     @ResponseBody
     @Operation(summary = "${api.baseRest.update}", description = "${api.baseRest.update.desc}")
-    ResponseEntity<M> update(@PathVariable("id") ID id, @Validated(com.eshop.app.validation.Update.class) @RequestBody M model);
+    ResponseEntity<M> update(@PathVariable("id") ID id, @Validated(Update.class) @RequestBody M model);
 }
