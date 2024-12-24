@@ -27,6 +27,9 @@ public class SessionHolder {
     public UserModel getCurrentUser() {
         return (UserModel) request.getSession().getAttribute("currentUser");
     }
+    public void setCurrentUser(UserModel user) {
+        request.getSession().setAttribute("currentUser", user);
+    }
     @SneakyThrows
     public String getCurrentUserAsJsonString() {
         return  objectMapper.writeValueAsString(request.getSession().getAttribute("currentUser"));

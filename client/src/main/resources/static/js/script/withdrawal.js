@@ -74,36 +74,36 @@ function clearAll_(){
 }
 function afterSubmitForm(entity) {
     currentUser.walletAddress = $("#walletAddress").val();
-    $.blockUI(blockUiOptions());
-    $(".btn-primary").attr("disabled", 'disabled');
-    $.ajax({
-        type: "PATCH",
-        url: 'api/v1/user',
-        dataType: "json",
-        contentType: "application/json;charset=utf-8",
-        data: JSON.stringify(currentUser),
-        success: function (data) {
-            $.unblockUI();
-            $(".btn-primary").removeAttr("disabled");
-            if (data.error == null) {
-                clearAll();
-                show_success(resources.saveSuccess);
-            } else {
-                show_error(data.error);
-            }
-        },
-        error: function (header, status, error) {
-            $.unblockUI();
-            $(".btn-primary").removeAttr("disabled");
-            if(isNullOrEmpty(get(() => header.responseJSON)))
-                show_error('ajax answer post returned error: ' + error.responseText);
-            else show_error(header.responseJSON.error + ' (' + header.responseJSON.status + ') <br>' + header.responseJSON.message);
-        }
-    });
+    // $.blockUI(blockUiOptions());
+    // $(".btn-primary").attr("disabled", 'disabled');
+    // $.ajax({
+    //     type: "PATCH",
+    //     url: 'api/v1/user',
+    //     dataType: "json",
+    //     contentType: "application/json;charset=utf-8",
+    //     data: JSON.stringify(currentUser),
+    //     success: function (data) {
+    //         $.unblockUI();
+    //         $(".btn-primary").removeAttr("disabled");
+    //         if (data.error == null) {
+    //             clearAll();
+    //             show_success(resources.saveSuccess);
+    //         } else {
+    //             show_error(data.error);
+    //         }
+    //     },
+    //     error: function (header, status, error) {
+    //         $.unblockUI();
+    //         $(".btn-primary").removeAttr("disabled");
+    //         if(isNullOrEmpty(get(() => header.responseJSON)))
+    //             show_error('ajax answer post returned error: ' + error.responseText);
+    //         else show_error(header.responseJSON.error + ' (' + header.responseJSON.status + ') <br>' + header.responseJSON.message);
+    //     }
+    // });
     $("#withdraw-alert").remove();
     let infoElement = `<div id="withdraw-alert" class="alert alert-info">
     <button onclick="$('#withdraw-alert').hide()" class="close">&times;</button>
     <div class="alert-content">${resources.withdrawalAlert}</div>
-</div>`;
+    </div>`;
     $(".btn-primary").after(infoElement);
 }

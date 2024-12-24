@@ -158,6 +158,7 @@ public class UserServiceImpl extends BaseServiceImpl<UserFilter,UserModel, UserE
         }
         entity.setUid(getUid());
         var createdUser = mapper.toModel(repository.save(entity));
+        sessionHolder.setCurrentUser(createdUser);
         sendWelcomeNotification(createdUser.getId());
         return createdUser;
     }
