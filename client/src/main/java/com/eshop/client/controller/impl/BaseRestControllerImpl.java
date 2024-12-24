@@ -100,8 +100,9 @@ public abstract class BaseRestControllerImpl<F,M extends BaseModel<ID>, ID exten
     }
 
     @Override
-    public ResponseEntity<M> update(M model) {
+    public ResponseEntity<M> update(ID id, M model) {
         log.debug("call BaseRestImpl.update for {}", model);
+        model.setId(id);
         return ResponseEntity.ok(service.update(model, generateIdKey(getClassName(),model.getId()), String.format("%s:*", getClassName())));
     }
 }

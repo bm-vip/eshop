@@ -42,10 +42,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 new HoneypotAuthenticationFilter("website");
         http.addFilterBefore(honeypotFilter, UsernamePasswordAuthenticationFilter.class).authorizeRequests()
                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
-                .antMatchers("/ltr/**","/logout","/page_404","/page_403","/region_denied","/login","/registration","/about","/send-OTP","/api/v1/country/findAllSelect*","/api/v1/user/verify-email/**","/api/v1/user/register*","/actuator/**").permitAll()
+                .antMatchers("/ltr/**","/swagger*/**","/api-docs*/**","/logout","/page_404","/page_403","/region_denied","/login","/registration","/about","/send-OTP","/api/v1/country/findAllSelect*","/api/v1/user/verify-email/**","/api/v1/user/register*","/actuator/**").permitAll()
+                .antMatchers(HttpMethod.PATCH, "/api/v1/user*/**").hasAnyRole(RoleType.name(RoleType.ADMIN),RoleType.name(RoleType.SUPER_WISER),RoleType.name(RoleType.MANAGER), RoleType.name(RoleType.USER))
+                .antMatchers(HttpMethod.POST, "/api/v1/wallet*/**","/api/v1/arbitrage*/**","/api/v1/notification*/**").hasAnyRole(RoleType.name(RoleType.ADMIN),RoleType.name(RoleType.SUPER_WISER),RoleType.name(RoleType.MANAGER), RoleType.name(RoleType.USER))
                 .antMatchers(HttpMethod.GET,  "/dashboard","/subUsers","/deposit","/profile","/withdrawal","/notification","/arbitrage","about","/api/v1/files/**", "/api/v1/common/**","/api/v1/wallet/**","/api/v1/coin/**","/api/v1/exchange/**","/api/v1/parameter/**","/api/v1/subscription/**","/api/v1/subscription-package/**","/api/v1/user/**","/api/v1/role/**","/api/v1/arbitrage/**","/api/v1/notification/**").hasAnyRole(RoleType.name(RoleType.ADMIN),RoleType.name(RoleType.SUPER_WISER),RoleType.name(RoleType.MANAGER), RoleType.name(RoleType.USER))
-                .antMatchers(HttpMethod.POST, "/api/v1/wallet","/api/v1/arbitrage","/api/v1/notification").hasAnyRole(RoleType.name(RoleType.ADMIN),RoleType.name(RoleType.SUPER_WISER),RoleType.name(RoleType.MANAGER), RoleType.name(RoleType.USER))
-                .antMatchers(HttpMethod.PATCH, "api/v1/user").hasAnyRole(RoleType.name(RoleType.ADMIN),RoleType.name(RoleType.SUPER_WISER),RoleType.name(RoleType.MANAGER), RoleType.name(RoleType.USER))
                 .antMatchers("/**").hasRole(RoleType.name(RoleType.ADMIN))
                 .anyRequest().authenticated()
                 .and().csrf().disable().formLogin()

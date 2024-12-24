@@ -97,7 +97,7 @@ function submitFormData(formData) {
     $.blockUI(blockUiOptions());
     $.ajax({
         type: isNullOrEmpty(formData.id) ? "POST" : "PATCH",
-        url: ajaxUrl,
+        url: isNullOrEmpty(formData.id) ? ajaxUrl : `${ajaxUrl}/${formData.id}`,
         processData: false,
         contentType: false,
         data: formData,
@@ -130,7 +130,7 @@ function submitEntity(entity) {
     $.blockUI(blockUiOptions());
     $.ajax({
         type: isNullOrEmpty(entity.id) ? "POST" : "PATCH",
-        url: ajaxUrl,
+        url: isNullOrEmpty(entity.id) ? ajaxUrl : `${ajaxUrl}/${entity.id}`,
         dataType: "json",
         contentType: "application/json;charset=utf-8",
         data: JSON.stringify(entity),

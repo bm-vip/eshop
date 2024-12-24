@@ -1,4 +1,4 @@
-ajaxUrl = "/api/v1/user/";
+ajaxUrl = "/api/v1/user";
 var imageProfileUrl = '';
 var myDropzone;
 var referralDataTable1;
@@ -133,7 +133,7 @@ function loadTable() {
     $.subscribe('reloadReferral2Table', referralDataTable2.ajax.reload);
 }
 function loadInputByEntity(id) {
-    $.getJSON(ajaxUrl + id,function(entity) {
+    $.getJSON(`${ajaxUrl}/${id}`,function(entity) {
         $("#countrySelect2").html("<option value='" + get(() => entity.country.id) + "' selected>" + get(() => entity.country.name) + "</option>").trigger('change');
         $("#countrySelect2").val(get(() => entity.country.id)).trigger('change');
         $("#email").val(entity.email);
@@ -143,7 +143,7 @@ function loadInputByEntity(id) {
     });
 }
 function loadLabelByEntity(id) {
-    $.getJSON(ajaxUrl + id, function(entity) {
+    $.getJSON(`${ajaxUrl}/${id}`, function(entity) {
         if(!isNullOrEmpty(entity.profileImageUrl))
             $("#profile-image-url").attr('src',entity.profileImageUrl);
 
@@ -192,7 +192,7 @@ function updateUser() {
     $("#updateUser").attr("disabled", 'disabled');
     $.ajax({
         type: "PATCH",
-        url: ajaxUrl,
+        url: `${ajaxUrl}/${entity.id}`,
         dataType: "json",
         contentType: "application/json;charset=utf-8",
         data: JSON.stringify(entity),
@@ -200,24 +200,23 @@ function updateUser() {
             $.unblockUI();
             $("#updateUser").removeAttr("disabled");
             if (data.error == null) {
-                clearAll();$('input:password').val('');
-                show_success(resources.saveSuccess);
+                clearAll();
                 loadLabelByEntity(currentUser.id);
             } else {
-                show_error(data.error);
+                //show_error(data.error);
             }
         },
         error: function (header, status, error) {
             $.unblockUI();
             $("#updateUser").removeAttr("disabled");
-            if(isNullOrEmpty(get(() => header.responseJSON)))
-                show_error('ajax answer post returned error: ' + error.responseText);
-            else show_error(header.responseJSON.error + ' (' + header.responseJSON.status + ') <br>' + header.responseJSON.message);
+            // if(isNullOrEmpty(get(() => header.responseJSON)))
+            //     show_error('ajax answer post returned error: ' + error.responseText);
+            // else show_error(header.responseJSON.error + ' (' + header.responseJSON.status + ') <br>' + header.responseJSON.message);
         }
     });
 }
 function clearAll_() {
-    $("#walletAddress,#email,#name,#lastName").val('');
+    $("#walletAddress,#email,#name,#lastName, input:password").val('');
     $("#countrySelect2").val('').trigger('change');
     myDropzone.removeAllFiles(true);
 }
