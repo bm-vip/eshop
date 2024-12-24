@@ -18,7 +18,6 @@
         <java.version>17</java.version>
         <lombok.version>1.18.22</lombok.version>
         <mapstruct.version>1.4.2.Final</mapstruct.version>
-        <webdrivermanager.version>5.0.3</webdrivermanager.version>
     </properties>
     <dependencies>
         <dependency>
