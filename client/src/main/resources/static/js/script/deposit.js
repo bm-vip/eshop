@@ -172,7 +172,7 @@ function fetchTokenPrice(network,currency, callback) {
 function updateActualAmount() {
     console.log('change trigerred');
     const network = $('#network').val();
-    const currency = $('#currency').val();
+    const currency = $('#currency option:selected').attr('data');
     const usdAmount = $('#amount').val();
 
     fillWalletAddress(network,$("#currency option:selected").text());
