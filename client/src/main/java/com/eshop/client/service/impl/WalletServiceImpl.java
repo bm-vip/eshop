@@ -231,7 +231,7 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter,WalletModel,
                         .sum();
 
 
-        return queryFactory.select(rewardBonusSum.subtract(withdrawalProfitSum))
+        return queryFactory.select(rewardBonusSum.subtract(withdrawalProfitSum).coalesce(BigDecimal.ZERO))
                 .from(path)
                 .where(path.user.id.eq(userId))
                 .where(path.status.eq(EntityStatusType.Active))

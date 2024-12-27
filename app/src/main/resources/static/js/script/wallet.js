@@ -248,7 +248,7 @@ function updateActualAmount() {
     if (!usdAmount) {
         $('#actualAmount').val('');
         return;
-    } else if(currency == 'USDT') {
+    } else if(currency == 'USDT' || currency == 'BUSD') {
         $('#actualAmount').val(usdAmount);
         return;
     }

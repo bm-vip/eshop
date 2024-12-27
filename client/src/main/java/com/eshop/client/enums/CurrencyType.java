@@ -15,6 +15,7 @@ public enum CurrencyType {
     USDT("USDT"),
     TRX("trx"),
     BNB("BNBUSDT"),
+    BUSD("BUSD"),
 //    SOL("SOL"),
     ;
 

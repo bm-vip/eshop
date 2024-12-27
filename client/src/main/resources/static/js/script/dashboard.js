@@ -37,6 +37,8 @@
 
     $.get(`/api/v1/wallet/daily-profit/${currentUser.id}`, function (data) {
         $("#dailyProfit").text(get(() => data, 0));
+        if(parseInt(data) < 0)
+            $("#dailyProfit").removeClass("green").addClass("red");
     });
 
     $.get("/api/v1/arbitrage/find-top-coins/5", function (data) {

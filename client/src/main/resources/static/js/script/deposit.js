@@ -93,7 +93,7 @@ function onLoad() {
         clearTimeout(timeout);
         timeout = setTimeout(updateActualAmount, 500);
     });
-    $('#currency').on('change', updateActualAmount);
+    $("#currency,#network").on('change', updateActualAmount);
 }
 function initQrCode(value) {
     QRCode.toCanvas(value, { width: 200, margin: 2 }, function(error, canvas) {
@@ -179,7 +179,7 @@ function updateActualAmount() {
     if (!usdAmount) {
         $('#actualAmount').val('');
         return;
-    } else if(currency == 'USDT') {
+    } else if(currency == 'USDT' || currency == 'BUSD') {
         $('#actualAmount').val(usdAmount);
         return;
     }
