@@ -1,4 +1,5 @@
 ajaxUrl = "/api/v1/wallet";
+var businessRules;
 rules = {
     walletAddress: {
         required: true,
@@ -48,16 +49,44 @@ function onLoad() {
         $("#walletAddress").val(user.walletAddress);
     });
     $.getJSON("/api/v1/parameter/find-by-group-code/BUSINESS_RULES", function (data) {
+        businessRules = data;
         $("#withdraw-notice .alert-content ul").html(`<li>${resources.withdrawalNotice.format(data.find(x => x.code == 'MIN_WITHDRAW').value ?? '15')}</li><li>${resources.transferFee.format(data.find(x => x.code == 'TRANSFER_FEE').value ?? '2')}</li>`);
+        validate('WITHDRAWAL_PROFIT');
+    });
+    $("#withdrawalType").on('change', function (){
+        validate($("#withdrawalType").val());
     });
 }
-
+function validate(withdrawalType){
+    if(withdrawalType == 'WITHDRAWAL_PROFIT') {
+        $.getJSON("/api/v1/wallet/total-profit/" + currentUser.id, function (totalProfit) {
+            if (parseFloat(totalProfit) < parseFloat(businessRules.find(x => x.code == 'MIN_WITHDRAW').value)) {
+                $("#saveWithdraw").addClass("disabled").attr("aria-disabled", true).attr('disabled',true);
+                show_warning(`Profit balance ${totalProfit} is insufficient for withdrawal!`);
+            } else {
+                $("#saveWithdraw").removeClass("disabled").removeAttr("aria-disabled").removeAttr('disabled');
+            }
+        });
+    } else {
+        $.get("/api/v1/subscription/find-active-by-user/" + currentUser.id, function (subscription) {
+            if(isNullOrEmpty(subscription)) {
+                $("#saveWithdraw").addClass("disabled").attr("aria-disabled", true).attr('disabled',true);
+                show_warning(`Insufficient fund to withdraw!`);
+            } else if (subscription.remainingWithdrawalPerDay > 0) {
+                $("#saveWithdraw").addClass("disabled").attr("aria-disabled", true).attr('disabled',true);
+                show_warning(`You can withdraw your funds after ${subscription.remainingWithdrawalPerDay} days!`);
+            } else {
+                $("#saveWithdraw").removeClass("disabled").removeAttr("aria-disabled").removeAttr('disabled');
+            }
+        });
+    }
+}
 function loadSaveEntityByInput() {
     let model = {
         amount: $("#amount").val().replace(/,/g, ""),
         network: $("#network").val(),
         currency: 'USDT',
-        transactionType: 'WITHDRAWAL',
+        transactionType: $("#transactionType").val(),
         user: {id: currentUser.id},
         address: $("#walletAddress").val()
     };

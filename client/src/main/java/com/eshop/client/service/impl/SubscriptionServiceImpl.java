@@ -144,6 +144,7 @@ public class SubscriptionServiceImpl extends BaseServiceImpl<SubscriptionFilter,
         var discountAmount = originalPrice.multiply(new BigDecimal(discountPercentage).divide(new BigDecimal("100")));
         return originalPrice.subtract(discountAmount);
     }
+
     private void deactivateOldActive(UUID userId) {
         var userEntity = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("No such user with " + userId));
         var oldActive = subscriptionRepository.findByUserIdAndStatus(userEntity.getId(), EntityStatusType.Active);

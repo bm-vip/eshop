@@ -15,6 +15,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 @Component
 @RequiredArgsConstructor
@@ -80,7 +81,7 @@ public class TronStrategyImpl implements NetworkStrategy {
                 var amount = new BigDecimal(transferNode.get("amount_str").asText());
                 if(amount == null)
                     response.setAmount(BigDecimal.ZERO);
-                else response.setAmount(amount.divide(BigDecimal.valueOf(1000000)));
+                else response.setAmount(amount.divide(BigDecimal.valueOf(1000000)).setScale(4, RoundingMode.HALF_UP));
             }
             if(transferNode.has("to_address"))
                 response.setToAddress(transferNode.get("to_address").asText());
@@ -91,7 +92,7 @@ public class TronStrategyImpl implements NetworkStrategy {
                     var amount = new BigDecimal(transferNode.get("amount_str").asText());
                     if(amount == null)
                         response.setAmount(BigDecimal.ZERO);
-                    else response.setAmount(amount.divide(BigDecimal.valueOf(1000000)));
+                    else response.setAmount(amount.divide(BigDecimal.valueOf(1000000)).setScale(4, RoundingMode.HALF_UP));
                 }
                 if(transferNode.has("to_address"))
                     response.setToAddress(transferNode.get("to_address").asText());

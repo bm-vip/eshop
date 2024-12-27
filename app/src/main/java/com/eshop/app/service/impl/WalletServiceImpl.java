@@ -28,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -292,7 +293,7 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter,WalletModel,
                 return false;
             if (!transaction.isSuccess())
                 return false;
-            if (transaction.getAmount().longValue() != model.getAmount().longValue())
+            if (transaction.getAmount().subtract(model.getActualAmount().setScale(4, RoundingMode.HALF_UP)).abs().compareTo(new BigDecimal("0.0001")) != 0)
                 return false;
             if (!transaction.getToAddress().equals(model.getAddress()))
                 return false;

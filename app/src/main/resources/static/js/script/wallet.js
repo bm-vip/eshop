@@ -5,11 +5,13 @@ rules = {
     currency: "required",
     amount: {
         required: true,
-        currency: ["$", false]
+        number: true,
+        decimalPlaces: 4
     },
     actualAmount: {
         required: true,
-        currency: ["$", false]
+        number: true,
+        decimalPlaces: 4
     },
     transactionType: "required",
     transactionHash: "required",
@@ -23,11 +25,13 @@ messages = {
     currency: resources.pleaseEnter.format(resources.currency),
     amount: {
         required: resources.pleaseEnter.format(resources.amountInUSD),
-        currency: resources.invalidFormat.format(resources.amountInUSD)
+        number: resources.mustBeNumber.format(resources.amountInUSD),
+        decimalPlaces: resources.invalidDecimal.format(4),
     },
     actualAmount: {
         required: resources.pleaseEnter.format(resources.actualAmount),
-        currency: resources.invalidFormat.format(resources.actualAmount)
+        number: resources.mustBeNumber.format(resources.actualAmount),
+        decimalPlaces: resources.invalidDecimal.format(4),
     },
     transactionType: resources.pleaseEnter.format(resources.transactionType),
     transactionHash: resources.pleaseEnter.format(resources.transactionHash),
@@ -161,7 +165,7 @@ function onLoad() {
     $.getJSON("/api/v1/common/getEnum/CurrencyType", function (json) {
         if (json.error == null) {
             json.forEach(function (value, index) {
-                $("#currency").append("<option value='" + value.text + "'>" + value.id + "</option>");
+                $("#currency").append(`<option data="${value.text}" value="${value.id}">${value.id}</option>`);
             });
         } else {
             show_error(json.error);
@@ -242,7 +246,7 @@ function fetchTokenPrice(network,currency, callback) {
 function updateActualAmount() {
     console.log('change trigerred');
     const network = $('#network').val();
-    const currency = $('#currency').val();
+    const currency = $('#currency option:selected').attr('data');
     const usdAmount = $('#amount').val();
 
     if (!usdAmount) {

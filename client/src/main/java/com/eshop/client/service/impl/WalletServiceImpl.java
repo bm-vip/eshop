@@ -13,6 +13,7 @@ import com.eshop.client.repository.WalletRepository;
 import com.eshop.client.service.*;
 import com.eshop.client.util.DateUtil;
 import com.eshop.client.util.SessionHolder;
+import com.eshop.exception.common.BadRequestException;
 import com.eshop.exception.common.NotAcceptableException;
 import com.eshop.exception.common.NotFoundException;
 import com.eshop.exception.common.PaymentRequiredException;
@@ -38,16 +39,18 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter,WalletModel,
 
     private final WalletRepository walletRepository;
     private final SubscriptionService subscriptionService;
+    private final SubscriptionPackageService subscriptionPackageService;
     private final JPAQueryFactory queryFactory;
     private final SessionHolder sessionHolder;
     private final String minWithdrawAmount;
     private final UserService userService;
     private final MailService mailService;
 
-    public WalletServiceImpl(WalletRepository repository, WalletMapper mapper, SubscriptionService subscriptionService, JPAQueryFactory queryFactory, SessionHolder sessionHolder, ParameterService parameterService, UserService userService, MailService mailService) {
+    public WalletServiceImpl(WalletRepository repository, WalletMapper mapper, SubscriptionService subscriptionService, SubscriptionPackageService subscriptionPackageService, JPAQueryFactory queryFactory, SessionHolder sessionHolder, ParameterService parameterService, UserService userService, MailService mailService) {
         super(repository, mapper);
         this.walletRepository = repository;
         this.subscriptionService = subscriptionService;
+        this.subscriptionPackageService = subscriptionPackageService;
         this.queryFactory = queryFactory;
         this.sessionHolder = sessionHolder;
         this.minWithdrawAmount = parameterService.findByCode("MIN_WITHDRAW").getValue();
@@ -87,57 +90,47 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter,WalletModel,
     @Transactional
     public WalletModel create(WalletModel model, String allKey) {
         var user = userService.findById(model.getUser().getId(), generateIdKey("User",model.getUser().getId()));
+        var currentSubscription = subscriptionService.findByUserAndActivePackage(model.getUser().getId());
+        SubscriptionPackageModel currentSubscriptionPackage = currentSubscription.getSubscriptionPackage();
 //        if(!user.isEmailVerified()) {
 //            mailService.sendVerification(user.getEmail(),"Email verification link");
 //            throw new ExpectationException("Please verify your email before make this transaction.");
 //        }
-        var totalBalance = totalBalanceByUserId(model.getUser().getId());
-        if(model.getTransactionType().equals(TransactionType.WITHDRAWAL)) {
-            if(totalBalance.compareTo(model.getAmount()) < 0)
-                throw new PaymentRequiredException();
-
-            var currentSubscription = subscriptionService.findByUserAndActivePackage(model.getUser().getId());
+        if(model.getTransactionType().equals(TransactionType.WITHDRAWAL_PROFIT)) {
             if(currentSubscription == null)
                 throw new PaymentRequiredException();
-
-            SubscriptionPackageModel currentSubscriptionPackage = currentSubscription.getSubscriptionPackage();
-            if(!model.getCurrency().equals(currentSubscriptionPackage.getCurrency()))
-                throw new NotAcceptableException("The currency type does not match your currently active subscription's currency.");
-
             var totalProfit = walletRepository.totalProfit(model.getUser().getId());
-            if(model.getAmount().compareTo(currentSubscription.getFinalPrice()) >= 0 || model.getAmount().compareTo(totalProfit) > 0) {
+            if(totalProfit.compareTo(model.getAmount()) < 0)
+                throw new PaymentRequiredException();
+            if(walletRepository.countAllByUserIdAndTransactionTypeAndStatus(user.getId(),TransactionType.WITHDRAWAL_PROFIT,EntityStatusType.Active)>1 && user.getChildCount() < currentSubscriptionPackage.getOrderCount()) {
+                throw new NotAcceptableException(String.format("To withdraw your profit you need to have at least %d referrals.", currentSubscriptionPackage.getOrderCount()));
+            }
+            if (model.getAmount().compareTo(new BigDecimal(minWithdrawAmount)) < 0)
+                throw new NotAcceptableException(String.format("Profit balance %s is insufficient for withdrawal!", minWithdrawAmount));
+        }
+        if(model.getTransactionType().equals(TransactionType.WITHDRAWAL)) {
+            if(currentSubscription == null)
+                throw new PaymentRequiredException();
+            var totalDeposit = walletRepository.totalDeposit(model.getUser().getId());
+            if(totalDeposit.compareTo(model.getAmount()) < 0)
+                throw new PaymentRequiredException();
+            if(model.getAmount().compareTo(currentSubscription.getFinalPrice()) >= 0) {
                 if(currentSubscription.getRemainingWithdrawalPerDay() > 0L)
                     throw new NotAcceptableException(String.format("You can withdraw your funds after %d days.",currentSubscription.getRemainingWithdrawalPerDay()));
                 if(user.getChildCount() < currentSubscriptionPackage.getOrderCount()) {
                     throw new NotAcceptableException(String.format("To withdraw your funds you need to have at least %d referrals.", currentSubscriptionPackage.getOrderCount()));
                 }
-                model.setTransactionType(TransactionType.WITHDRAWAL);
-            } else {
-                // withdrawal profit
-                model.setTransactionType(TransactionType.WITHDRAWAL_PROFIT);
-                if (model.getAmount().compareTo(new BigDecimal(minWithdrawAmount)) < 0)
-                    throw new NotAcceptableException(String.format("You need to request more than %s %s.", minWithdrawAmount, currentSubscriptionPackage.getCurrency().getTitle()));
-                if (model.getAmount().compareTo(totalProfit) > 0)
-                    throw new NotAcceptableException(String.format("Insufficient balance, You are not allowed to withdraw more than %s of the total profit.", totalProfit));
             }
 
         } else if(model.getTransactionType().equals(TransactionType.DEPOSIT)) {
             //please deposit more than the subscription amount
+            var sp = subscriptionPackageService.findMatchedPackageByAmount(model.getAmount());
+            if(sp == null)
+                throw new BadRequestException("Please deposit at least the amount of the first subscription.");
         }
         model.setStatus(EntityStatusType.Pending);
         model.setRole(user.getRole());
-        var result =  super.create(model, allKey);
-//        if(model.isActive()) {
-//            balance = walletRepository.findBalance(model.getUser().getId());
-//            for (BalanceModel balanceModel : balance) {
-//                var currentSubscription = subscriptionService.findByUserAndActivePackage(model.getUser().getId());
-//                var subscriptionPackage = subscriptionPackageService.findMatchedPackageByAmountAndCurrency(balanceModel.getTotalAmount(),balanceModel.getCurrency());
-//                if(currentSubscription == null || (subscriptionPackage != null && !currentSubscription.getSubscriptionPackage().getId().equals(subscriptionPackage.getId()))) {
-//                    subscriptionService.create(new SubscriptionModel().setSubscriptionPackage(subscriptionPackage).setUser(model.getUser()).setStatus(EntityStatusType.Active));
-//                }
-//            }
-//        }
-        return result;
+        return super.create(model, allKey);
     }
 
     @Override

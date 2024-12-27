@@ -2,7 +2,6 @@ package com.eshop.client.service.impl;
 
 import com.eshop.client.entity.QSubscriptionPackageEntity;
 import com.eshop.client.entity.SubscriptionPackageEntity;
-import com.eshop.client.enums.CurrencyType;
 import com.eshop.client.filter.SubscriptionPackageFilter;
 import com.eshop.client.mapping.SubscriptionPackageMapper;
 import com.eshop.client.model.SubscriptionPackageModel;
@@ -60,8 +59,15 @@ public class SubscriptionPackageServiceImpl extends BaseServiceImpl<Subscription
     }
 
     @Override
-    @Cacheable(cacheNames = "client", key = "'SubscriptionPackage:findMatchedPackageByAmountAndCurrency:amount:' + #amount.toString() + ':currency:' + #currency.toString()")
-    public SubscriptionPackageModel findMatchedPackageByAmountAndCurrency(BigDecimal amount, CurrencyType currency) {
-        return mapper.toModel(subscriptionPackageRepository.findMatchedPackageByAmountAndCurrency(amount, currency).orElse(subscriptionPackageRepository.findTopByOrderByMaxPriceDesc()));
+    @Cacheable(cacheNames = "client", key = "'SubscriptionPackage:findMatchedPackageByAmount:amount:' + #amount.toString()")
+    public SubscriptionPackageModel findMatchedPackageByAmount(BigDecimal amount) {
+        var result = subscriptionPackageRepository.findMatchedPackageByAmount(amount);
+        if(result.isEmpty()) {
+            var lastPackage = subscriptionPackageRepository.findTopByOrderByMaxPriceDesc();
+            if(amount.compareTo(lastPackage.getMaxPrice()) >= 0)
+                return mapper.toModel(lastPackage);
+            return null;
+        }
+        return mapper.toModel(result.get());
     }
 }

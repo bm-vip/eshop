@@ -19,9 +19,12 @@
             filter: grayscale(100%);
             pointer-events: none;
         }
-
         .form-control-feedback.right, .btn-primary, #walletAddress-title, #qrcode {
             margin-top: 34px;
+        }
+        .disabled {
+            filter: grayscale(100%);
+            pointer-events: none;
         }
     </style>
 </th:block>
@@ -49,31 +52,38 @@
                     <div class="x_content">
                         <div class="row">
                             <div class="col-md-6 form-group has-feedback">
+                                <label th:text="#{withdrawalType}"></label>
+                                <select class="form-control" th:id="withdrawalType" th:title="#{withdrawalType}" tabindex="1" autofocus>
+                                    <option value="WITHDRAWAL_PROFIT" th:text="#{withdrawalProfit}" selected ></option>
+                                    <option value="WITHDRAWAL" th:text="#{withdrawalDepositedFund}"></option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 form-group has-feedback">
                                 <label th:text="#{network}"></label>
-                                <select class="form-control" th:id="network" th:title="#{network}" tabindex="1" autofocus>
+                                <select class="form-control" th:id="network" th:title="#{network}" tabindex="2">
                                     <option value="TRC20" th:text="TRC20" selected ></option>
                                     <option value="BEP20" th:text="BEP20"></option>
                                 </select>
                             </div>
                             <div class="col-md-6 form-group has-feedback">
                                 <label th:text="#{wallet} +' '+ #{address}"></label>
-                                <input type="text" class="form-control" id="walletAddress" name="walletAddress" tabindex="1" autofocus>
+                                <input type="text" class="form-control" id="walletAddress" name="walletAddress" tabindex="3">
                                 <span class="fa fa-wallet form-control-feedback right" aria-hidden="true"></span>
                             </div>
                             <div class="col-md-6 form-group has-feedback">
                                 <label th:text="#{amountInUSD}"></label>
-                                <input type="number" tabindex="2" placeholder="Min 15 USD" class="form-control" id="amount" th:name="amount" th:value="${amount ?: ''}">
+                                <input type="number" tabindex="4" placeholder="Min 15 USD" class="form-control" id="amount" th:name="amount" th:value="${amount ?: ''}">
                                 <span class="fa fa-dollar-sign form-control-feedback right" aria-hidden="true"></span>
                             </div>
                             <div class="col-md-6 form-group has-feedback">
                                 <label th:text="#{currency}"></label>
-                                <input type="text" tabindex="3" class="form-control" id="currency" disabled="disabled" th:name="currency" value="USDT">
+                                <input type="text" tabindex="5" class="form-control" id="currency" disabled="disabled" th:name="currency" value="USDT">
                                 <span class="fa fa-coins form-control-feedback right" aria-hidden="true"></span>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-md-12">
-                                <button tabindex="3" type="submit" class="btn btn-primary btn-block"><i class="fa fa-send"></i>&nbsp;<span th:text="#{send}"></span></button>
+                                <button id="saveWithdraw" tabindex="6" type="submit" class="btn btn-primary btn-block"><i class="fa fa-send"></i>&nbsp;<span th:text="#{send}"></span></button>
                                 <div id="withdraw-notice" class="alert alert-info">
                                     <button onclick="$('#withdraw-notice').hide()" class="close">&times;</button>
                                     <div class="alert-content">

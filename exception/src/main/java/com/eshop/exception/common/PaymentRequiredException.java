@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 public class PaymentRequiredException extends BaseException {
     private static final Logger log = LoggerFactory.getLogger(PaymentRequiredException.class);
     public PaymentRequiredException() {
-        super("insufficient balance!", HttpStatus.PAYMENT_REQUIRED);
+        super("Insufficient balance!", HttpStatus.PAYMENT_REQUIRED);
         log.error(
                 String.valueOf(this)
         );

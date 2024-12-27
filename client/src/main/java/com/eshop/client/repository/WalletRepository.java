@@ -1,6 +1,7 @@
 package com.eshop.client.repository;
 
 import com.eshop.client.entity.WalletEntity;
+import com.eshop.client.enums.EntityStatusType;
 import com.eshop.client.enums.TransactionType;
 import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
@@ -66,6 +67,8 @@ public interface WalletRepository extends BaseRepository<WalletEntity, Long> {
 			+ "SUM(CASE WHEN w.transactionType = com.eshop.client.enums.TransactionType.WITHDRAWAL_PROFIT THEN w.amount ELSE 0 END),0) "
 			+ "FROM WalletEntity w WHERE w.user.id = :userId AND w.status=com.eshop.client.enums.EntityStatusType.Active")
 	 BigDecimal totalProfit(UUID userId);
+
+	 long countAllByUserIdAndTransactionTypeAndStatus(UUID userId, TransactionType transactionType, EntityStatusType status);
 
 //	@Query(value = "SELECT currency, SUM(totalAmount) AS totalAmount" +
 //				   " FROM (" +

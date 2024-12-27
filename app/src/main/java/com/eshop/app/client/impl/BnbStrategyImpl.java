@@ -13,6 +13,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.math.RoundingMode;
 
 @Component
 @RequiredArgsConstructor
@@ -32,7 +33,7 @@ public class BnbStrategyImpl implements NetworkStrategy {
         if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
             return new BigDecimal(response.getBody().getPrice());
         } else {
-            throw new RuntimeException(String.format("Failed to fetch %s price, Status: %s", token,response.getStatusCode()));
+            throw new RuntimeException(String.format("Failed to fetch %s price, Status: %s", token, response.getStatusCode()));
         }
     }
 
@@ -61,7 +62,7 @@ public class BnbStrategyImpl implements NetworkStrategy {
         TransactionResult result = bsTxResponse.getResult();
         BigInteger valueWei = new BigInteger(result.getValue().replace("0x", ""), 16);
         BigDecimal amount = new BigDecimal(valueWei).divide(new BigDecimal("1000000000000000000")); // Convert Wei to BNB
-        response.setAmount(amount);
+        response.setAmount(amount.setScale(4, RoundingMode.HALF_UP));
         response.setToAddress(result.getTo());
         response.setFromAddress(result.getFrom());
         response.setSymbol(getTokenSymbol(result.getTo()));
@@ -77,28 +78,34 @@ public class BnbStrategyImpl implements NetworkStrategy {
                 .queryParam("contractaddress", tokenAddress)
                 .queryParam("apikey", apiKey)
                 .toUriString();
+        try {
+            TokenInfoResponse response = new RestTemplate().getForObject(url, TokenInfoResponse.class);
 
-        TokenInfoResponse response = new RestTemplate().getForObject(url, TokenInfoResponse.class);
-
-        if (response != null && response.getResult() != null && !response.getResult().isEmpty()) {
-            return response.getResult().get(0).getSymbol(); // Assuming the token symbol is in the first result
+            if (response != null && response.getResult() != null && !response.getResult().isEmpty()) {
+                return response.getResult().get(0).getSymbol(); // Assuming the token symbol is in the first result
+            }
+            return "UNKNOWN TOKEN"; // Default return if symbol cannot be determined
+        } catch (Exception e) {
+            return "UNKNOWN TOKEN";
         }
-        return "UNKNOWN TOKEN"; // Default return if symbol cannot be determined
     }
 
     private boolean getTransactionReceiptStatus(String txHash) {
         String receiptUrl = UriComponentsBuilder.fromHttpUrl(baseUrl)
-                .queryParam("module", "proxy")
-                .queryParam("action", "eth_getTransactionReceipt")
+                .queryParam("module", "transaction")
+                .queryParam("action", "gettxreceiptstatus")
                 .queryParam("txhash", txHash)
                 .queryParam("apikey", apiKey)
                 .toUriString();
+        try {
+            TransactionReceiptResponse receiptResponse = new RestTemplate().getForObject(receiptUrl, TransactionReceiptResponse.class);
 
-        TransactionReceiptResponse receiptResponse = new RestTemplate().getForObject(receiptUrl, TransactionReceiptResponse.class);
-
-        if (receiptResponse != null && receiptResponse.getResult() != null) {
-            return receiptResponse.getResult().getStatus().equals("1"); // Status field in the receipt, expected to be "0" or "1"
+            if (receiptResponse != null && receiptResponse.getResult() != null) {
+                return receiptResponse.getResult().getStatus().equals("1"); // Status field in the receipt, expected to be "0" or "1"
+            }
+            return false; // Default to failure if unable to retrieve the status
+        } catch (Exception e) {
+            return false;
         }
-        return false; // Default to failure if unable to retrieve the status
     }
 }

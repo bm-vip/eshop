@@ -12,7 +12,7 @@ $(function () {
                                     <div class="alert-content">
                                         <i class="fa fa-warning" style="font-size:17px"></i>
                                         <ul style="margin: 0">
-                                            <li>You have reached the purchase limitation, please try after ${purchaseLimit}</li>                                           
+                                            <li>You have reached the purchase limitation, please try ${purchaseLimit}</li>                                           
                                         </ul>
                                     </div>
                                 </div>`);
@@ -22,14 +22,14 @@ async function trade(id, callback) {
     $("#trade-btn-"+ id).attr("disabled", "disabled").attr("aria-disabled",true).addClass("disabled");
     purchaseLimit = await (await fetch("/api/v1/arbitrage/purchase-limit/" + currentUser.id)).text();
     if(!isNullOrEmpty(purchaseLimit)) {
-        show_warning(`You have reached the purchase limitation, please try after ${purchaseLimit}`);
+        show_warning(`You have reached the purchase limitation, please try ${purchaseLimit}`);
         $(`#subscription-package-item-${id} .btn-success`).text('Trade ' + purchaseLimit);
         $("#trading-order").html(`<div id="purchase-limit-notice" class="col-12 alert alert-warning">
                                     <button onclick="$('#purchase-limit-notice').hide()" class="close">&times;</button>
                                     <div class="alert-content">
                                         <i class="fa fa-warning" style="font-size:17px"></i>
                                         <ul style="margin: 0">
-                                            <li>You have reached the purchase limitation, please try after ${purchaseLimit}</li>                                           
+                                            <li>You have reached the purchase limitation, please try ${purchaseLimit}</li>                                           
                                         </ul>
                                     </div>
                                 </div>`);
