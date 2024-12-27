@@ -23,15 +23,15 @@ messages = {
 };
 
 columns = [{
+    data: 'network'
+},{
     data: 'amount',
     render: function (data) { return addPeriod(data) }
-}, {
-    data: 'currency'
 },{
     data: 'transactionType'
 },{
-    data: 'active',
-    render: function (data) { return data ? `<span class='grteen'>${resources.active}</span>` :  `<span class='red'>${resources.inactive}</span>`}
+    data: 'status',
+    render: function (data) { return `<span class="${data == 'Active' ? 'green':'red'}">${data}</span>`}
 }, {
     data: 'modifiedDate',
     render: function (data) { return toLocalizingDateString(data, true) }
@@ -39,7 +39,7 @@ columns = [{
 
 function customTableOptions(){
     let tbl_option = tableOptions();
-    tbl_option.order = [[4, 'asc']];
+    tbl_option.order = [[4, 'desc']];
     return tbl_option;
 }
 
@@ -55,6 +55,7 @@ function onLoad() {
 function loadSaveEntityByInput() {
     let model = {
         amount: $("#amount").val().replace(/,/g, ""),
+        network: $("#network").val(),
         currency: 'USDT',
         transactionType: 'WITHDRAWAL',
         user: {id: currentUser.id},
@@ -70,7 +71,7 @@ function loadSearchEntityByInput() {
     return model;
 }
 function clearAll_(){
-    $("#amount").val('');
+    $("#amount","#walletAddress").val('');
 }
 function afterSubmitForm(entity) {
     currentUser.walletAddress = $("#walletAddress").val();

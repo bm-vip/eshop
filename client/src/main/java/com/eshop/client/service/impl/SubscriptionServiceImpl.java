@@ -13,7 +13,6 @@ import com.eshop.client.repository.SubscriptionPackageRepository;
 import com.eshop.client.repository.SubscriptionRepository;
 import com.eshop.client.repository.UserRepository;
 import com.eshop.client.repository.WalletRepository;
-import com.eshop.client.service.ParameterService;
 import com.eshop.client.service.SubscriptionService;
 import com.eshop.client.util.DateUtil;
 import com.eshop.exception.common.BadRequestException;
@@ -39,17 +38,13 @@ public class SubscriptionServiceImpl extends BaseServiceImpl<SubscriptionFilter,
     private final SubscriptionPackageRepository subscriptionPackageRepository;
     private final UserRepository userRepository;
     private final WalletRepository walletRepository;
-    private final ParameterService parameterService;
-    private final String walletAddressValue;
 
-    public SubscriptionServiceImpl(SubscriptionRepository repository, SubscriptionMapper mapper, SubscriptionPackageRepository subscriptionPackageRepository, UserRepository userRepository, WalletRepository walletRepository, ParameterService parameterService) {
+    public SubscriptionServiceImpl(SubscriptionRepository repository, SubscriptionMapper mapper, SubscriptionPackageRepository subscriptionPackageRepository, UserRepository userRepository, WalletRepository walletRepository) {
         super(repository, mapper);
         this.subscriptionRepository = repository;
         this.subscriptionPackageRepository = subscriptionPackageRepository;
         this.userRepository = userRepository;
         this.walletRepository = walletRepository;
-        this.parameterService = parameterService;
-        this.walletAddressValue = parameterService.findByCode(ParameterService.walletAddress).getValue();
     }
     @Override
     public JpaRepository<SubscriptionEntity,Long> getRepository() {
@@ -95,11 +90,10 @@ public class SubscriptionServiceImpl extends BaseServiceImpl<SubscriptionFilter,
         entity.setRole(user.getRole());
 
         if(model.getStatus().equals(EntityStatusType.Active)) {
-            var balanceList = walletRepository.totalBalanceGroupedByCurrency(entity.getUser().getId());
-            var balance = balanceList.stream().filter(x->x.getCurrency().equals(subscriptionPackage.getCurrency())).findFirst();
-            if(balance.isEmpty())
+            var balance = walletRepository.calculateUserBalance(entity.getUser().getId());
+            if(balance.compareTo(BigDecimal.ZERO) <= 0)
                 throw new PaymentRequiredException();
-            if(entity.getFinalPrice().compareTo(balance.get().getTotalAmount()) > 0)
+            if(entity.getFinalPrice().compareTo(balance) > 0)
                 throw new PaymentRequiredException();
             deactivateOldActive(entity.getUser().getId());
             entity.setStatus(EntityStatusType.Active);
@@ -132,11 +126,10 @@ public class SubscriptionServiceImpl extends BaseServiceImpl<SubscriptionFilter,
             entity.setStatus(EntityStatusType.Passive);
         }
         if(model.getStatus().equals(EntityStatusType.Active)) {
-            var balanceList = walletRepository.totalBalanceGroupedByCurrency(entity.getUser().getId());
-            var balance = balanceList.stream().filter(x->x.getCurrency().equals(entity.getSubscriptionPackage().getCurrency())).findFirst();
-            if(balance.isEmpty())
+            var balance = walletRepository.calculateUserBalance(entity.getUser().getId());
+            if(balance.compareTo(BigDecimal.ZERO) <= 0)
                 throw new PaymentRequiredException();
-            if(entity.getFinalPrice().compareTo(balance.get().getTotalAmount()) > 0)
+            if(entity.getFinalPrice().compareTo(balance) > 0)
                 throw new PaymentRequiredException();
             deactivateOldActive(entity.getUser().getId());
             entity.setStatus(EntityStatusType.Active);
@@ -182,12 +175,11 @@ public class SubscriptionServiceImpl extends BaseServiceImpl<SubscriptionFilter,
         if(entity.getUser().getParent() != null) {
             var parentReferralBonus = entity.getSubscriptionPackage().getParentReferralBonus();
             WalletEntity parentWallet = new WalletEntity();
-            parentWallet.setActive(true);
+            parentWallet.setStatus(EntityStatusType.Active);
             parentWallet.setAmount(new BigDecimal(parentReferralBonus));
             parentWallet.setUser(entity.getUser().getParent());
             parentWallet.setCurrency(entity.getSubscriptionPackage().getCurrency());
             parentWallet.setTransactionType(TransactionType.BONUS);
-            parentWallet.setAddress(walletAddressValue);
             walletRepository.save(parentWallet);
         }
         clearCache("Wallet:" + entity.getUser().getId().toString());

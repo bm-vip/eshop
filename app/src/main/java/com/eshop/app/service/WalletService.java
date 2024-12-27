@@ -11,11 +11,14 @@ import java.util.Map;
 import java.util.UUID;
 
 public interface WalletService extends BaseService<WalletFilter, WalletModel, Long> {
-    List<BalanceModel> totalBalanceGroupedByCurrency();
-    List<BalanceModel> totalDepositGroupedByCurrency();
-    List<BalanceModel> totalWithdrawalGroupedByCurrency();
-    List<BalanceModel> totalBonusGroupedByCurrency();
-    List<BalanceModel> totalRewardGroupedByCurrency();
-//    List<BalanceModel> totalProfitGroupedByCurrency();
+    WalletModel createFromAdmin(WalletModel model);
+    BigDecimal totalBalance();
+    BigDecimal totalDeposit();
+    BigDecimal totalWithdrawal();
+    BigDecimal totalBonus();
+    BigDecimal totalReward();
+//    List<BalanceModel> totalProfit();
     Map<Long, BigDecimal> findAllWithinDateRange(long startDate, long endDate, TransactionType transactionType);
+    boolean validateTransaction(WalletModel model);
+    BigDecimal referralDepositBonus(BigDecimal amount);
 }

@@ -12,9 +12,7 @@ import com.eshop.client.model.CoinUsageDTO;
 import com.eshop.client.repository.*;
 import com.eshop.client.service.ArbitrageService;
 import com.eshop.client.service.MailService;
-import com.eshop.client.service.ParameterService;
 import com.eshop.client.util.DateUtil;
-import com.eshop.exception.common.ExpectationException;
 import com.eshop.exception.common.NotAcceptableException;
 import com.eshop.exception.common.NotFoundException;
 import com.querydsl.core.BooleanBuilder;
@@ -35,12 +33,9 @@ import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
-import java.util.Random;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import static com.eshop.client.util.MapperHelper.get;
-import static com.eshop.client.util.StringUtils.generateIdKey;
 
 
 @Service
@@ -51,22 +46,18 @@ public class ArbitrageServiceImpl extends BaseServiceImpl<ArbitrageFilter, Arbit
     private ArbitrageMapper mapper;
     private final SubscriptionPackageRepository subscriptionPackageRepository;
     private final SubscriptionRepository subscriptionRepository;
-    private final ParameterService parameterService;
     private final WalletRepository walletRepository;
     private final UserRepository userRepository;
-    private final String walletAddressValue;
     private final JPAQueryFactory queryFactory;
     private final MailService mailService;
 
     @Autowired
-    public ArbitrageServiceImpl(ArbitrageRepository repository, ArbitrageMapper mapper, SubscriptionPackageRepository subscriptionPackageRepository, SubscriptionRepository subscriptionRepository, ParameterService parameterService, WalletRepository walletRepository, UserRepository userRepository, ArbitrageRepository arbitrageRepository, JPAQueryFactory queryFactory, MailService mailService) {
+    public ArbitrageServiceImpl(ArbitrageRepository repository, ArbitrageMapper mapper, SubscriptionPackageRepository subscriptionPackageRepository, SubscriptionRepository subscriptionRepository, WalletRepository walletRepository, UserRepository userRepository, ArbitrageRepository arbitrageRepository, JPAQueryFactory queryFactory, MailService mailService) {
         super(repository, mapper);
         this.repository = repository;
         this.mapper = mapper;
         this.subscriptionPackageRepository = subscriptionPackageRepository;
         this.subscriptionRepository = subscriptionRepository;
-        this.parameterService = parameterService;
-        this.walletAddressValue = parameterService.findByCode(ParameterService.walletAddress).getValue();
         this.walletRepository = walletRepository;
         this.userRepository = userRepository;
         this.arbitrageRepository = arbitrageRepository;
@@ -103,24 +94,21 @@ public class ArbitrageServiceImpl extends BaseServiceImpl<ArbitrageFilter, Arbit
             throw new NotAcceptableException("You have reached purchase limitation, please try " + purchaseLimitResponse);
 
         var subscription = subscriptionRepository.findByUserIdAndStatus(model.getUser().getId(), EntityStatusType.Active);
-        var balanceList = walletRepository.totalBalanceGroupedByCurrency(model.getUser().getId());
-        var balance = balanceList.stream().filter(x->x.getCurrency().equals(subscription.getSubscriptionPackage().getCurrency())).findFirst();
+        var balance = walletRepository.calculateUserBalance(model.getUser().getId());
         var user = userRepository.findById(model.getUser().getId()).orElseThrow(()->new NotFoundException("user not found"));
 //        if(!user.isEmailVerified()) {
 //            mailService.sendVerification(user.getEmail(),"Email verification link");
 //            throw new ExpectationException("Please verify your email before make this transaction.");
 //        }
-        var reward = subscription.getSubscriptionPackage().getReward(balance.get().getTotalAmount());
+        var reward = subscription.getSubscriptionPackage().getReward(balance);
 
         if(reward.compareTo(BigDecimal.ZERO) == 1) {
             WalletEntity buyReward = new WalletEntity();
-            buyReward.setActive(true);
+            buyReward.setStatus(EntityStatusType.Active);
             buyReward.setAmount(reward);
             buyReward.setUser(user);
             buyReward.setRole(user.getRole());
-            buyReward.setCurrency(subscription.getSubscriptionPackage().getCurrency());
             buyReward.setTransactionType(TransactionType.REWARD);
-            buyReward.setAddress(walletAddressValue);
             walletRepository.save(buyReward);
             model.setReward(buyReward.getAmount());
             model.setCurrency(subscription.getSubscriptionPackage().getCurrency());
@@ -128,26 +116,24 @@ public class ArbitrageServiceImpl extends BaseServiceImpl<ArbitrageFilter, Arbit
             //parent reward
             if(user.getParent()!=null){
                 WalletEntity buyRewardParent = new WalletEntity();
-                buyRewardParent.setActive(true);
+                buyRewardParent.setStatus(EntityStatusType.Active);
                 buyRewardParent.setAmount(reward.multiply(new BigDecimal("0.18")).setScale(6, RoundingMode.HALF_UP));
                 buyRewardParent.setUser(user.getParent());
                 buyRewardParent.setRole(user.getRole());
                 buyRewardParent.setCurrency(subscription.getSubscriptionPackage().getCurrency());
                 buyRewardParent.setTransactionType(TransactionType.BONUS);
-                buyRewardParent.setAddress(walletAddressValue);
                 walletRepository.save(buyRewardParent);
             }
 
             //grand parent reward
             if(get(()-> user.getParent().getParent())!=null) {
                 WalletEntity buyRewardGrandParent = new WalletEntity();
-                buyRewardGrandParent.setActive(true);
+                buyRewardGrandParent.setStatus(EntityStatusType.Active);
                 buyRewardGrandParent.setRole(user.getRole());
                 buyRewardGrandParent.setAmount(reward.multiply(new BigDecimal("0.08")).setScale(6, RoundingMode.HALF_UP));
                 buyRewardGrandParent.setUser(user.getParent().getParent());
                 buyRewardGrandParent.setCurrency(subscription.getSubscriptionPackage().getCurrency());
                 buyRewardGrandParent.setTransactionType(TransactionType.BONUS);
-                buyRewardGrandParent.setAddress(walletAddressValue);
                 walletRepository.save(buyRewardGrandParent);
             }
             clearCache("Wallet:" + user.getId().toString());

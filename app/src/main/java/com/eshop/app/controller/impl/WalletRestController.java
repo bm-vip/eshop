@@ -5,8 +5,12 @@ import com.eshop.app.filter.WalletFilter;
 import com.eshop.app.model.BalanceModel;
 import com.eshop.app.model.WalletModel;
 import com.eshop.app.service.WalletService;
+import com.eshop.app.validation.Create;
+import com.eshop.exception.common.BadRequestException;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -27,27 +31,36 @@ public class WalletRestController extends BaseRestControllerImpl<WalletFilter, W
         this.walletService = service;
     }
     @GetMapping("/total-balance")
-    public ResponseEntity<List<BalanceModel>> totalBalanceGroupedByCurrency(){
-        return ResponseEntity.ok(walletService.totalBalanceGroupedByCurrency());
+    public ResponseEntity<BigDecimal> totalBalance(){
+        return ResponseEntity.ok(walletService.totalBalance());
     }
     @GetMapping("/total-deposit")
-    public ResponseEntity<List<BalanceModel>> totalDepositGroupedByCurrency(){
-        return ResponseEntity.ok(walletService.totalDepositGroupedByCurrency());
+    public ResponseEntity<BigDecimal> totalDeposit(){
+        return ResponseEntity.ok(walletService.totalDeposit());
     }
     @GetMapping("/total-withdrawal")
-    public ResponseEntity<List<BalanceModel>> totalWithdrawalGroupedByCurrency(){
-        return ResponseEntity.ok(walletService.totalWithdrawalGroupedByCurrency());
+    public ResponseEntity<BigDecimal> totalWithdrawal(){
+        return ResponseEntity.ok(walletService.totalWithdrawal());
     }
     @GetMapping("/total-bonus")
-    public ResponseEntity<List<BalanceModel>> totalBonusGroupedByCurrency(){
-        return ResponseEntity.ok(walletService.totalBonusGroupedByCurrency());
+    public ResponseEntity<BigDecimal> totalBonus(){
+        return ResponseEntity.ok(walletService.totalBonus());
     }
     @GetMapping("/total-reward")
-    public ResponseEntity<List<BalanceModel>> totalRewardGroupedByCurrency(){
-        return ResponseEntity.ok(walletService.totalRewardGroupedByCurrency());
+    public ResponseEntity<BigDecimal> totalReward(){
+        return ResponseEntity.ok(walletService.totalReward());
     }
     @GetMapping("/get-date-range/{startDate}/{endDate}/{transactionType}")
     public ResponseEntity<Map<Long, BigDecimal>> findAllWithinDateRange(@PathVariable long startDate, @PathVariable long endDate, @PathVariable TransactionType transactionType){
         return ResponseEntity.ok(walletService.findAllWithinDateRange(startDate,endDate,transactionType));
+    }
+    @PostMapping("/admin")
+    @ResponseBody
+    @Operation(summary = "${api.baseRest.create}", description = "${api.baseRest.create.desc}")
+    ResponseEntity<WalletModel> createForAdmin(@Validated(Create.class) @RequestBody WalletModel model){
+        if (model.getId() != null) {
+            throw new BadRequestException("The id must not be provided when creating a new record");
+        }
+        return ResponseEntity.ok(walletService.createFromAdmin(model));
     }
 }

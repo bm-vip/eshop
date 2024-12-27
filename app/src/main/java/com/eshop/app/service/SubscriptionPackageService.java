@@ -7,5 +7,5 @@ import com.eshop.app.model.SubscriptionPackageModel;
 import java.math.BigDecimal;
 
 public interface SubscriptionPackageService extends BaseService<SubscriptionPackageFilter, SubscriptionPackageModel, Long> {
-    SubscriptionPackageModel findMatchedPackageByAmountAndCurrency(BigDecimal amount, CurrencyType currency);
+    SubscriptionPackageModel findMatchedPackageByAmount(BigDecimal amount);
 }

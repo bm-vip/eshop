@@ -5,23 +5,23 @@
     });
 
     $.getJSON("/api/v1/wallet/total-balance", jsonToUrlSearchParams({}), function (data) {
-        $("#totalBalance").text(get(() => data[0].totalAmount, 0));
+        $("#totalBalance").text(get(() => data, 0));
     });
 
     $.getJSON("/api/v1/wallet/total-bonus", jsonToUrlSearchParams({}), function (data) {
-        $("#totalBonus").text(get(() => data[0].totalAmount, 0));
+        $("#totalBonus").text(get(() => data, 0));
     });
 
     $.getJSON("/api/v1/wallet/total-reward", jsonToUrlSearchParams({}), function (data) {
-        $("#totalProfit").text(get(() => data[0].totalAmount, 0));
+        $("#totalProfit").text(get(() => data, 0));
     });
 
     $.getJSON("/api/v1/wallet/total-withdrawal", jsonToUrlSearchParams({}), function (data) {
-        $("#totalWithdrawal").text(get(() => data[0].totalAmount, 0));
+        $("#totalWithdrawal").text(get(() => data, 0));
     });
 
     $.getJSON("/api/v1/wallet/total-deposit", jsonToUrlSearchParams({}), function (data) {
-        $("#totalDeposit").text(get(() => data[0].totalAmount, 0));
+        $("#totalDeposit").text(get(() => data, 0));
     });
     //chart
     var chart_plot_01_settings = {

@@ -13,7 +13,9 @@ import java.util.stream.Collectors;
 
 public enum CurrencyType {
     USDT("USDT"),
-    TRX("TRX"),
+    TRX("trx"),
+    BNB("BNBUSDT"),
+//    SOL("SOL"),
     ;
 
     CurrencyType(String title) {

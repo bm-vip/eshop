@@ -3,6 +3,7 @@ package com.eshop.client.enums;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 public class RoleType {
+    private static String ADMIN_ID = "92d18767-6336-474d-9b57-9cec381db56b";
     public static final String ADMIN = "ROLE_ADMIN";
     public static final String SUPER_WISER = "ROLE_SUPER_WISER";
     public static final String MANAGER = "ROLE_MANAGER";

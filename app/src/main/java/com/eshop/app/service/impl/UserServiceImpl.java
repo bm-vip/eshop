@@ -1,8 +1,9 @@
 package com.eshop.app.service.impl;
 
+import com.eshop.app.entity.CountryEntity;
 import com.eshop.app.entity.QUserEntity;
+import com.eshop.app.entity.RoleEntity;
 import com.eshop.app.entity.UserEntity;
-import com.eshop.app.enums.CurrencyType;
 import com.eshop.app.enums.RoleType;
 import com.eshop.app.filter.UserFilter;
 import com.eshop.app.mapping.UserMapper;
@@ -28,7 +29,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
-import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Optional;
@@ -73,10 +73,10 @@ public class UserServiceImpl extends BaseServiceImpl<UserFilter,UserModel, UserE
     @Override
     public Page<UserModel> findAll(UserFilter filter, Pageable pageable) {
         return super.findAll(filter, pageable).map(m-> {
-            m.setDeposit(walletRepository.totalDepositGroupedByCurrencyByUserId(m.getId()).stream().filter(f->f.getCurrency().equals(CurrencyType.USDT)).map(BalanceModel::getTotalAmount).findFirst().orElse(BigDecimal.ZERO));
-            m.setWithdrawal(walletRepository.totalWithdrawalGroupedByCurrencyByUserId(m.getId()).stream().filter(f->f.getCurrency().equals(CurrencyType.USDT)).map(BalanceModel::getTotalAmount).findFirst().orElse(BigDecimal.ZERO));
-            m.setBonus(walletRepository.totalBonusGroupedByCurrencyByUserId(m.getId()).stream().filter(f->f.getCurrency().equals(CurrencyType.USDT)).map(BalanceModel::getTotalAmount).findFirst().orElse(BigDecimal.ZERO));
-            m.setReward(walletRepository.totalRewardGroupedByCurrencyByUserId(m.getId()).stream().filter(f->f.getCurrency().equals(CurrencyType.USDT)).map(BalanceModel::getTotalAmount).findFirst().orElse(BigDecimal.ZERO));
+            m.setDeposit(walletRepository.totalDepositByUserId(m.getId()));
+            m.setWithdrawal(walletRepository.totalWithdrawalByUserId(m.getId()));
+            m.setBonus(walletRepository.totalBonusByUserId(m.getId()));
+            m.setReward(walletRepository.totalRewardByUserId(m.getId()));
             return m;
         });
     }
@@ -86,10 +86,10 @@ public class UserServiceImpl extends BaseServiceImpl<UserFilter,UserModel, UserE
         var data = super.findAllTable(filter, pageable);
         if(!CollectionUtils.isEmpty(data.getData())) {
             for (UserModel m : data.getData()) {
-                m.setDeposit(walletRepository.totalDepositGroupedByCurrencyByUserId(m.getId()).stream().filter(f->f.getCurrency().equals(CurrencyType.USDT)).map(BalanceModel::getTotalAmount).findFirst().orElse(BigDecimal.ZERO));
-                m.setWithdrawal(walletRepository.totalWithdrawalGroupedByCurrencyByUserId(m.getId()).stream().filter(f->f.getCurrency().equals(CurrencyType.USDT)).map(BalanceModel::getTotalAmount).findFirst().orElse(BigDecimal.ZERO));
-                m.setBonus(walletRepository.totalBonusGroupedByCurrencyByUserId(m.getId()).stream().filter(f->f.getCurrency().equals(CurrencyType.USDT)).map(BalanceModel::getTotalAmount).findFirst().orElse(BigDecimal.ZERO));
-                m.setReward(walletRepository.totalRewardGroupedByCurrencyByUserId(m.getId()).stream().filter(f->f.getCurrency().equals(CurrencyType.USDT)).map(BalanceModel::getTotalAmount).findFirst().orElse(BigDecimal.ZERO));
+                m.setDeposit(walletRepository.totalDepositByUserId(m.getId()));
+                m.setWithdrawal(walletRepository.totalWithdrawalByUserId(m.getId()));
+                m.setBonus(walletRepository.totalBonusByUserId(m.getId()));
+                m.setReward(walletRepository.totalRewardByUserId(m.getId()));
             }
         }
         return data;
@@ -143,9 +143,15 @@ public class UserServiceImpl extends BaseServiceImpl<UserFilter,UserModel, UserE
         if (StringUtils.hasLength(model.getPassword()))
             entity.setPassword(bCryptPasswordEncoder.encode(model.getPassword()));
         if(get(()->model.getCountry().getId())!=null)
-            entity.setCountry(entityManager.getReference(entity.getCountry().getClass(), model.getCountry().getId()));
+            entity.setCountry(entityManager.getReference(CountryEntity.class, model.getCountry().getId()));
         if(get(()->model.getParent().getId())!=null)
-            entity.setParent(entityManager.getReference(entity.getParent().getClass(), model.getParent().getId()));
+            entity.setParent(entityManager.getReference(UserEntity.class, model.getParent().getId()));
+        if(!CollectionUtils.isEmpty(model.getRoles())) {
+            entity.getRoles().clear();
+            model.getRoles().forEach(roleModel -> {
+                entity.getRoles().add(entityManager.getReference(RoleEntity.class, roleModel.getId()));
+            });
+        }
         return mapper.toModel(repository.save(entity));
     }
 

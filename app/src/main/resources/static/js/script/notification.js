@@ -55,7 +55,7 @@ columns = [{
 }];
 function customTableOptions(){
     let tbl_option = tableOptions();
-    tbl_option.order = [[3, 'asc']];
+    tbl_option.order = [[4, 'desc']];
     return tbl_option;
 }
 function loadInputByEntity(model) {

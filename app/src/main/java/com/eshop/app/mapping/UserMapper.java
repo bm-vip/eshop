@@ -26,7 +26,10 @@ public interface UserMapper extends BaseMapper<UserModel, UserEntity> {
     @Override
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mappings({
-            @Mapping(target = "password", ignore = true)
+            @Mapping(target = "password", ignore = true),
+            @Mapping(target = "parent", ignore = true),
+            @Mapping(target = "country", ignore = true),
+            @Mapping(target = "roles", ignore = true)
     })
     UserEntity updateEntity(UserModel model, @MappingTarget UserEntity entity);
 

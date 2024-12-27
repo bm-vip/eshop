@@ -8,8 +8,7 @@
     });
 
     $.getJSON("/api/v1/wallet/total-deposit/" + currentUser.id, function (data) {
-        $("#totalDeposit").text(get(() => data[0].totalAmount, 0));
-        $(".currency").text(get(() => data[0].currency, 'USDT'));
+        $("#totalDeposit").text(get(() => data, 0));
     });
     $.get("api/v1/subscription/find-active-by-user/" + currentUser.id, function (data) {
         if(isNullOrEmpty(data)) {
@@ -17,15 +16,15 @@
         } else $("#totalDepositReverseTimer").text(data.remainingWithdrawalPerDay);
     });
     $.getJSON("/api/v1/wallet/total-bonus/" + currentUser.id, function (data) {
-        $("#referralBonus").text(get(() => data[0].totalAmount, 0));
+        $("#referralBonus").text(get(() => data, 0));
     });
 
     $.getJSON("/api/v1/wallet/total-profit/" + currentUser.id, function (data) {
-        $("#totalProfit").text(get(() => data[0].totalAmount, 0));
+        $("#totalProfit").text(get(() => data, 0));
     });
 
     $.getJSON("/api/v1/wallet/total-withdrawal/" + currentUser.id, function (data) {
-        $("#totalWithdrawal").text(get(() => data[0].totalAmount, 0));
+        $("#totalWithdrawal").text(get(() => data, 0));
     });
 
     $.get("/api/v1/arbitrage/count-all-by-user/" + currentUser.id, function (data) {
@@ -37,7 +36,7 @@
     });
 
     $.get(`/api/v1/wallet/daily-profit/${currentUser.id}`, function (data) {
-        $("#dailyProfit").text(get(() => data[0].totalAmount, 0));
+        $("#dailyProfit").text(get(() => data, 0));
     });
 
     $.get("/api/v1/arbitrage/find-top-coins/5", function (data) {

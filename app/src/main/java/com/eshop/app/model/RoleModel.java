@@ -1,5 +1,6 @@
 package com.eshop.app.model;
 
+import com.eshop.app.mapping.RoleMapper;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
@@ -11,5 +12,4 @@ public class RoleModel extends BaseModel<Long> {
 	@NotBlank
 	private String role;
 	private String title;
-	private String wallet;
 }

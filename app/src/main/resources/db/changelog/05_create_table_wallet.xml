@@ -77,4 +77,39 @@
             <column name="role" type="VARCHAR(255)"/>
         </addColumn>
     </changeSet>
+    <changeSet id="05-7" author="administrator">
+        <addColumn tableName="tbl_wallet">
+            <column name="network" type="VARCHAR(255)" defaultValue="TRC20">
+                <constraints nullable="false"></constraints>
+            </column>
+            <column name="actual_amount" type="NUMBER(19, 6)" defaultValueNumeric="0">
+                <constraints nullable="false"></constraints>
+            </column>
+        </addColumn>
+        <addColumn tableName="tbl_wallet_aud">
+            <column name="network" type="VARCHAR(255)"/>
+            <column name="actual_amount" type="NUMBER(19, 6)"/>
+        </addColumn>
+        <sql endDelimiter="/">
+            update tbl_wallet set actual_amount=amount;/
+        </sql>
+    </changeSet>
+    <changeSet id="05-8" author="administrator">
+        <addColumn tableName="tbl_wallet">
+            <column name="status" type="VARCHAR(50)" defaultValue="Pending">
+                <constraints nullable="false"></constraints>
+            </column>
+        </addColumn>
+        <addColumn tableName="tbl_wallet_aud">
+            <column name="status" type="VARCHAR(50)"/>
+        </addColumn>
+        <sql endDelimiter="/">
+            UPDATE public.tbl_wallet SET status = (case when active=true then 'Active' else 'Pending' end);/
+        </sql>
+        <sql endDelimiter="/">
+            UPDATE public.tbl_wallet_aud SET status = (case when active=true then 'Active' else 'Pending' end);/
+        </sql>
+        <dropColumn tableName="tbl_wallet" columnName="active"/>
+        <dropColumn tableName="tbl_wallet_aud" columnName="active"/>
+    </changeSet>
 </databaseChangeLog>

@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 @Component
 @SessionScope
 public class SessionHolder {
-    private final HttpServletRequest request;
+    private HttpServletRequest request;
     private ObjectMapper objectMapper;
 
     public SessionHolder(HttpServletRequest request) {
@@ -26,6 +26,9 @@ public class SessionHolder {
 
     public UserModel getCurrentUser() {
         return (UserModel) request.getSession().getAttribute("currentUser");
+    }
+    public void setCurrentUser(UserModel user) {
+        request.getSession().setAttribute("currentUser", user);
     }
     @SneakyThrows
     public String getCurrentUserAsJsonString() {

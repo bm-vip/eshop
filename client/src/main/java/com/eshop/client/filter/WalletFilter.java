@@ -1,6 +1,8 @@
 package com.eshop.client.filter;
 
 import com.eshop.client.enums.CurrencyType;
+import com.eshop.client.enums.EntityStatusType;
+import com.eshop.client.enums.NetworkType;
 import com.eshop.client.enums.TransactionType;
 import lombok.Setter;
 import lombok.ToString;
@@ -19,12 +21,16 @@ public class WalletFilter {
     private BigDecimal amount;
     private BigDecimal amountFrom;
     private BigDecimal amountTo;
+    private BigDecimal actualAmount;
+    private BigDecimal actualAmountFrom;
+    private BigDecimal actualAmountTo;
     private TransactionType transactionType;
     private List<TransactionType> transactionTypes;
     private String transactionHash;
     private CurrencyType currency;
+    private NetworkType network;
     private UUID userId;
-    private Boolean active;
+    private EntityStatusType status;
     private String address;
 
     public Optional<Long> getId() {
@@ -38,6 +44,15 @@ public class WalletFilter {
     }
     public Optional<BigDecimal> getAmountTo() {
         return Optional.ofNullable(amountTo);
+    }
+    public Optional<BigDecimal> getActualAmount() {
+        return Optional.ofNullable(actualAmount);
+    }
+    public Optional<BigDecimal> getActualAmountFrom() {
+        return Optional.ofNullable(actualAmountFrom);
+    }
+    public Optional<BigDecimal> getActualAmountTo() {
+        return Optional.ofNullable(actualAmountTo);
     }
     public Optional<TransactionType> getTransactionType() {
         return Optional.ofNullable(transactionType);
@@ -57,12 +72,15 @@ public class WalletFilter {
     public Optional<CurrencyType> getCurrency() {
         return Optional.ofNullable(currency);
     }
+    public Optional<NetworkType> getNetwork() {
+        return Optional.ofNullable(network);
+    }
     public Optional<UUID> getUserId() {
         return Optional.ofNullable(userId);
     }
 
-    public Optional<Boolean> getActive() {
-        return Optional.ofNullable(active);
+    public Optional<EntityStatusType> getStatus() {
+        return Optional.ofNullable(status);
     }
 
     public Optional<String> getAddress() {

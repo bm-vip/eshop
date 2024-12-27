@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 @Component
 @SessionScope
 public class SessionHolder {
-    private final HttpServletRequest request;
+    private HttpServletRequest request;
     private ObjectMapper objectMapper;
 
     public SessionHolder(HttpServletRequest request) {

@@ -1,6 +1,8 @@
 package com.eshop.app.entity;
 
 import com.eshop.app.enums.CurrencyType;
+import com.eshop.app.enums.EntityStatusType;
+import com.eshop.app.enums.NetworkType;
 import com.eshop.app.enums.TransactionType;
 import lombok.Data;
 import org.hibernate.envers.Audited;
@@ -24,8 +26,12 @@ public class WalletEntity extends BaseEntity<Long> {
 	private Long id;
 	@NotNull
 	private BigDecimal amount;
+	@Column(name = "actual_amount", nullable = false)
+	private BigDecimal actualAmount;
 	@Enumerated(value = EnumType.STRING)
-	private CurrencyType currency;
+	private CurrencyType currency = CurrencyType.USDT;
+	@Enumerated(value = EnumType.STRING)
+	private NetworkType network = NetworkType.TRC20;
 	@Column(name = "transaction_type", nullable = false)
 	@Enumerated(value = EnumType.STRING)
 	private TransactionType transactionType;
@@ -38,7 +44,9 @@ public class WalletEntity extends BaseEntity<Long> {
 	@JoinColumn(name = "user_id")
 	private UserEntity user;
 
-	private boolean active;
+	@Enumerated(value = EnumType.STRING)
+	private EntityStatusType status;
+
 	private String role;
 
 	@Override

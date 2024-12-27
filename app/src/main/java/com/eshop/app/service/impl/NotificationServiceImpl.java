@@ -95,20 +95,24 @@ public class NotificationServiceImpl extends BaseServiceImpl<NotificationFilter,
 
     @Override
     public NotificationModel create(NotificationModel model) {
-        model.setRole(sessionHolder.getCurrentUser().getRole());
         if (model.isAllRecipients()) {
             userRepository.findAll().forEach(u->{
+                model.setRole(u.getRole());
                 model.setRecipient(new UserModel().setUserId(u.getId()));
                 super.create(model);
             });
         }
         else if(!CollectionUtils.isEmpty(model.getRecipients())) {
             model.getRecipients().forEach(recipientId -> {
+                var recipient = userRepository.findById(recipientId).orElseThrow(()->new NotFoundException("User not found"));
+                model.setRole(recipient.getRole());
                 model.setRecipient(new UserModel().setUserId(recipientId));
                 super.create(model);
             });
             return model;
         }
+        var recipient = userRepository.findById(model.getRecipient().getId()).orElseThrow(()->new NotFoundException("User not found"));
+        model.setRole(recipient.getRole());
         return super.create(model);
     }
 

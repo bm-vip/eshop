@@ -201,6 +201,8 @@ var resources = {
     'nationalCode': 'nationalCode',
     'informationA': '{0} informationA',
     'amount': 'amount',
+    'actualAmount': 'actual amount',
+    'amountInUSD': 'amount in USD',
     'transactionType': 'Transaction type',
     'transactionHash': 'Transaction hash',
     'buy': 'buy',
@@ -417,4 +419,5 @@ var resources = {
     'body': 'body',
     'minTradingReward':'minimum trading reward',
     'maxTradingReward':'maximum trading reward',
+    'network':'Network',
 };

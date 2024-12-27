@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
 import org.springframework.data.envers.repository.support.EnversRevisionRepositoryFactoryBean;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 import javax.annotation.PostConstruct;
 import java.net.InetAddress;
@@ -18,6 +19,7 @@ import java.util.Objects;
 @SpringBootApplication(exclude = {SecurityAutoConfiguration.class})
 @Slf4j
 @AllArgsConstructor
+@EnableScheduling
 @EnableJpaRepositories(repositoryFactoryBeanClass = EnversRevisionRepositoryFactoryBean.class)
 public class Application {
 

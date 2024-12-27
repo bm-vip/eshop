@@ -10,7 +10,7 @@ import java.util.Optional;
 
 @Repository
 public interface SubscriptionPackageRepository extends BaseRepository<SubscriptionPackageEntity, Long> {
-    @Query("SELECT sp FROM SubscriptionPackageEntity sp WHERE :amount BETWEEN sp.price AND sp.maxPrice AND sp.currency = :currencyType")
-    Optional<SubscriptionPackageEntity> findMatchedPackageByAmountAndCurrency(BigDecimal amount, CurrencyType currencyType);
+    @Query("SELECT sp FROM SubscriptionPackageEntity sp WHERE :amount BETWEEN sp.price AND sp.maxPrice")
+    Optional<SubscriptionPackageEntity> findMatchedPackageByAmount(BigDecimal amount);
     SubscriptionPackageEntity findTopByOrderByMaxPriceDesc();
 }

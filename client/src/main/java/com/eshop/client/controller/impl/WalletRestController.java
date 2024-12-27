@@ -2,7 +2,6 @@ package com.eshop.client.controller.impl;
 
 import com.eshop.client.enums.TransactionType;
 import com.eshop.client.filter.WalletFilter;
-import com.eshop.client.model.BalanceModel;
 import com.eshop.client.model.WalletModel;
 import com.eshop.client.service.WalletService;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -13,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.math.BigDecimal;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -29,32 +27,32 @@ public class WalletRestController extends BaseRestControllerImpl<WalletFilter, W
         this.walletService = service;
     }
     @GetMapping("/total-balance/{userId}")
-    public ResponseEntity<List<BalanceModel>> totalBalanceGroupedByCurrency(@PathVariable UUID userId){
-        return ResponseEntity.ok(walletService.totalBalanceGroupedByCurrency(userId));
+    public ResponseEntity<BigDecimal> totalBalance(@PathVariable UUID userId){
+        return ResponseEntity.ok(walletService.totalBalanceByUserId(userId));
     }
     @GetMapping("/total-deposit/{userId}")
-    public ResponseEntity<List<BalanceModel>> totalDepositGroupedByCurrency(@PathVariable UUID userId){
-        return ResponseEntity.ok(walletService.totalDepositGroupedByCurrency(userId));
+    public ResponseEntity<BigDecimal> totalDeposit(@PathVariable UUID userId){
+        return ResponseEntity.ok(walletService.totalDeposit(userId));
     }
     @GetMapping("/total-withdrawal/{userId}")
-    public ResponseEntity<List<BalanceModel>> totalWithdrawalGroupedByCurrency(@PathVariable UUID userId){
-        return ResponseEntity.ok(walletService.totalWithdrawalGroupedByCurrency(userId));
+    public ResponseEntity<BigDecimal> totalWithdrawal(@PathVariable UUID userId){
+        return ResponseEntity.ok(walletService.totalWithdrawal(userId));
     }
     @GetMapping("/total-bonus/{userId}")
-    public ResponseEntity<List<BalanceModel>> totalBonusGroupedByCurrency(@PathVariable UUID userId){
-        return ResponseEntity.ok(walletService.totalBonusGroupedByCurrency(userId));
+    public ResponseEntity<BigDecimal> totalBonus(@PathVariable UUID userId){
+        return ResponseEntity.ok(walletService.totalBonus(userId));
     }
     @GetMapping("/total-reward/{userId}")
-    public ResponseEntity<List<BalanceModel>> totalRewardGroupedByCurrency(@PathVariable UUID userId){
-        return ResponseEntity.ok(walletService.totalRewardGroupedByCurrency(userId));
+    public ResponseEntity<BigDecimal> totalReward(@PathVariable UUID userId){
+        return ResponseEntity.ok(walletService.totalReward(userId));
     }
     @GetMapping("/total-profit/{userId}")
-    public ResponseEntity<List<BalanceModel>> totalProfitGroupedByCurrency(@PathVariable UUID userId){
-        return ResponseEntity.ok(walletService.totalProfitGroupedByCurrency(userId));
+    public ResponseEntity<BigDecimal> totalProfit(@PathVariable UUID userId){
+        return ResponseEntity.ok(walletService.totalProfit(userId));
     }
     @GetMapping("/daily-profit/{userId}")
-    public ResponseEntity<List<BalanceModel>> dailyProfitGroupedByCurrency(@PathVariable UUID userId){
-        return ResponseEntity.ok(walletService.dailyProfitGroupedByCurrency(userId));
+    public ResponseEntity<BigDecimal> dailyProfit(@PathVariable UUID userId){
+        return ResponseEntity.ok(walletService.dailyProfit(userId));
     }
     @GetMapping("/get-date-range/{startDate}/{endDate}/{transactionType}")
     public ResponseEntity<Map<Long, BigDecimal>> findAllWithinDateRange(@PathVariable long startDate, @PathVariable long endDate, @PathVariable TransactionType transactionType){

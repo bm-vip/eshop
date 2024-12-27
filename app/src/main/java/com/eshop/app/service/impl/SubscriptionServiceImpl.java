@@ -32,7 +32,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import static com.eshop.app.service.ParameterService.walletAddress;
 import static com.eshop.app.util.MapperHelper.get;
 
 @Service
@@ -96,11 +95,10 @@ public class SubscriptionServiceImpl extends BaseServiceImpl<SubscriptionFilter,
         }
         entity.setFinalPrice(calculatePrice(subscriptionPackage.getPrice(), model.getDiscountPercentage()));
         if(model.getStatus().equals(EntityStatusType.Active)) {
-            var balanceList = walletRepository.totalBalanceGroupedByCurrencyByUserId(entity.getUser().getId());
-            var balance = balanceList.stream().filter(x->x.getCurrency().equals(subscriptionPackage.getCurrency())).findFirst();
-            if(balance.isEmpty())
+            var balance = walletRepository.calculateUserBalance(entity.getUser().getId());
+            if(balance.compareTo(BigDecimal.ZERO) <= 0)
                 throw new PaymentRequiredException();
-            if(entity.getFinalPrice().compareTo(balance.get().getTotalAmount()) > 0)
+            if(entity.getFinalPrice().compareTo(balance) > 0)
                 throw new PaymentRequiredException();
             deactivateOldActive(entity.getUser().getId());
             entity.setStatus(EntityStatusType.Active);
@@ -133,11 +131,10 @@ public class SubscriptionServiceImpl extends BaseServiceImpl<SubscriptionFilter,
             entity.setStatus(EntityStatusType.Passive);
         }
         if(model.getStatus().equals(EntityStatusType.Active)) {
-            var balanceList = walletRepository.totalBalanceGroupedByCurrencyByUserId(entity.getUser().getId());
-            var balance = balanceList.stream().filter(x->x.getCurrency().equals(entity.getSubscriptionPackage().getCurrency())).findFirst();
-            if(balance.isEmpty())
+            var balance = walletRepository.calculateUserBalance(entity.getUser().getId());
+            if(balance.compareTo(BigDecimal.ZERO) <= 0)
                 throw new PaymentRequiredException();
-            if(entity.getFinalPrice().compareTo(balance.get().getTotalAmount()) > 0)
+            if(entity.getFinalPrice().compareTo(balance) > 0)
                 throw new PaymentRequiredException();
             deactivateOldActive(entity.getUser().getId());
             entity.setStatus(EntityStatusType.Active);
@@ -161,12 +158,12 @@ public class SubscriptionServiceImpl extends BaseServiceImpl<SubscriptionFilter,
     }
 
     @Override
+    @Transactional(readOnly = true)
     public SubscriptionModel findByUserAndActivePackage(UUID userId) {
         return mapper.toModel(subscriptionRepository.findByUserIdAndStatus(userId, EntityStatusType.Active));
     }
 
     private void addBonus(SubscriptionEntity entity) {
-        var walletAddressValue = parameterService.findByCode(walletAddress).getValue();
 //        var selfReferralBonus = entity.getSubscriptionPackage().getSelfReferralBonus();
 //        WalletEntity selfWallet = new WalletEntity();
 //        selfWallet.setActive(true);
@@ -180,12 +177,11 @@ public class SubscriptionServiceImpl extends BaseServiceImpl<SubscriptionFilter,
         if(entity.getUser().getParent() != null) {
             var parentReferralBonus = entity.getSubscriptionPackage().getParentReferralBonus();
             WalletEntity parentWallet = new WalletEntity();
-            parentWallet.setActive(true);
+            parentWallet.setStatus(EntityStatusType.Active);
             parentWallet.setAmount(new BigDecimal(parentReferralBonus));
             parentWallet.setUser(entity.getUser().getParent());
             parentWallet.setCurrency(entity.getSubscriptionPackage().getCurrency());
             parentWallet.setTransactionType(TransactionType.BONUS);
-            parentWallet.setAddress(walletAddressValue);
             parentWallet.setRole(entity.getUser().getRole());
             walletRepository.save(parentWallet);
         }

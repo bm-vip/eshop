@@ -1,50 +1,71 @@
 package com.eshop.client.repository;
 
 import com.eshop.client.entity.WalletEntity;
-import com.eshop.client.model.BalanceModel;
+import com.eshop.client.enums.TransactionType;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.QueryHints;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Date;
+import javax.persistence.LockModeType;
+import javax.persistence.QueryHint;
+import java.math.BigDecimal;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.UUID;
 
 @Repository
 public interface WalletRepository extends BaseRepository<WalletEntity, Long> {
-	@Query("SELECT new com.eshop.client.model.BalanceModel(w.currency, "
-			+ "SUM(CASE WHEN w.transactionType = com.eshop.client.enums.TransactionType.DEPOSIT OR w.transactionType = com.eshop.client.enums.TransactionType.REWARD OR w.transactionType = com.eshop.client.enums.TransactionType.BONUS THEN w.amount ELSE 0 END) - "
-			+ "SUM(CASE WHEN w.transactionType = com.eshop.client.enums.TransactionType.WITHDRAWAL OR w.transactionType = com.eshop.client.enums.TransactionType.WITHDRAWAL_PROFIT THEN w.amount ELSE 0 END)) "
-			+ "FROM WalletEntity w WHERE w.user.id = :userId AND w.active is true GROUP BY w.currency")
-	 List<BalanceModel> totalBalanceGroupedByCurrency(UUID userId);
+//	@Query("SELECT coalesce( "
+//			+ "SUM(CASE WHEN w.transactionType = com.eshop.client.enums.TransactionType.DEPOSIT OR w.transactionType = com.eshop.client.enums.TransactionType.REWARD OR w.transactionType = com.eshop.client.enums.TransactionType.BONUS THEN w.amount ELSE 0 END) - "
+//			+ "SUM(CASE WHEN w.transactionType = com.eshop.client.enums.TransactionType.WITHDRAWAL OR w.transactionType = com.eshop.client.enums.TransactionType.WITHDRAWAL_PROFIT THEN w.amount ELSE 0 END),0) "
+//			+ "FROM WalletEntity w WHERE w.user.id = :userId AND w.status=com.eshop.client.enums.EntityStatusType.Active")
+//	BigDecimal totalBalance(UUID userId);
 
-	@Query("SELECT new com.eshop.client.model.BalanceModel(w.currency, SUM(w.amount)) "
+	@Lock(LockModeType.PESSIMISTIC_WRITE)
+	@QueryHints({@QueryHint(name = "javax.persistence.lock.timeout", value = "3000")})
+	@Query("select w from WalletEntity w where w.user.id = :userId and w.status = com.eshop.client.enums.EntityStatusType.Active")
+	List<WalletEntity> findAllActiveByUserId(UUID userId);
+
+	default BigDecimal calculateUserBalance(UUID userId) {
+		List<WalletEntity> list = findAllActiveByUserId(userId);
+
+		BigDecimal deposits = list.parallelStream()
+				.filter(w -> EnumSet.of(TransactionType.DEPOSIT, TransactionType.REWARD, TransactionType.BONUS)
+						.contains(w.getTransactionType()))
+				.map(WalletEntity::getAmount)
+				.reduce(BigDecimal.ZERO, BigDecimal::add);
+
+		BigDecimal withdrawals = list.parallelStream()
+				.filter(w -> EnumSet.of(TransactionType.WITHDRAWAL, TransactionType.WITHDRAWAL_PROFIT)
+						.contains(w.getTransactionType()))
+				.map(WalletEntity::getAmount)
+				.reduce(BigDecimal.ZERO, BigDecimal::add);
+
+		return deposits.subtract(withdrawals);
+	}
+	@Query("SELECT coalesce(SUM(w.amount),0) "
 			+ "FROM WalletEntity w WHERE w.transactionType = com.eshop.client.enums.TransactionType.DEPOSIT "
-			+ "AND w.user.id = :userId AND w.active is true "
-			+ "GROUP BY w.currency")
-	 List<BalanceModel> totalDepositGroupedByCurrency(UUID userId);
-	@Query("SELECT new com.eshop.client.model.BalanceModel(w.currency, SUM(w.amount)) "
+			+ "AND w.user.id = :userId AND w.status=com.eshop.client.enums.EntityStatusType.Active")
+	 BigDecimal totalDeposit(UUID userId);
+	@Query("SELECT coalesce(SUM(w.amount),0) "
 			+ "FROM WalletEntity w WHERE (w.transactionType = com.eshop.client.enums.TransactionType.WITHDRAWAL OR w.transactionType = com.eshop.client.enums.TransactionType.WITHDRAWAL_PROFIT) "
-			+ "AND w.user.id = :userId AND w.active is true "
-			+ "GROUP BY w.currency")
-	 List<BalanceModel> totalWithdrawalGroupedByCurrency(UUID userId);
-	@Query("SELECT new com.eshop.client.model.BalanceModel(w.currency, SUM(w.amount)) "
+			+ "AND w.user.id = :userId AND w.status=com.eshop.client.enums.EntityStatusType.Active")
+	 BigDecimal totalWithdrawal(UUID userId);
+	@Query("SELECT coalesce(SUM(w.amount),0) "
 			+ "FROM WalletEntity w WHERE w.transactionType = com.eshop.client.enums.TransactionType.BONUS "
-			+ "AND w.user.id = :userId AND w.active is true "
-			+ "GROUP BY w.currency")
-	 List<BalanceModel> totalBonusGroupedByCurrency(UUID userId);
-	@Query("SELECT new com.eshop.client.model.BalanceModel(w.currency, SUM(w.amount)) "
+			+ "AND w.user.id = :userId AND w.status=com.eshop.client.enums.EntityStatusType.Active")
+	 BigDecimal totalBonus(UUID userId);
+	@Query("SELECT coalesce(SUM(w.amount),0) "
 			+ "FROM WalletEntity w WHERE w.transactionType = com.eshop.client.enums.TransactionType.REWARD "
-			+ "AND w.user.id = :userId AND w.active is true "
-			+ "GROUP BY w.currency")
-	 List<BalanceModel> totalRewardGroupedByCurrency(UUID userId);
+			+ "AND w.user.id = :userId AND w.status=com.eshop.client.enums.EntityStatusType.Active")
+	 BigDecimal totalReward(UUID userId);
 
-	@Query("SELECT new com.eshop.client.model.BalanceModel(w.currency, "
+	@Query("SELECT coalesce( "
 			+ "SUM(CASE WHEN w.transactionType = com.eshop.client.enums.TransactionType.REWARD OR w.transactionType = com.eshop.client.enums.TransactionType.BONUS THEN w.amount ELSE 0 END) - "
-			+ "SUM(CASE WHEN w.transactionType = com.eshop.client.enums.TransactionType.WITHDRAWAL_PROFIT THEN w.amount ELSE 0 END)) "
-			+ "FROM WalletEntity w WHERE w.user.id = :userId AND w.active is true GROUP BY w.currency")
-	 List<BalanceModel> totalProfitGroupedByCurrency(UUID userId);
+			+ "SUM(CASE WHEN w.transactionType = com.eshop.client.enums.TransactionType.WITHDRAWAL_PROFIT THEN w.amount ELSE 0 END),0) "
+			+ "FROM WalletEntity w WHERE w.user.id = :userId AND w.status=com.eshop.client.enums.EntityStatusType.Active")
+	 BigDecimal totalProfit(UUID userId);
 
 //	@Query(value = "SELECT currency, SUM(totalAmount) AS totalAmount" +
 //				   " FROM (" +
@@ -59,5 +80,5 @@ public interface WalletRepository extends BaseRepository<WalletEntity, Long> {
 //				   " GROUP BY a.currency" +
 //				   " ) AS combined" +
 //				   " GROUP BY currency;", nativeQuery = true)
-//	List<Object[]> totalProfitGroupedByCurrency(UUID userId);
+//	List<Object[]> totalProfit(UUID userId);
 }

@@ -251,4 +251,8 @@
             <column name="role" type="VARCHAR(255)"/>
         </addColumn>
     </changeSet>
+    <changeSet id="03-14" author="administrator">
+        <dropColumn tableName="tbl_role" columnName="wallet"/>
+        <dropColumn tableName="tbl_role_aud" columnName="wallet"/>
+    </changeSet>
 </databaseChangeLog>

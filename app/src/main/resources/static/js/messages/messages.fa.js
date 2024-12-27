@@ -203,6 +203,8 @@ var resources = {
     'PleasePutCardOnCardReader': 'لطفا کارت را بروی کارت خوان قرار دهید',
     'informationA': 'اطلاعات {0}',
     'amount': 'مبلغ',
+    'actualAmount': 'مبلغ اقعی',
+    'amountInUSD': 'مبلغ به دلار',
     'transactionType': 'نوع تراکنش',
     'transactionHash': 'هش تراکنش',
     'billA': '{0} فاکتور',
@@ -435,4 +437,5 @@ var resources = {
     'body': 'بدنه',
     'minTradingReward':'کمترین پاداش',
     'maxTradingReward':'بیشترین پاداش',
+    'network':'شبکه',
 };

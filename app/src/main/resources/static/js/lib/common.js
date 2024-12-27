@@ -26,7 +26,7 @@ $.postJSON = function(url, data, success, dataType) {
         dataType: dataType
     });
 };
-
+var currentUser = JSON.parse($("#currentUser").val());
 $.cookie.json = true;
 
 $(function () {

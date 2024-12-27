@@ -4,6 +4,7 @@ import lombok.Data;
 import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Data
 @Entity
@@ -21,7 +22,6 @@ public class RoleEntity extends BaseEntity<Long> {
 
 	@Column(name="title")
 	private String title;
-	private String wallet;
 
 	@Override
 	public String getSelectTitle() {

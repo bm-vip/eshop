@@ -19,7 +19,7 @@ import java.util.List;
 @RequestMapping(value = "/api/v1/parameter")
 public class ParameterRestController extends BaseRestControllerImpl<ParameterFilter, ParameterModel, Long> implements LogicalDeletedRestController<Long> {
 
-    private ParameterService parameterService;
+    private final ParameterService parameterService;
 
     public ParameterRestController(ParameterService service) {
         super(service);

@@ -4,6 +4,7 @@ import lombok.Data;
 import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Data
 @Entity
@@ -21,17 +22,11 @@ public class RoleEntity extends BaseEntity<Long> {
 
 	@Column(name="title")
 	private String title;
-	private String wallet;
 
 	@Override
 	public String getSelectTitle() {
 		return title;
 	}
-
-//	@JsonIgnore
-//	@ManyToMany(cascade = CascadeType.DETACH)
-//	@JoinTable(name = "tbl_user_role", joinColumns = @JoinColumn(name = "role_id"), inverseJoinColumns = @JoinColumn(name = "user_id"))
-//	private Set<UserEntity> userEntities;
 
 
 }

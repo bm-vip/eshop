@@ -11,5 +11,4 @@ public class RoleModel extends BaseModel<Long> {
 	@NotBlank
 	private String role;
 	private String title;
-	private String wallet;
 }

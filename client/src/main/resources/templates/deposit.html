@@ -55,26 +55,46 @@
                             <div class="col-md-6 payment-method">
                                 <p class="lead">Payment Methods:</p>
                                 <img th:src="@{/images/usdt.png}" alt="USDT">
-                                <img class="disabled" th:src="@{/images/tron.png}" alt="TRX">
-                                <img class="disabled" th:src="@{/images/BNB.png}" alt="BNB">
+                                <img th:src="@{/images/tron.png}" alt="TRX">
+                                <img th:src="@{/images/BNB.png}" alt="BNB">
                                 <img class="disabled" th:src="@{/images/MATIC.png}" alt="MATIC">
                                 <img class="disabled" th:src="@{/images/visa.png}" alt="Visa">
                                 <img class="disabled" th:src="@{/images/mastercard.png}" alt="Mastercard">
                                 <img class="disabled" th:src="@{/images/paypal.png}" alt="Paypal">
 
                                 <div class="col-md-12 form-group has-feedback">
+                                    <label th:text="#{network}"></label>
+                                    <select class="form-control" th:id="network" th:title="#{network}" tabindex="1" autofocus>
+                                        <option value="TRC20" th:text="TRC20" selected ></option>
+                                        <option value="BEP20" th:text="BEP20"></option>
+                                    </select>
+                                </div>
+                                <div class="col-md-12 form-group has-feedback">
+                                    <label th:text="#{currency}"></label>
+                                    <select class="form-control" th:id="currency" th:title="#{currency}" tabindex="2" autofocus>
+                                        <option value="USDT" th:text="USDT" selected ></option>
+                                        <option value="trx" th:text="TRX" ></option>
+                                        <option value="BNBUSDT" th:text="BNB" ></option>
+                                    </select>
+                                </div>
+                                <div class="col-md-12 form-group has-feedback">
+                                    <label th:text="#{amountInUSD}"></label>
+                                    <input type="number" tabindex="3" class="form-control" id="amount" th:name="amount" th:value="${amount ?: ''}">
+                                    <span class="fa fa-dollar-sign form-control-feedback right" aria-hidden="true"></span>
+                                </div>
+                                <div class="col-md-12 form-group has-feedback">
                                     <label th:text="#{wallet} +' '+ #{address}"></label>
                                     <input type="text" class="form-control" disabled="disabled" id="walletAddress" name="walletAddress">
                                     <span class="fa fa-wallet form-control-feedback right" aria-hidden="true"></span>
                                 </div>
                                 <div class="col-md-12 form-group has-feedback">
-                                    <label th:text="#{amount}"></label>
-                                    <input type="number" tabindex="1" autofocus class="form-control" id="amount" th:name="amount" th:value="${amount ?: ''}">
+                                    <label th:text="#{actualAmount}"></label>
+                                    <input type="number" tabindex="4" class="form-control" id="actualAmount">
                                     <span class="fa fa-dollar-sign form-control-feedback right" aria-hidden="true"></span>
                                 </div>
                                 <div class="col-md-12 form-group has-feedback">
                                     <label th:text="#{transactionHash}"></label>
-                                    <input type="text" tabindex="2" class="form-control" id="transactionHash" name="transactionHash" required>
+                                    <input type="text" tabindex="5" class="form-control" id="transactionHash" name="transactionHash" required>
                                     <span class="fa fa-hashtag form-control-feedback right" aria-hidden="true"></span>
                                 </div>
                             </div>
@@ -87,7 +107,7 @@
                         </div>
                         <div class="row">
                             <div class="col-md-12">
-                                <button tabindex="3" type="submit" class="btn btn-primary btn-block"><i class="fa fa-send"></i>&nbsp;<span th:text="#{send}"></span></button>
+                                <button tabindex="6" type="submit" class="btn btn-primary btn-block"><i class="fa fa-send"></i>&nbsp;<span th:text="#{send}"></span></button>
                             </div>
                         </div>
                     </div>
@@ -109,7 +129,8 @@
                     <table class="table table-striped table-bordered table-hover table-condensed dt-responsive nowrap" width="100%">
                         <thead>
                         <tr>
-                            <th th:text="#{amount}"></th>
+                            <th th:text="#{amountInUSD}"></th>
+                            <th th:text="#{actualAmount}"></th>
                             <th th:text="#{currency}"></th>
                             <th th:text="#{transactionType}"></th>
                             <th th:text="#{status}"></th>
@@ -118,7 +139,8 @@
                         </thead>
                         <tfoot>
                         <tr>
-                            <th th:text="#{amount}"></th>
+                            <th th:text="#{amountInUSD}"></th>
+                            <th th:text="#{actualAmount}"></th>
                             <th th:text="#{currency}"></th>
                             <th th:text="#{transactionType}"></th>
                             <th th:text="#{status}"></th>

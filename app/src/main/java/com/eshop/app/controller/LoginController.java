@@ -53,6 +53,9 @@ public class LoginController {
     public ModelAndView login() {
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("login");
+        request.getParameterMap().forEach((key, value) -> {
+            modelAndView.addObject(key, value[0]);
+        });
         return modelAndView;
     }
 

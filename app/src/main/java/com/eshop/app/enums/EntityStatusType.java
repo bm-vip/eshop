@@ -17,6 +17,7 @@ public enum EntityStatusType {
     Pending("Pending"),
     Expired("Expired"),
     Refunded("Refunded"),
+    Invalid("Invalid"),
     ;
     EntityStatusType(String title) {
         this.title = title;

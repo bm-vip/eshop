@@ -1,6 +1,8 @@
 package com.eshop.app.filter;
 
 import com.eshop.app.enums.CurrencyType;
+import com.eshop.app.enums.EntityStatusType;
+import com.eshop.app.enums.NetworkType;
 import com.eshop.app.enums.TransactionType;
 import lombok.Setter;
 import lombok.ToString;
@@ -18,12 +20,17 @@ public class WalletFilter {
     private BigDecimal amount;
     private BigDecimal amountFrom;
     private BigDecimal amountTo;
+    private BigDecimal actualAmount;
+    private BigDecimal actualAmountFrom;
+    private BigDecimal actualAmountTo;
     private TransactionType transactionType;
     private String transactionHash;
     private CurrencyType currency;
+    private NetworkType network;
     private UUID userId;
-    private Boolean active;
+    private EntityStatusType status;
     private String address;
+    private Long roleId;
 
     public Optional<Long> getId() {
         return Optional.ofNullable(id);
@@ -36,6 +43,15 @@ public class WalletFilter {
     }
     public Optional<BigDecimal> getAmountTo() {
         return Optional.ofNullable(amountTo);
+    }
+    public Optional<BigDecimal> getActualAmount() {
+        return Optional.ofNullable(actualAmount);
+    }
+    public Optional<BigDecimal> getActualAmountFrom() {
+        return Optional.ofNullable(actualAmountFrom);
+    }
+    public Optional<BigDecimal> getActualAmountTo() {
+        return Optional.ofNullable(actualAmountTo);
     }
     public Optional<TransactionType> getTransactionType() {
         return Optional.ofNullable(transactionType);
@@ -51,12 +67,16 @@ public class WalletFilter {
     public Optional<CurrencyType> getCurrency() {
         return Optional.ofNullable(currency);
     }
+    public Optional<NetworkType> getNetwork() {return Optional.ofNullable(network);}
     public Optional<UUID> getUserId() {
         return Optional.ofNullable(userId);
     }
 
-    public Optional<Boolean> getActive() {
-        return Optional.ofNullable(active);
+    public Optional<EntityStatusType> getStatus() {
+        return Optional.ofNullable(status);
+    }
+    public Optional<Long> getRoleId() {
+        return Optional.ofNullable(roleId);
     }
 
     public Optional<String> getAddress() {

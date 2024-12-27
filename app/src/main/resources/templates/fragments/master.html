@@ -87,6 +87,7 @@
     <th:block layout:fragment="header"></th:block>
 </head>
 <body class="nav-md" th:dir="#{direction}">
+<input type="hidden" id="currentUser" name="currentUser" th:value="${currentUser}" />
 <div class="container body">
     <div class="main_container">
         <div class="col-md-3 left_col hidden-print">
@@ -147,10 +148,14 @@
                                     <li><a th:href="@{/subscription}" th:text="#{subscription}"></a></li>
                                 </ul>
                             </li>
-
-                            <li sec:authorize="hasRole('ADMIN')" class="sub_menu"><a th:href="@{/userManagement}"><i class="fa fa-user"></i>
-                                <th:block th:text="#{userManagement}"></th:block>
-                            </a></li>
+                            <th:block sec:authorize="hasRole('ADMIN')">
+                                <li class="sub_menu"><a th:href="@{/userManagement}"><i class="fa fa-user"></i>
+                                    <th:block th:text="#{userManagement}"></th:block>
+                                </a></li>
+                                <li class="sub_menu"><a th:href="@{/role}"><i class="fa fa-user-shield"></i>
+                                    <th:block th:text="#{role}"></th:block>
+                                </a></li>
+                            </th:block>
                             <li class="sub_menu"><a th:href="@{/wallet}"><i class="fa fa-wallet"></i>
                                 <th:block th:text="#{wallet}"></th:block>
                             </a></li>

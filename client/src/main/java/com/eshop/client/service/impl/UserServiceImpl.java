@@ -112,10 +112,10 @@ public class UserServiceImpl extends BaseServiceImpl<UserFilter,UserModel, UserE
     @Override
     public Page<UserModel> findAll(UserFilter filter, Pageable pageable, String key) {
         return super.findAll(filter, pageable, key).map(m->{
-            m.setDeposit(walletRepository.totalDepositGroupedByCurrency(m.getId()).stream().filter(f->f.getCurrency().equals(CurrencyType.USDT)).map(BalanceModel::getTotalAmount).findFirst().orElse(BigDecimal.ZERO));
-            m.setWithdrawal(walletRepository.totalWithdrawalGroupedByCurrency(m.getId()).stream().filter(f->f.getCurrency().equals(CurrencyType.USDT)).map(BalanceModel::getTotalAmount).findFirst().orElse(BigDecimal.ZERO));
-            m.setBonus(walletRepository.totalBonusGroupedByCurrency(m.getId()).stream().filter(f->f.getCurrency().equals(CurrencyType.USDT)).map(BalanceModel::getTotalAmount).findFirst().orElse(BigDecimal.ZERO));
-            m.setReward(walletRepository.totalProfitGroupedByCurrency(m.getId()).stream().filter(f->f.getCurrency().equals(CurrencyType.USDT)).map(BalanceModel::getTotalAmount).findFirst().orElse(BigDecimal.ZERO));
+            m.setDeposit(walletRepository.totalDeposit(m.getId()));
+            m.setWithdrawal(walletRepository.totalWithdrawal(m.getId()));
+            m.setBonus(walletRepository.totalBonus(m.getId()));
+            m.setReward(walletRepository.totalProfit(m.getId()));
             return m;
         });
     }
@@ -125,10 +125,10 @@ public class UserServiceImpl extends BaseServiceImpl<UserFilter,UserModel, UserE
         var data = super.findAllTable(filter, pageable,key);
         if(!CollectionUtils.isEmpty(data.getData())) {
             for (UserModel m : data.getData()) {
-                m.setDeposit(walletRepository.totalDepositGroupedByCurrency(m.getId()).stream().filter(f->f.getCurrency().equals(CurrencyType.USDT)).map(BalanceModel::getTotalAmount).findFirst().orElse(BigDecimal.ZERO));
-                m.setWithdrawal(walletRepository.totalWithdrawalGroupedByCurrency(m.getId()).stream().filter(f->f.getCurrency().equals(CurrencyType.USDT)).map(BalanceModel::getTotalAmount).findFirst().orElse(BigDecimal.ZERO));
-                m.setBonus(walletRepository.totalBonusGroupedByCurrency(m.getId()).stream().filter(f->f.getCurrency().equals(CurrencyType.USDT)).map(BalanceModel::getTotalAmount).findFirst().orElse(BigDecimal.ZERO));
-                m.setReward(walletRepository.totalProfitGroupedByCurrency(m.getId()).stream().filter(f->f.getCurrency().equals(CurrencyType.USDT)).map(BalanceModel::getTotalAmount).findFirst().orElse(BigDecimal.ZERO));
+                m.setDeposit(walletRepository.totalDeposit(m.getId()));
+                m.setWithdrawal(walletRepository.totalWithdrawal(m.getId()));
+                m.setBonus(walletRepository.totalBonus(m.getId()));
+                m.setReward(walletRepository.totalProfit(m.getId()));
             }
         }
         return data;
