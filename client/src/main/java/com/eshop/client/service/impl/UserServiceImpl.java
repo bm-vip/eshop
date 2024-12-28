@@ -72,7 +72,7 @@ public class UserServiceImpl extends BaseServiceImpl<UserFilter,UserModel, UserE
     }
 
     @Override
-    @Cacheable(cacheNames = "client", key = "'User:findByUserNameOrEmail:' + #login")
+    @Cacheable(cacheNames = "client", key = "'User:' + #login + ':findByUserNameOrEmail'")
     @Limited(requestsPerMinutes = 3)
     public UserModel findByUserNameOrEmail(String login) {
         var entity = userRepository.findByUserNameOrEmail(login, login).orElseThrow(() -> new NotFoundException("User not found with username/email: " + login));
@@ -82,12 +82,12 @@ public class UserServiceImpl extends BaseServiceImpl<UserFilter,UserModel, UserE
     }
 
     @Override
-    @Cacheable(cacheNames = "client", key = "'User:findByUserName:' + #userName")
+    @Cacheable(cacheNames = "client", key = "'User:' + #userName + ':findByUserName'")
     public UserModel findByUserName(String userName) {
         return mapper.toModel(userRepository.findByUserName(userName).orElseThrow(() -> new NotFoundException("username: " + userName)));
     }
     @Override
-    @Cacheable(cacheNames = "client", key = "'User:findByEmail:' + #email")
+    @Cacheable(cacheNames = "client", key = "'User:' + #email + ':findByEmail'")
     public UserModel findByEmail(String email) {
         return mapper.toModel(userRepository.findByEmail(email).orElseThrow(() -> new NotFoundException("email: " + email)));
     }
@@ -107,6 +107,12 @@ public class UserServiceImpl extends BaseServiceImpl<UserFilter,UserModel, UserE
             });
         }
         return verify;
+    }
+
+    @Override
+    @Cacheable(cacheNames = "client", key = "'User:' + #id.toString() + ':countAllActiveChild'")
+    public long countAllActiveChild(UUID id) {
+        return userRepository.countActiveChildrenByUserId(id.toString());
     }
 
     @Override

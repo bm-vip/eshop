@@ -102,7 +102,8 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter,WalletModel,
             var totalProfit = walletRepository.totalProfit(model.getUser().getId());
             if(totalProfit.compareTo(model.getAmount()) < 0)
                 throw new PaymentRequiredException();
-            if(walletRepository.countAllByUserIdAndTransactionTypeAndStatus(user.getId(),TransactionType.WITHDRAWAL_PROFIT,EntityStatusType.Active)>1 && user.getChildCount() < currentSubscriptionPackage.getOrderCount()) {
+            if(walletRepository.countAllByUserIdAndTransactionTypeAndStatus(user.getId(),TransactionType.WITHDRAWAL_PROFIT,EntityStatusType.Active)>1
+            && userService.countAllActiveChild(user.getId()) < currentSubscriptionPackage.getOrderCount()) {
                 throw new NotAcceptableException(String.format("To withdraw your profit you need to have at least %d referrals.", currentSubscriptionPackage.getOrderCount()));
             }
             if (model.getAmount().compareTo(new BigDecimal(minWithdrawAmount)) < 0)
@@ -117,11 +118,10 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter,WalletModel,
             if(model.getAmount().compareTo(currentSubscription.getFinalPrice()) >= 0) {
                 if(currentSubscription.getRemainingWithdrawalPerDay() > 0L)
                     throw new NotAcceptableException(String.format("You can withdraw your funds after %d days.",currentSubscription.getRemainingWithdrawalPerDay()));
-                if(user.getChildCount() < currentSubscriptionPackage.getOrderCount()) {
+                if(userService.countAllActiveChild(user.getId()) < currentSubscriptionPackage.getOrderCount()) {
                     throw new NotAcceptableException(String.format("To withdraw your funds you need to have at least %d referrals.", currentSubscriptionPackage.getOrderCount()));
                 }
             }
-
         } else if(model.getTransactionType().equals(TransactionType.DEPOSIT)) {
             //please deposit more than the subscription amount
             var sp = subscriptionPackageService.findMatchedPackageByAmount(model.getAmount());

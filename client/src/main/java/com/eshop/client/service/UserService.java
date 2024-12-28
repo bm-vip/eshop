@@ -14,4 +14,5 @@ public interface UserService extends BaseService<UserFilter, UserModel, UUID> {
     UserModel register(UserModel model);
     List<CountryUsers> findAllUserCountByCountry();
     boolean verifyEmail(UUID id, String otp);
+    long countAllActiveChild(UUID id);
 }

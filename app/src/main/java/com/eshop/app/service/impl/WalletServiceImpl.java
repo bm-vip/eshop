@@ -161,8 +161,7 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter,WalletModel,
         if(get(()->model.getUser().getId())!=null)
             entity.setUser(entityManager.getReference(entity.getUser().getClass(), model.getUser().getId()));
         var result = mapper.toModel(repository.save(mapper.updateEntity(model, entity)));
-        boolean transactionIsValid = validateTransaction(model);
-        if(model.getStatus().equals(EntityStatusType.Active) && (RoleType.hasRole(RoleType.ADMIN) || transactionIsValid)) {
+        if(model.getStatus().equals(EntityStatusType.Active) && (RoleType.hasRole(RoleType.ADMIN) || validateTransaction(model))) {
             var balance = walletRepository.calculateUserBalance(model.getUser().getId());
             var currentSubscription = subscriptionService.findByUserAndActivePackage(model.getUser().getId());
 
@@ -174,6 +173,8 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter,WalletModel,
             if(model.getTransactionType().equals(TransactionType.WITHDRAWAL) && getOrDefault(()-> model.getAmount().compareTo(newSubscription.getSubscriptionPackage().getPrice()) >=0,false)){
                 if(RoleType.hasRole(RoleType.USER) && newSubscription.getRemainingWithdrawalPerDay() > 0)
                     throw new NotAcceptableException(String.format("Withdrawal is allowed only after %d days.", newSubscription.getRemainingWithdrawalPerDay()));
+                if(userService.countAllActiveChild(model.getUser().getId()) < newSubscription.getSubscriptionPackage().getOrderCount())
+                    throw new NotAcceptableException(String.format("To withdraw your funds you need to have at least %d referrals.", newSubscription.getSubscriptionPackage().getOrderCount()));
             }
             if(model.getTransactionType().equals(TransactionType.DEPOSIT) && walletRepository.countByUserIdAndTransactionTypeAndStatus(model.getUser().getId(),TransactionType.DEPOSIT,EntityStatusType.Active) == 1) {
                 var user = userService.findById(model.getUser().getId());

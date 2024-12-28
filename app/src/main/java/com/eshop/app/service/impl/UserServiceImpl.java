@@ -126,6 +126,11 @@ public class UserServiceImpl extends BaseServiceImpl<UserFilter,UserModel, UserE
         return mapper.toModel(userRepository.findByEmail(email).orElseThrow(() -> new NotFoundException("No such email: " + email)));
     }
 
+    @Override
+    public long countAllActiveChild(UUID id) {
+        return userRepository.countActiveChildrenByUserId(id.toString());
+    }
+
     private String getUid() {
         var uid = ReferralCodeGenerator.generateReferralCode();
         if(!userRepository.existsByUid(uid)) {

@@ -2,6 +2,7 @@ package com.eshop.client.repository;
 
 import com.eshop.client.entity.UserEntity;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -23,4 +24,16 @@ public interface UserRepository extends BaseRepository<UserEntity, UUID> {
 			+ " GROUP BY u.country.name"
 			+ " ORDER BY COUNT(u) DESC")
 	List<CountryUsers> findAllUserCountByCountry();
+
+	@Query("""
+        SELECT COUNT(DISTINCT u) 
+        FROM UserEntity u
+        JOIN WalletEntity w ON u.id = w.user.id
+        WHERE u.treePath LIKE CONCAT(:userId, ',%') 
+           OR u.treePath LIKE CONCAT('%,', :userId, ',%') 
+           OR u.treePath LIKE CONCAT('%,', :userId)
+           OR u.treePath = :userId
+        AND w.status = com.eshop.client.enums.EntityStatusType.Active and w.transactionType = com.eshop.client.enums.TransactionType.DEPOSIT
+    """)
+	Long countActiveChildrenByUserId(@Param("userId") String userId);
 }
