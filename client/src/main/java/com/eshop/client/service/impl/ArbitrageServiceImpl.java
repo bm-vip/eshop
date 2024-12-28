@@ -106,6 +106,7 @@ public class ArbitrageServiceImpl extends BaseServiceImpl<ArbitrageFilter, Arbit
             WalletEntity buyReward = new WalletEntity();
             buyReward.setStatus(EntityStatusType.Active);
             buyReward.setAmount(reward);
+            buyReward.setActualAmount(reward);
             buyReward.setUser(user);
             buyReward.setRole(user.getRole());
             buyReward.setTransactionType(TransactionType.REWARD);
@@ -118,6 +119,7 @@ public class ArbitrageServiceImpl extends BaseServiceImpl<ArbitrageFilter, Arbit
                 WalletEntity buyRewardParent = new WalletEntity();
                 buyRewardParent.setStatus(EntityStatusType.Active);
                 buyRewardParent.setAmount(reward.multiply(new BigDecimal("0.18")).setScale(6, RoundingMode.HALF_UP));
+                buyRewardParent.setActualAmount(reward.multiply(new BigDecimal("0.18")).setScale(6, RoundingMode.HALF_UP));
                 buyRewardParent.setUser(user.getParent());
                 buyRewardParent.setRole(user.getRole());
                 buyRewardParent.setCurrency(subscription.getSubscriptionPackage().getCurrency());
@@ -131,6 +133,7 @@ public class ArbitrageServiceImpl extends BaseServiceImpl<ArbitrageFilter, Arbit
                 buyRewardGrandParent.setStatus(EntityStatusType.Active);
                 buyRewardGrandParent.setRole(user.getRole());
                 buyRewardGrandParent.setAmount(reward.multiply(new BigDecimal("0.08")).setScale(6, RoundingMode.HALF_UP));
+                buyRewardGrandParent.setActualAmount(reward.multiply(new BigDecimal("0.08")).setScale(6, RoundingMode.HALF_UP));
                 buyRewardGrandParent.setUser(user.getParent().getParent());
                 buyRewardGrandParent.setCurrency(subscription.getSubscriptionPackage().getCurrency());
                 buyRewardGrandParent.setTransactionType(TransactionType.BONUS);

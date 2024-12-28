@@ -178,6 +178,7 @@ public class SubscriptionServiceImpl extends BaseServiceImpl<SubscriptionFilter,
             WalletEntity parentWallet = new WalletEntity();
             parentWallet.setStatus(EntityStatusType.Active);
             parentWallet.setAmount(new BigDecimal(parentReferralBonus));
+            parentWallet.setActualAmount(new BigDecimal(parentReferralBonus));
             parentWallet.setUser(entity.getUser().getParent());
             parentWallet.setCurrency(entity.getSubscriptionPackage().getCurrency());
             parentWallet.setTransactionType(TransactionType.BONUS);

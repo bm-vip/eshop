@@ -142,7 +142,7 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter,WalletModel,
                     bonus1.setStatus(EntityStatusType.Active);
                     bonus1.setUser(user.getParent());
                     bonus1.setAmount(referralDepositBonus(model.getAmount()));
-//                        bonus1.setAddress(parameterService.findByCode("WALLET_ADDRESS").getValue());
+                    bonus1.setActualAmount(referralDepositBonus(model.getAmount()));
                     bonus1.setTransactionType(TransactionType.BONUS);
                     bonus1.setRole(user.getRole());
                     create(bonus1);
@@ -182,7 +182,7 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter,WalletModel,
                     bonus1.setStatus(EntityStatusType.Active);
                     bonus1.setUser(user.getParent());
                     bonus1.setAmount(referralDepositBonus(model.getAmount()));
-//                        bonus1.setAddress(parameterService.findByCode("WALLET_ADDRESS").getValue());
+                    bonus1.setActualAmount(referralDepositBonus(model.getAmount()));
                     bonus1.setTransactionType(TransactionType.BONUS);
                     bonus1.setRole(user.getRole());
                     create(bonus1);
