@@ -209,17 +209,17 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter,WalletModel,
     }
     @Override
     public BigDecimal referralDepositBonus(BigDecimal amount) {
-        List<ParameterModel> parameters = parameterService.findAllByParameterGroupCode("REFERRAL_DEPOSIT_BONUS");
-        for (ParameterModel parameter : parameters) {
-            // Check if the amount falls within the range
-            var split = parameter.getTitle().split("~");
-            BigDecimal lowerLimit = new BigDecimal(split[0]);
-            BigDecimal upperLimit = new BigDecimal(split[1]);
-            if (amount.compareTo(lowerLimit) >= 0 && amount.compareTo(upperLimit) <= 0) {
-                return new BigDecimal(parameter.getValue());
-            }
-        }
-        return BigDecimal.ZERO;
+//        List<ParameterModel> parameters = parameterService.findAllByParameterGroupCode("REFERRAL_DEPOSIT_BONUS");
+//        for (ParameterModel parameter : parameters) {
+//            // Check if the amount falls within the range
+//            var split = parameter.getTitle().split("~");
+//            BigDecimal lowerLimit = new BigDecimal(split[0]);
+//            BigDecimal upperLimit = new BigDecimal(split[1]);
+//            if (amount.compareTo(lowerLimit) >= 0 && amount.compareTo(upperLimit) <= 0) {
+//                return new BigDecimal(parameter.getValue());
+//            }
+//        }
+        return BigDecimal.ONE;
     }
 
     @Override

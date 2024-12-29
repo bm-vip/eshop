@@ -1,5 +1,6 @@
 package com.eshop.client.service.impl;
 
+import com.eshop.app.model.ParameterModel;
 import com.eshop.client.entity.QWalletEntity;
 import com.eshop.client.entity.WalletEntity;
 import com.eshop.client.enums.EntityStatusType;
@@ -35,7 +36,7 @@ import static com.eshop.client.util.DateUtil.toLocalDate;
 import static com.eshop.client.util.StringUtils.generateIdKey;
 
 @Service
-public class WalletServiceImpl extends BaseServiceImpl<WalletFilter,WalletModel, WalletEntity, Long> implements WalletService {
+public class WalletServiceImpl extends BaseServiceImpl<WalletFilter, WalletModel, WalletEntity, Long> implements WalletService {
 
     private final WalletRepository walletRepository;
     private final SubscriptionService subscriptionService;
@@ -45,6 +46,7 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter,WalletModel,
     private final String minWithdrawAmount;
     private final UserService userService;
     private final MailService mailService;
+    private final ParameterService parameterService;
 
     public WalletServiceImpl(WalletRepository repository, WalletMapper mapper, SubscriptionService subscriptionService, SubscriptionPackageService subscriptionPackageService, JPAQueryFactory queryFactory, SessionHolder sessionHolder, ParameterService parameterService, UserService userService, MailService mailService) {
         super(repository, mapper);
@@ -53,6 +55,7 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter,WalletModel,
         this.subscriptionPackageService = subscriptionPackageService;
         this.queryFactory = queryFactory;
         this.sessionHolder = sessionHolder;
+        this.parameterService = parameterService;
         this.minWithdrawAmount = parameterService.findByCode("MIN_WITHDRAW").getValue();
         this.userService = userService;
         this.mailService = mailService;
@@ -63,7 +66,7 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter,WalletModel,
         BooleanBuilder builder = new BooleanBuilder();
         QWalletEntity path = QWalletEntity.walletEntity;
 
-        if(!RoleType.hasRole(RoleType.ADMIN)) {
+        if (!RoleType.hasRole(RoleType.ADMIN)) {
             builder.and(path.user.roles.any().role.ne(RoleType.ADMIN));
         }
 
@@ -89,43 +92,47 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter,WalletModel,
     @Override
     @Transactional
     public WalletModel create(WalletModel model, String allKey) {
-        var user = userService.findById(model.getUser().getId(), generateIdKey("User",model.getUser().getId()));
+        var user = userService.findById(model.getUser().getId(), generateIdKey("User", model.getUser().getId()));
         var currentSubscription = subscriptionService.findByUserAndActivePackage(model.getUser().getId());
         SubscriptionPackageModel currentSubscriptionPackage = currentSubscription.getSubscriptionPackage();
+        long countAllActiveChild = userService.countAllActiveChild(user.getId());
 //        if(!user.isEmailVerified()) {
 //            mailService.sendVerification(user.getEmail(),"Email verification link");
 //            throw new ExpectationException("Please verify your email before make this transaction.");
 //        }
-        if(model.getTransactionType().equals(TransactionType.WITHDRAWAL_PROFIT)) {
-            if(currentSubscription == null)
+        if (model.getTransactionType().equals(TransactionType.WITHDRAWAL_PROFIT)) {
+            if (currentSubscription == null)
                 throw new PaymentRequiredException();
             var totalProfit = walletRepository.totalProfit(model.getUser().getId());
-            if(totalProfit.compareTo(model.getAmount()) < 0)
+            if (totalProfit.compareTo(model.getAmount()) < 0)
                 throw new PaymentRequiredException();
-            if(walletRepository.countAllByUserIdAndTransactionTypeAndStatus(user.getId(),TransactionType.WITHDRAWAL_PROFIT,EntityStatusType.Active)>1
-            && userService.countAllActiveChild(user.getId()) < currentSubscriptionPackage.getOrderCount()) {
+            if (walletRepository.countAllByUserIdAndTransactionTypeAndStatus(user.getId(), TransactionType.WITHDRAWAL_PROFIT, EntityStatusType.Active) > 1
+                    && countAllActiveChild < currentSubscriptionPackage.getOrderCount()) {
                 throw new NotAcceptableException(String.format("To withdraw your profit you need to have at least %d referrals.", currentSubscriptionPackage.getOrderCount()));
             }
             if (model.getAmount().compareTo(new BigDecimal(minWithdrawAmount)) < 0)
                 throw new NotAcceptableException(String.format("Profit balance %s is insufficient for withdrawal!", minWithdrawAmount));
         }
-        if(model.getTransactionType().equals(TransactionType.WITHDRAWAL)) {
-            if(currentSubscription == null)
+        if (model.getTransactionType().equals(TransactionType.WITHDRAWAL_REWARD_REFERRAL)) {
+            validateRewardReferral(countAllActiveChild, model.getAmount(),user.getId());
+        }
+        if (model.getTransactionType().equals(TransactionType.WITHDRAWAL)) {
+            if (currentSubscription == null)
                 throw new PaymentRequiredException();
             var totalDeposit = walletRepository.totalDeposit(model.getUser().getId());
-            if(totalDeposit.compareTo(model.getAmount()) < 0)
+            if (totalDeposit.compareTo(model.getAmount()) < 0)
                 throw new PaymentRequiredException();
-            if(model.getAmount().compareTo(currentSubscription.getFinalPrice()) >= 0) {
-                if(currentSubscription.getRemainingWithdrawalPerDay() > 0L)
-                    throw new NotAcceptableException(String.format("You can withdraw your funds after %d days.",currentSubscription.getRemainingWithdrawalPerDay()));
-                if(userService.countAllActiveChild(user.getId()) < currentSubscriptionPackage.getOrderCount()) {
+            if (model.getAmount().compareTo(currentSubscription.getFinalPrice()) >= 0) {
+                if (currentSubscription.getRemainingWithdrawalPerDay() > 0L)
+                    throw new NotAcceptableException(String.format("You can withdraw your funds after %d days.", currentSubscription.getRemainingWithdrawalPerDay()));
+                if (userService.countAllActiveChild(user.getId()) < currentSubscriptionPackage.getOrderCount()) {
                     throw new NotAcceptableException(String.format("To withdraw your funds you need to have at least %d referrals.", currentSubscriptionPackage.getOrderCount()));
                 }
             }
-        } else if(model.getTransactionType().equals(TransactionType.DEPOSIT)) {
+        } else if (model.getTransactionType().equals(TransactionType.DEPOSIT)) {
             //please deposit more than the subscription amount
             var sp = subscriptionPackageService.findMatchedPackageByAmount(model.getAmount());
-            if(sp == null)
+            if (sp == null)
                 throw new BadRequestException("Please deposit at least the amount of the first subscription.");
         }
         model.setStatus(EntityStatusType.Pending);
@@ -136,13 +143,13 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter,WalletModel,
     @Override
     @Transactional
     public WalletModel update(WalletModel model, String key, String allKey) {
-        var user = userService.findById(model.getUser().getId(), generateIdKey("User",model.getUser().getId()));
+        var user = userService.findById(model.getUser().getId(), generateIdKey("User", model.getUser().getId()));
 //        if(!user.isEmailVerified()) {
 //            mailService.sendVerification(user.getEmail(),"Email verification link");
 //            throw new ExpectationException("Please verify your email before make this transaction.");
 //        }
         model.setStatus(EntityStatusType.Pending);
-        var result =  super.update(model, key, allKey);
+        var result = super.update(model, key, allKey);
 //        if(model.isActive()) {
 //            var balance = walletRepository.findBalance(model.getUser().getId());
 //            var subscriptionModel = subscriptionService.findByUserAndActivePackage(model.getUser().getId());
@@ -165,7 +172,7 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter,WalletModel,
         var balance = totalBalanceByUserId(entity.getUser().getId());
         var subscriptionModel = subscriptionService.findByUserAndActivePackage(entity.getUser().getId());
 
-        if(subscriptionModel.getSubscriptionPackage().getPrice().compareTo(balance) > 0) {
+        if (subscriptionModel.getSubscriptionPackage().getPrice().compareTo(balance) > 0) {
             subscriptionService.logicalDeleteById(subscriptionModel.getId());
         }
     }
@@ -175,16 +182,19 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter,WalletModel,
     public BigDecimal totalBalanceByUserId(UUID userId) {
         return walletRepository.calculateUserBalance(userId);
     }
+
     @Override
     @Cacheable(cacheNames = "client", key = "'Wallet:' + #userId.toString() + ':totalDeposit'")
     public BigDecimal totalDeposit(UUID userId) {
         return walletRepository.totalDeposit(userId);
     }
+
     @Override
     @Cacheable(cacheNames = "client", key = "'Wallet:' + #userId.toString() + ':totalWithdrawal'")
     public BigDecimal totalWithdrawal(UUID userId) {
         return walletRepository.totalWithdrawal(userId);
     }
+
     @Override
     @Cacheable(cacheNames = "client", key = "'Wallet:' + #userId.toString() + ':totalBonus'")
     public BigDecimal totalBonus(UUID userId) {
@@ -239,17 +249,29 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter,WalletModel,
         DateTemplate<Date> truncatedDate = Expressions.dateTemplate(Date.class, "date_trunc('day', {0})", path.createdDate);
         var results = queryFactory.select(truncatedDate, path.amount.sum())
                 .from(path)
-                .where(truncatedDate.between(new Date(startDate),new Date(endDate)))
+                .where(truncatedDate.between(new Date(startDate), new Date(endDate)))
                 .where(path.transactionType.eq(transactionType))
                 .where(path.user.id.eq(sessionHolder.getCurrentUser().getId()))
                 .groupBy(truncatedDate)
                 .orderBy(truncatedDate.asc())
                 .fetch();
         Map<Long, BigDecimal> map = results.stream()
-                .collect(Collectors.toMap(tuple -> tuple.get(truncatedDate).getTime(),tuple -> tuple.get(path.amount.sum())));
+                .collect(Collectors.toMap(tuple -> tuple.get(truncatedDate).getTime(), tuple -> tuple.get(path.amount.sum())));
 
         var allDates = toLocalDate(startDate).datesUntil(toLocalDate(endDate).plusDays(1)).map(DateUtil::toEpoch);
 
         return allDates.collect(Collectors.toMap(epoch -> epoch, epoch -> map.getOrDefault(epoch, BigDecimal.ZERO)));
+    }
+
+    private void validateRewardReferral(long activeReferralCount, BigDecimal amount, UUID userId) {
+        long maxValue = parameterService.findAllByParameterGroupCode("REFERRAL_REWARD").stream()
+                .filter(f -> Long.valueOf(f.getTitle()) <= activeReferralCount)
+                .mapToLong(m -> Long.valueOf(m.getValue()))
+                .max()
+                .orElse(0L);
+
+        var totalWithdrawalRewardReferral = walletRepository.totalWithdrawalRewardReferral(userId);
+        if(BigDecimal.valueOf(maxValue).compareTo(totalWithdrawalRewardReferral.add(amount)) < 0)
+            throw new NotAcceptableException("The requested amount is more than the allowed amount!");
     }
 }

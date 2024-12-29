@@ -86,7 +86,7 @@ function loadSaveEntityByInput() {
         amount: $("#amount").val().replace(/,/g, ""),
         network: $("#network").val(),
         currency: 'USDT',
-        transactionType: $("#transactionType").val(),
+        transactionType: $("#withdrawalType").val(),
         user: {id: currentUser.id},
         address: $("#walletAddress").val()
     };

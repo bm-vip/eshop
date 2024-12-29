@@ -5,7 +5,10 @@ import com.eshop.client.config.Limited;
 import com.eshop.client.config.MessageConfig;
 import com.eshop.client.enums.RoleType;
 import com.eshop.client.filter.SubscriptionPackageFilter;
-import com.eshop.client.model.*;
+import com.eshop.client.model.CoinExchangeModel;
+import com.eshop.client.model.ExchangeModel;
+import com.eshop.client.model.ResetPassModel;
+import com.eshop.client.model.UserModel;
 import com.eshop.client.service.*;
 import com.eshop.client.service.impl.UserServiceImpl;
 import com.eshop.client.util.SessionHolder;
@@ -22,7 +25,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
-
 import java.util.ArrayList;
 
 import static com.eshop.client.util.StringUtils.generateFilterKey;
@@ -46,6 +48,7 @@ public class LoginController {
     final SubscriptionService subscriptionService;
     final CoinService coinService;
     final ExchangeService exchangeService;
+    private final ParameterService parameterService;
 
     @SneakyThrows
     @RequestMapping(value = "/{name}", method = RequestMethod.GET)
@@ -65,6 +68,10 @@ public class LoginController {
         request.getParameterMap().forEach((key, value) -> {
             modelAndView.addObject(key, value[0]);
         });
+        if(name.equals("referral-reward")) {
+            modelAndView.addObject("referralRewards",parameterService.findAllByParameterGroupCode("REFERRAL_REWARD"));
+            modelAndView.addObject("countActiveChild",userService.countAllActiveChild(user.getId()));
+        }
         if(name.equals("arbitrage")) {
             var limit = arbitrageService.purchaseLimit(user.getId());
             var filter = new SubscriptionPackageFilter();
