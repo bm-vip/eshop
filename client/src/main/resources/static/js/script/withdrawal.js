@@ -44,20 +44,31 @@ function customTableOptions(){
     return tbl_option;
 }
 
+function loadAllowedWithdrawalInformation(withdrawalType) {
+    $.get(`api/v1/wallet/allowed-withdrawal-balance/${currentUser.id}/${withdrawalType}`, function (allowedAmount){
+        let minWithdraw = businessRules.find(x => x.code == 'MIN_WITHDRAW').value ?? '15';
+        let transferFee = businessRules.find(x => x.code == 'TRANSFER_FEE').value ?? '2';
+        $("#amount").attr('placeholder',`${minWithdraw} ~ ${allowedAmount}`);
+        $("#withdraw-notice .alert-content ul").html(`<li>${resources.minWithdrawalNotice.format(minWithdraw)}</li>
+                                                      <li>${resources.maxWithdrawalNotice.format(allowedAmount)}</li>
+                                                      <li>${resources.transferFee.format(transferFee)}</li>`);
+    });
+}
+
 function onLoad() {
     $.getJSON("/api/v1/user/" + currentUser.id, function (user) {
         $("#walletAddress").val(user.walletAddress);
     });
     $.getJSON("/api/v1/parameter/find-by-group-code/BUSINESS_RULES", function (data) {
         businessRules = data;
-        $("#withdraw-notice .alert-content ul").html(`<li>${resources.withdrawalNotice.format(data.find(x => x.code == 'MIN_WITHDRAW').value ?? '15')}</li><li>${resources.transferFee.format(data.find(x => x.code == 'TRANSFER_FEE').value ?? '2')}</li>`);
-        validate('WITHDRAWAL_PROFIT');
+        validate($("#withdrawalType").val());
     });
     $("#withdrawalType").on('change', function (){
         validate($("#withdrawalType").val());
     });
 }
 function validate(withdrawalType){
+    loadAllowedWithdrawalInformation(withdrawalType);
     if(withdrawalType == 'WITHDRAWAL_PROFIT') {
         $.getJSON("/api/v1/wallet/total-profit/" + currentUser.id, function (totalProfit) {
             if (parseFloat(totalProfit) < parseFloat(businessRules.find(x => x.code == 'MIN_WITHDRAW').value)) {
@@ -67,7 +78,7 @@ function validate(withdrawalType){
                 $("#saveWithdraw").removeClass("disabled").removeAttr("aria-disabled").removeAttr('disabled');
             }
         });
-    } else {
+    } else if(withdrawalType == 'WITHDRAWAL') {
         $.get("/api/v1/subscription/find-active-by-user/" + currentUser.id, function (subscription) {
             if(isNullOrEmpty(subscription)) {
                 $("#saveWithdraw").addClass("disabled").attr("aria-disabled", true).attr('disabled',true);

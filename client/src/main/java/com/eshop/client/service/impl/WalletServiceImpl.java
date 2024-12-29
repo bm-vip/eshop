@@ -14,9 +14,9 @@ import com.eshop.client.service.*;
 import com.eshop.client.util.DateUtil;
 import com.eshop.client.util.SessionHolder;
 import com.eshop.exception.common.BadRequestException;
+import com.eshop.exception.common.InsufficentBalanceException;
 import com.eshop.exception.common.NotAcceptableException;
 import com.eshop.exception.common.NotFoundException;
-import com.eshop.exception.common.PaymentRequiredException;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.CaseBuilder;
@@ -103,34 +103,35 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter, WalletModel
 //        }
         if (model.getTransactionType().equals(TransactionType.WITHDRAWAL_PROFIT)) {
             if (currentSubscription == null)
-                throw new PaymentRequiredException();
+                throw new InsufficentBalanceException();
             var totalProfit = walletRepository.totalProfit(model.getUser().getId());
             if (totalProfit.compareTo(model.getAmount()) < 0)
-                throw new PaymentRequiredException();
+                throw new InsufficentBalanceException();
             if (walletRepository.countAllByUserIdAndTransactionTypeAndStatus(user.getId(), TransactionType.WITHDRAWAL_PROFIT, EntityStatusType.Active) > 1
                     && countAllActiveChild < currentSubscriptionPackage.getOrderCount()) {
                 throw new NotAcceptableException(String.format("To withdraw your profit you need to have at least %d referrals.", currentSubscriptionPackage.getOrderCount()));
             }
             if (model.getAmount().compareTo(new BigDecimal(minWithdrawAmount)) < 0)
-                throw new NotAcceptableException(String.format("Profit balance %s is insufficient for withdrawal!", minWithdrawAmount));
+                throw new InsufficentBalanceException(String.format("Profit balance %s is insufficient for withdrawal!", minWithdrawAmount));
         }
         if (model.getTransactionType().equals(TransactionType.WITHDRAWAL_REWARD_REFERRAL)) {
-            long maxValue = parameterService.findAllByParameterGroupCode("REFERRAL_REWARD").stream()
+            long allowedAmount = parameterService.findAllByParameterGroupCode("REFERRAL_REWARD").stream()
                     .filter(f -> Long.valueOf(f.getTitle()) <= countAllActiveChild)
                     .mapToLong(m -> Long.valueOf(m.getValue()))
                     .max()
                     .orElse(0L);
 
             var totalWithdrawalRewardReferral = walletRepository.totalWithdrawalRewardReferral(user.getId());
-            if(BigDecimal.valueOf(maxValue).compareTo(totalWithdrawalRewardReferral.add(model.getAmount())) < 0)
-                throw new NotAcceptableException("The requested amount is more than the allowed amount!");
+            var totalReferralReward = BigDecimal.valueOf(allowedAmount).subtract(totalWithdrawalRewardReferral);
+            if (totalReferralReward.compareTo(model.getAmount()) < 0)
+                throw new NotAcceptableException(String.format("The requested amount %s is more than the allowed amount %s!", model.getAmount().toString(), totalReferralReward.toString()));
         }
         if (model.getTransactionType().equals(TransactionType.WITHDRAWAL)) {
             if (currentSubscription == null)
-                throw new PaymentRequiredException();
+                throw new InsufficentBalanceException();
             var totalDeposit = walletRepository.totalDeposit(model.getUser().getId());
             if (totalDeposit.compareTo(model.getAmount()) < 0)
-                throw new PaymentRequiredException();
+                throw new InsufficentBalanceException();
             if (model.getAmount().compareTo(currentSubscription.getFinalPrice()) >= 0) {
                 if (currentSubscription.getRemainingWithdrawalPerDay() > 0L)
                     throw new NotAcceptableException(String.format("You can withdraw your funds after %d days.", currentSubscription.getRemainingWithdrawalPerDay()));
@@ -270,5 +271,23 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter, WalletModel
         var allDates = toLocalDate(startDate).datesUntil(toLocalDate(endDate).plusDays(1)).map(DateUtil::toEpoch);
 
         return allDates.collect(Collectors.toMap(epoch -> epoch, epoch -> map.getOrDefault(epoch, BigDecimal.ZERO)));
+    }
+    @Override
+    public BigDecimal allowedWithdrawalBalance(UUID userId, TransactionType transactionType) {
+        long countAllActiveChild = userService.countAllActiveChild(userId);
+        if (transactionType.equals(TransactionType.WITHDRAWAL))
+            return walletRepository.totalDeposit(userId);
+        if (transactionType.equals(TransactionType.WITHDRAWAL_PROFIT))
+            return walletRepository.totalProfit(userId);
+        if (transactionType.equals(TransactionType.WITHDRAWAL_REWARD_REFERRAL)) {
+            var totalWithdrawalRewardReferral = walletRepository.totalWithdrawalRewardReferral(userId);
+            long allowedAmount = parameterService.findAllByParameterGroupCode("REFERRAL_REWARD").stream()
+                    .filter(f -> Long.valueOf(f.getTitle()) <= countAllActiveChild)
+                    .mapToLong(m -> Long.valueOf(m.getValue()))
+                    .max()
+                    .orElse(0L);
+            return BigDecimal.valueOf(allowedAmount).subtract(totalWithdrawalRewardReferral);
+        }
+        return BigDecimal.ZERO;
     }
 }

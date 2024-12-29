@@ -58,5 +58,8 @@ public class WalletRestController extends BaseRestControllerImpl<WalletFilter, W
     public ResponseEntity<Map<Long, BigDecimal>> findAllWithinDateRange(@PathVariable long startDate, @PathVariable long endDate, @PathVariable TransactionType transactionType){
         return ResponseEntity.ok(walletService.findAllWithinDateRange(startDate,endDate,transactionType));
     }
-
+    @GetMapping("/allowed-withdrawal-balance/{userId}/{transactionType}")
+    public ResponseEntity<BigDecimal> allowedWithdrawalBalance(@PathVariable UUID userId, @PathVariable TransactionType transactionType){
+        return ResponseEntity.ok(walletService.allowedWithdrawalBalance(userId,transactionType));
+    }
 }

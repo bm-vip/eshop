@@ -8,15 +8,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(HttpStatus.PAYMENT_REQUIRED)
-public class PaymentRequiredException extends BaseException {
-    private static final Logger log = LoggerFactory.getLogger(PaymentRequiredException.class);
-    public PaymentRequiredException() {
+public class InsufficentBalanceException extends BaseException {
+    private static final Logger log = LoggerFactory.getLogger(InsufficentBalanceException.class);
+    public InsufficentBalanceException() {
         super("Insufficient balance!", HttpStatus.PAYMENT_REQUIRED);
         log.error(
                 String.valueOf(this)
         );
     }
-    public PaymentRequiredException(String msg) {
+    public InsufficentBalanceException(String msg) {
         super(String.format("%s",msg), HttpStatus.PAYMENT_REQUIRED);
         log.error(
                 String.valueOf(this)

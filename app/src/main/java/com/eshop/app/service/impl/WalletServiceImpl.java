@@ -8,15 +8,14 @@ import com.eshop.app.enums.RoleType;
 import com.eshop.app.enums.TransactionType;
 import com.eshop.app.filter.WalletFilter;
 import com.eshop.app.mapping.WalletMapper;
-import com.eshop.app.model.ParameterModel;
 import com.eshop.app.model.SubscriptionModel;
 import com.eshop.app.model.WalletModel;
 import com.eshop.app.repository.WalletRepository;
 import com.eshop.app.service.*;
 import com.eshop.app.util.DateUtil;
+import com.eshop.exception.common.InsufficentBalanceException;
 import com.eshop.exception.common.NotAcceptableException;
 import com.eshop.exception.common.NotFoundException;
-import com.eshop.exception.common.PaymentRequiredException;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.DateTemplate;
@@ -30,7 +29,6 @@ import org.springframework.util.StringUtils;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -101,7 +99,7 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter,WalletModel,
         var balance = walletRepository.totalBalance(model.getRole());
         if(model.getTransactionType().equals(TransactionType.WITHDRAWAL)) {
             if(balance.compareTo(model.getAmount()) < 0)
-                throw new PaymentRequiredException();
+                throw new InsufficentBalanceException();
         }
         model.setStatus(EntityStatusType.Active);
         if(model.getRoleId()!=null && !StringUtils.hasLength(model.getRole())) {
@@ -118,7 +116,7 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter,WalletModel,
         var balance = walletRepository.calculateUserBalance(model.getUser().getId());
         if(model.getTransactionType().equals(TransactionType.WITHDRAWAL)) {
             if(balance.compareTo(model.getAmount()) < 0)
-                throw new PaymentRequiredException();
+                throw new InsufficentBalanceException();
         }
         model.setRole(user.getRole());
         var result =  super.create(model);

@@ -17,4 +17,5 @@ public interface WalletService extends BaseService<WalletFilter, WalletModel, Lo
     BigDecimal totalProfit(UUID userId);
     BigDecimal dailyProfit(UUID userId);
     Map<Long, BigDecimal> findAllWithinDateRange(long startDate, long endDate, TransactionType transactionType);
+    BigDecimal allowedWithdrawalBalance(UUID userId, TransactionType transactionType);
 }

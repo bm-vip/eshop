@@ -16,8 +16,8 @@ import com.eshop.client.repository.WalletRepository;
 import com.eshop.client.service.SubscriptionService;
 import com.eshop.client.util.DateUtil;
 import com.eshop.exception.common.BadRequestException;
+import com.eshop.exception.common.InsufficentBalanceException;
 import com.eshop.exception.common.NotFoundException;
-import com.eshop.exception.common.PaymentRequiredException;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
 import org.springframework.cache.annotation.Cacheable;
@@ -92,9 +92,9 @@ public class SubscriptionServiceImpl extends BaseServiceImpl<SubscriptionFilter,
         if(model.getStatus().equals(EntityStatusType.Active)) {
             var balance = walletRepository.calculateUserBalance(entity.getUser().getId());
             if(balance.compareTo(BigDecimal.ZERO) <= 0)
-                throw new PaymentRequiredException();
+                throw new InsufficentBalanceException();
             if(entity.getFinalPrice().compareTo(balance) > 0)
-                throw new PaymentRequiredException();
+                throw new InsufficentBalanceException();
             deactivateOldActive(entity.getUser().getId());
             entity.setStatus(EntityStatusType.Active);
             addBonus(entity);
@@ -128,9 +128,9 @@ public class SubscriptionServiceImpl extends BaseServiceImpl<SubscriptionFilter,
         if(model.getStatus().equals(EntityStatusType.Active)) {
             var balance = walletRepository.calculateUserBalance(entity.getUser().getId());
             if(balance.compareTo(BigDecimal.ZERO) <= 0)
-                throw new PaymentRequiredException();
+                throw new InsufficentBalanceException();
             if(entity.getFinalPrice().compareTo(balance) > 0)
-                throw new PaymentRequiredException();
+                throw new InsufficentBalanceException();
             deactivateOldActive(entity.getUser().getId());
             entity.setStatus(EntityStatusType.Active);
             addBonus(entity);
