@@ -11,6 +11,7 @@ import com.eshop.client.service.ParameterService;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
@@ -46,13 +47,14 @@ public class ParameterServiceImpl extends BaseServiceImpl<ParameterFilter,Parame
 
         return builder;
     }
-
+    @Cacheable(cacheNames = "client", key = "'Parameter:' + #code + ':findByCode'")
     public ParameterModel findByCode(String code) {
         Optional<ParameterEntity> optional = repository.findByCode(code);
         if (optional.isPresent())
             return mapper.toModel(optional.get());
         return new ParameterModel();
     }
+    @Cacheable(cacheNames = "client", key = "'Parameter:' + #parameterGroupCode + ':findAllByParameterGroupCode'")
     public List<ParameterModel> findAllByParameterGroupCode(String parameterGroupCode) {
         ParameterFilter filter = new ParameterFilter(){{setParameterGroup(new ParameterGroupFilter(){{setCode(parameterGroupCode);}});}};
         return super.findAll(filter, PageRequest.ofSize(1000), generateFilterKey("Parameter","findAllByParameterGroupCode",filter,PageRequest.ofSize(1000))).getContent();

@@ -1,6 +1,5 @@
 package com.eshop.client.service.impl;
 
-import com.eshop.app.model.ParameterModel;
 import com.eshop.client.entity.QWalletEntity;
 import com.eshop.client.entity.WalletEntity;
 import com.eshop.client.enums.EntityStatusType;
@@ -29,7 +28,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.Date;
+import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static com.eshop.client.util.DateUtil.toLocalDate;
@@ -44,9 +45,9 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter, WalletModel
     private final JPAQueryFactory queryFactory;
     private final SessionHolder sessionHolder;
     private final String minWithdrawAmount;
+    private final ParameterService parameterService;
     private final UserService userService;
     private final MailService mailService;
-    private final ParameterService parameterService;
 
     public WalletServiceImpl(WalletRepository repository, WalletMapper mapper, SubscriptionService subscriptionService, SubscriptionPackageService subscriptionPackageService, JPAQueryFactory queryFactory, SessionHolder sessionHolder, ParameterService parameterService, UserService userService, MailService mailService) {
         super(repository, mapper);
@@ -114,7 +115,15 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter, WalletModel
                 throw new NotAcceptableException(String.format("Profit balance %s is insufficient for withdrawal!", minWithdrawAmount));
         }
         if (model.getTransactionType().equals(TransactionType.WITHDRAWAL_REWARD_REFERRAL)) {
-            validateRewardReferral(countAllActiveChild, model.getAmount(),user.getId());
+            long maxValue = parameterService.findAllByParameterGroupCode("REFERRAL_REWARD").stream()
+                    .filter(f -> Long.valueOf(f.getTitle()) <= countAllActiveChild)
+                    .mapToLong(m -> Long.valueOf(m.getValue()))
+                    .max()
+                    .orElse(0L);
+
+            var totalWithdrawalRewardReferral = walletRepository.totalWithdrawalRewardReferral(user.getId());
+            if(BigDecimal.valueOf(maxValue).compareTo(totalWithdrawalRewardReferral.add(model.getAmount())) < 0)
+                throw new NotAcceptableException("The requested amount is more than the allowed amount!");
         }
         if (model.getTransactionType().equals(TransactionType.WITHDRAWAL)) {
             if (currentSubscription == null)
@@ -261,17 +270,5 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter, WalletModel
         var allDates = toLocalDate(startDate).datesUntil(toLocalDate(endDate).plusDays(1)).map(DateUtil::toEpoch);
 
         return allDates.collect(Collectors.toMap(epoch -> epoch, epoch -> map.getOrDefault(epoch, BigDecimal.ZERO)));
-    }
-
-    private void validateRewardReferral(long activeReferralCount, BigDecimal amount, UUID userId) {
-        long maxValue = parameterService.findAllByParameterGroupCode("REFERRAL_REWARD").stream()
-                .filter(f -> Long.valueOf(f.getTitle()) <= activeReferralCount)
-                .mapToLong(m -> Long.valueOf(m.getValue()))
-                .max()
-                .orElse(0L);
-
-        var totalWithdrawalRewardReferral = walletRepository.totalWithdrawalRewardReferral(userId);
-        if(BigDecimal.valueOf(maxValue).compareTo(totalWithdrawalRewardReferral.add(amount)) < 0)
-            throw new NotAcceptableException("The requested amount is more than the allowed amount!");
     }
 }
