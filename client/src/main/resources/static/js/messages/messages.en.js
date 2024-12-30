@@ -414,5 +414,7 @@ var resources = {
     'withdrawalAlert':'Your request is being reviewed, the amount will be deposited to your wallet after maximum 24 hours.',
     'minWithdrawalNotice':'Minimum withdrawal amount is {0} USD.',
     'maxWithdrawalNotice':'Maximum withdrawal amount is {0} USD.',
-    'transferFee':'Transfer fee is {0} USD.'
+    'transferFee':'Transfer fee is {0} USD.',
+    'inviteXFriends':'Invite {0} Friends',
+    'claim':'Claim'
 };

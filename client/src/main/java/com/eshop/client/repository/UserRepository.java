@@ -26,14 +26,11 @@ public interface UserRepository extends BaseRepository<UserEntity, UUID> {
 	List<CountryUsers> findAllUserCountByCountry();
 
 	@Query("""
-        SELECT COUNT(DISTINCT u) 
+        SELECT coalesce(COUNT(DISTINCT u),0) 
         FROM UserEntity u
         JOIN WalletEntity w ON u.id = w.user.id
-        WHERE u.treePath LIKE CONCAT(:userId, ',%') 
-           OR u.treePath LIKE CONCAT('%,', :userId, ',%') 
-           OR u.treePath LIKE CONCAT('%,', :userId)
-           OR u.treePath = :userId
+        WHERE u.parent.id = :userId         
         AND w.status = com.eshop.client.enums.EntityStatusType.Active and w.transactionType = com.eshop.client.enums.TransactionType.DEPOSIT
     """)
-	Long countActiveChildrenByUserId(@Param("userId") String userId);
+	Integer countActiveChildrenByUserId(@Param("userId") UUID userId);
 }

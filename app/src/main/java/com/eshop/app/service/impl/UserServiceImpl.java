@@ -128,7 +128,7 @@ public class UserServiceImpl extends BaseServiceImpl<UserFilter,UserModel, UserE
 
     @Override
     public long countAllActiveChild(UUID id) {
-        return userRepository.countActiveChildrenByUserId(id.toString());
+        return userRepository.countActiveChildrenByUserId(id);
     }
 
     private String getUid() {

@@ -69,6 +69,11 @@ public class UserEntity extends BaseEntity<UUID> {
 	private boolean emailVerified;
 	private String role;
 
+	public UserEntity setUserId(UUID id) {
+		this.id = id;
+		return this;
+	}
+
 	@Override
 	public String getSelectTitle() {
 		StringBuilder builder = new StringBuilder();

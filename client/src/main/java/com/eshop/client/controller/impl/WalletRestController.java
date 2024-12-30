@@ -6,10 +6,7 @@ import com.eshop.client.model.WalletModel;
 import com.eshop.client.service.WalletService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.util.Map;
@@ -61,5 +58,13 @@ public class WalletRestController extends BaseRestControllerImpl<WalletFilter, W
     @GetMapping("/allowed-withdrawal-balance/{userId}/{transactionType}")
     public ResponseEntity<BigDecimal> allowedWithdrawalBalance(@PathVariable UUID userId, @PathVariable TransactionType transactionType){
         return ResponseEntity.ok(walletService.allowedWithdrawalBalance(userId,transactionType));
+    }
+    @PostMapping("/claim-referral-reward/{userId}/{count}")
+    public ResponseEntity<WalletModel> allowedWithdrawalBalance(@PathVariable UUID userId, @PathVariable Integer count){
+        return ResponseEntity.ok(walletService.claimReferralReward(userId,count));
+    }
+    @GetMapping("/get-claimed-referrals/{userId}")
+    public ResponseEntity<Integer> getClaimedReferrals(@PathVariable UUID userId){
+        return ResponseEntity.ok(walletService.getClaimedReferrals(userId));
     }
 }

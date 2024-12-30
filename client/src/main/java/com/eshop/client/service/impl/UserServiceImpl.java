@@ -111,8 +111,8 @@ public class UserServiceImpl extends BaseServiceImpl<UserFilter,UserModel, UserE
 
     @Override
     @Cacheable(cacheNames = "client", key = "'User:' + #id.toString() + ':countAllActiveChild'")
-    public long countAllActiveChild(UUID id) {
-        return userRepository.countActiveChildrenByUserId(id.toString());
+    public Integer countAllActiveChild(UUID id) {
+        return userRepository.countActiveChildrenByUserId(id);
     }
 
     @Override

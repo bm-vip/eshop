@@ -18,4 +18,6 @@ public interface WalletService extends BaseService<WalletFilter, WalletModel, Lo
     BigDecimal dailyProfit(UUID userId);
     Map<Long, BigDecimal> findAllWithinDateRange(long startDate, long endDate, TransactionType transactionType);
     BigDecimal allowedWithdrawalBalance(UUID userId, TransactionType transactionType);
+    WalletModel claimReferralReward(UUID userId, Integer userCount);
+    Integer getClaimedReferrals(UUID userId);
 }

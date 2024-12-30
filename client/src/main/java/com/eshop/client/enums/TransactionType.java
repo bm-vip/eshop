@@ -17,7 +17,7 @@ public enum TransactionType {
     WITHDRAWAL_PROFIT("withdrawalProfit"),//both bonus and reward
     BONUS("bonus"), //referrals
     REWARD("reward"), //arbitrage
-    WITHDRAWAL_REWARD_REFERRAL("referralReward"),//withdraw referral reward
+    REWARD_REFERRAL("referralReward"),//referral reward
     ;
 
 

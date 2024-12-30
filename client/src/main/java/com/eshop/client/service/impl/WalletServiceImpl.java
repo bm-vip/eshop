@@ -1,12 +1,12 @@
 package com.eshop.client.service.impl;
 
 import com.eshop.client.entity.QWalletEntity;
+import com.eshop.client.entity.UserEntity;
 import com.eshop.client.entity.WalletEntity;
-import com.eshop.client.enums.EntityStatusType;
-import com.eshop.client.enums.RoleType;
-import com.eshop.client.enums.TransactionType;
+import com.eshop.client.enums.*;
 import com.eshop.client.filter.WalletFilter;
 import com.eshop.client.mapping.WalletMapper;
+import com.eshop.client.model.ParameterModel;
 import com.eshop.client.model.SubscriptionPackageModel;
 import com.eshop.client.model.WalletModel;
 import com.eshop.client.repository.WalletRepository;
@@ -23,14 +23,14 @@ import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.core.types.dsl.DateTemplate;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.util.Date;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 import static com.eshop.client.util.DateUtil.toLocalDate;
@@ -45,9 +45,9 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter, WalletModel
     private final JPAQueryFactory queryFactory;
     private final SessionHolder sessionHolder;
     private final String minWithdrawAmount;
-    private final ParameterService parameterService;
     private final UserService userService;
     private final MailService mailService;
+    private final List<ParameterModel> referralRewardParameters;
 
     public WalletServiceImpl(WalletRepository repository, WalletMapper mapper, SubscriptionService subscriptionService, SubscriptionPackageService subscriptionPackageService, JPAQueryFactory queryFactory, SessionHolder sessionHolder, ParameterService parameterService, UserService userService, MailService mailService) {
         super(repository, mapper);
@@ -56,10 +56,10 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter, WalletModel
         this.subscriptionPackageService = subscriptionPackageService;
         this.queryFactory = queryFactory;
         this.sessionHolder = sessionHolder;
-        this.parameterService = parameterService;
         this.minWithdrawAmount = parameterService.findByCode("MIN_WITHDRAW").getValue();
         this.userService = userService;
         this.mailService = mailService;
+        this.referralRewardParameters = parameterService.findAllByParameterGroupCode("REFERRAL_REWARD");
     }
 
     @Override
@@ -113,18 +113,33 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter, WalletModel
             }
             if (model.getAmount().compareTo(new BigDecimal(minWithdrawAmount)) < 0)
                 throw new InsufficentBalanceException(String.format("Profit balance %s is insufficient for withdrawal!", minWithdrawAmount));
+            model.setStatus(EntityStatusType.Pending);
         }
-        if (model.getTransactionType().equals(TransactionType.WITHDRAWAL_REWARD_REFERRAL)) {
-            long allowedAmount = parameterService.findAllByParameterGroupCode("REFERRAL_REWARD").stream()
-                    .filter(f -> Long.valueOf(f.getTitle()) <= countAllActiveChild)
+        if (model.getTransactionType().equals(TransactionType.REWARD_REFERRAL)) {
+            var rewardReferrals = walletRepository.findAllReferralRewardByUserId(user.getId());
+            Map<Integer,WalletEntity> walletEntityMap = new HashMap<>();
+            rewardReferrals.forEach(w->{
+                Integer key = referralRewardParameters.stream()
+                        .filter(f -> Integer.valueOf(f.getValue()) <= w.getAmount().intValue())
+                        .mapToInt(m -> Integer.valueOf(m.getTitle()))
+                        .max()
+                        .orElse(0);
+                walletEntityMap.put(key, w);
+            });
+            var allowedReferralCount = countAllActiveChild - walletEntityMap.keySet().stream().mapToInt(Integer::valueOf).sum();
+            if(allowedReferralCount <= 0)
+                throw new NotAcceptableException("You have already claimed this referrals reward.");
+
+            var allowedAmount = referralRewardParameters.stream()
+                    .filter(f -> Long.valueOf(f.getTitle()) <= allowedReferralCount)
                     .mapToLong(m -> Long.valueOf(m.getValue()))
                     .max()
                     .orElse(0L);
-
-            var totalWithdrawalRewardReferral = walletRepository.totalWithdrawalRewardReferral(user.getId());
-            var totalReferralReward = BigDecimal.valueOf(allowedAmount).subtract(totalWithdrawalRewardReferral);
-            if (totalReferralReward.compareTo(model.getAmount()) < 0)
-                throw new NotAcceptableException(String.format("The requested amount %s is more than the allowed amount %s!", model.getAmount().toString(), totalReferralReward.toString()));
+            if(BigDecimal.valueOf(allowedAmount).compareTo(model.getAmount()) < 0)
+                throw new NotAcceptableException(String.format("Invalid requested, Amount is greater than the allowed amount (%d USD).", allowedAmount));
+            model.setActualAmount(model.getAmount());
+            model.setCurrency(CurrencyType.USDT);
+            model.setStatus(EntityStatusType.Active);
         }
         if (model.getTransactionType().equals(TransactionType.WITHDRAWAL)) {
             if (currentSubscription == null)
@@ -139,14 +154,16 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter, WalletModel
                     throw new NotAcceptableException(String.format("To withdraw your funds you need to have at least %d referrals.", currentSubscriptionPackage.getOrderCount()));
                 }
             }
+            model.setStatus(EntityStatusType.Pending);
         } else if (model.getTransactionType().equals(TransactionType.DEPOSIT)) {
             //please deposit more than the subscription amount
             var sp = subscriptionPackageService.findMatchedPackageByAmount(model.getAmount());
             if (sp == null)
                 throw new BadRequestException("Please deposit at least the amount of the first subscription.");
+            model.setStatus(EntityStatusType.Pending);
         }
-        model.setStatus(EntityStatusType.Pending);
         model.setRole(user.getRole());
+        clearCache("Wallet:");
         return super.create(model, allKey);
     }
 
@@ -170,6 +187,7 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter, WalletModel
 //                }
 //            }
 //        }
+        clearCache("Wallet:");
         return result;
     }
 
@@ -185,6 +203,7 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter, WalletModel
         if (subscriptionModel.getSubscriptionPackage().getPrice().compareTo(balance) > 0) {
             subscriptionService.logicalDeleteById(subscriptionModel.getId());
         }
+        clearCache("Wallet:");
     }
 
     @Override
@@ -231,7 +250,9 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter, WalletModel
         var rewardBonusSum =
                 new CaseBuilder()
                         .when(path.transactionType.eq(TransactionType.REWARD)
-                                .or(path.transactionType.eq(TransactionType.BONUS)))
+                                .or(path.transactionType.eq(TransactionType.BONUS))
+                                .or(path.transactionType.eq(TransactionType.REWARD_REFERRAL))
+                        )
                         .then(path.amount)
                         .otherwise(BigDecimal.ZERO)
                         .sum();
@@ -273,21 +294,65 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter, WalletModel
         return allDates.collect(Collectors.toMap(epoch -> epoch, epoch -> map.getOrDefault(epoch, BigDecimal.ZERO)));
     }
     @Override
+    @Cacheable(cacheNames = "client", key = "'Wallet:' + #userId.toString() + ':' + transactionType.name() + ':allowedWithdrawalBalance'")
     public BigDecimal allowedWithdrawalBalance(UUID userId, TransactionType transactionType) {
         long countAllActiveChild = userService.countAllActiveChild(userId);
         if (transactionType.equals(TransactionType.WITHDRAWAL))
             return walletRepository.totalDeposit(userId);
         if (transactionType.equals(TransactionType.WITHDRAWAL_PROFIT))
             return walletRepository.totalProfit(userId);
-        if (transactionType.equals(TransactionType.WITHDRAWAL_REWARD_REFERRAL)) {
-            var totalWithdrawalRewardReferral = walletRepository.totalWithdrawalRewardReferral(userId);
-            long allowedAmount = parameterService.findAllByParameterGroupCode("REFERRAL_REWARD").stream()
-                    .filter(f -> Long.valueOf(f.getTitle()) <= countAllActiveChild)
-                    .mapToLong(m -> Long.valueOf(m.getValue()))
-                    .max()
-                    .orElse(0L);
-            return BigDecimal.valueOf(allowedAmount).subtract(totalWithdrawalRewardReferral);
-        }
         return BigDecimal.ZERO;
+    }
+    @Override
+    @Transactional
+    @CacheEvict(cacheNames = "client", key = "'Wallet:*'")
+    public WalletModel claimReferralReward(UUID userId, Integer userCount) {
+        BigDecimal amount = referralRewardParameters.stream()
+                .filter(f -> f.getTitle().equals(userCount.toString()))
+                .map(m -> new BigDecimal(m.getValue()))
+                .findAny().orElse(BigDecimal.ZERO);
+
+        WalletEntity entity = new WalletEntity();
+        entity.setAmount(amount);
+        entity.setActualAmount(amount);
+        entity.setCurrency(CurrencyType.USDT);
+        entity.setNetwork(NetworkType.TRC20);
+        entity.setUser(new UserEntity().setUserId(userId));
+        entity.setTransactionType(TransactionType.REWARD_REFERRAL);
+        entity.setStatus(EntityStatusType.Active);
+
+        var allowedReferralCount = userService.countAllActiveChild(userId) - getClaimedReferrals(userId);
+        if(allowedReferralCount <= 0)
+            throw new NotAcceptableException("You have already claimed this referrals reward.");
+
+        var allowedAmount = referralRewardParameters.stream()
+                .filter(f -> Long.valueOf(f.getTitle()) <= allowedReferralCount)
+                .mapToLong(m -> Long.valueOf(m.getValue()))
+                .max()
+                .orElse(0L);
+        if(BigDecimal.valueOf(allowedAmount).compareTo(entity.getAmount()) < 0)
+            throw new NotAcceptableException(String.format("Invalid requested, Amount is greater than the allowed amount (%d USD).", allowedAmount));
+
+        var user = userService.findById(userId, generateIdKey("User",userId));
+        entity.setRole(user.getRole());
+        clearCache("Wallet:");
+        return mapper.toModel(repository.save(entity));
+    }
+
+    @Override
+    @Transactional
+    @Cacheable(cacheNames = "client", key = "'Wallet:' + #userId.toString() + ':getClaimedReferrals'")
+    public Integer getClaimedReferrals(UUID userId) {
+        var rewardReferrals = walletRepository.findAllReferralRewardByUserId(userId);
+        AtomicReference<Integer> count = new AtomicReference<>(0);
+        rewardReferrals.forEach(w->{
+            count.updateAndGet(v -> v + referralRewardParameters.stream()
+                    .filter(f -> Integer.valueOf(f.getValue()) <= w.getAmount().intValue())
+                    .mapToInt(m -> Integer.valueOf(m.getTitle()))
+                    .max()
+                    .orElse(0));
+
+        });
+        return count.get();
     }
 }

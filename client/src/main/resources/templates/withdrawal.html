@@ -55,7 +55,6 @@
                                 <label th:text="#{withdrawalType}"></label>
                                 <select class="form-control" th:id="withdrawalType" th:title="#{withdrawalType}" tabindex="1" autofocus>
                                     <option value="WITHDRAWAL_PROFIT" th:text="#{withdrawalProfit}" th:selected="${withdrawalType == null}"></option>
-                                    <option value="WITHDRAWAL_REWARD_REFERRAL" th:text="#{withdrawalRewardReferral}" th:selected="${withdrawalType == 'WITHDRAWAL_REWARD_REFERRAL'}"></option>
                                     <option value="WITHDRAWAL" th:text="#{withdrawalDepositedFund}" th:selected="${withdrawalType == 'WITHDRAWAL'}"></option>
                                 </select>
                             </div>

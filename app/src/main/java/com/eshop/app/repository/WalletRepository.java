@@ -67,7 +67,7 @@ public interface WalletRepository extends BaseRepository<WalletEntity, Long> {
 	BigDecimal totalRewardByUserId(UUID userId);
 
 	@Query("SELECT coalesce( "
-			+ "SUM(CASE WHEN w.transactionType = com.eshop.app.enums.TransactionType.REWARD OR w.transactionType = com.eshop.app.enums.TransactionType.BONUS THEN w.amount ELSE 0 END) - "
+			+ "SUM(CASE WHEN w.transactionType = com.eshop.app.enums.TransactionType.REWARD OR w.transactionType = com.eshop.app.enums.TransactionType.REWARD_REFERRAL OR w.transactionType = com.eshop.app.enums.TransactionType.BONUS THEN w.amount ELSE 0 END) - "
 			+ "SUM(CASE WHEN w.transactionType = com.eshop.app.enums.TransactionType.WITHDRAWAL_PROFIT THEN w.amount ELSE 0 END), 0) "
 			+ "FROM WalletEntity w WHERE w.user.id = :userId AND w.status=com.eshop.app.enums.EntityStatusType.Active")
 	BigDecimal totalProfitByUserId(UUID userId);
@@ -100,7 +100,7 @@ public interface WalletRepository extends BaseRepository<WalletEntity, Long> {
 	BigDecimal totalReward(String role);
 
 	@Query("SELECT coalesce( "
-			+ "SUM(CASE WHEN w.transactionType = com.eshop.app.enums.TransactionType.REWARD OR w.transactionType = com.eshop.app.enums.TransactionType.BONUS THEN w.amount ELSE 0 END) - "
+			+ "SUM(CASE WHEN w.transactionType = com.eshop.app.enums.TransactionType.REWARD OR w.transactionType = com.eshop.app.enums.TransactionType.REWARD_REFERRAL OR w.transactionType = com.eshop.app.enums.TransactionType.BONUS THEN w.amount ELSE 0 END) - "
 			+ "SUM(CASE WHEN w.transactionType = com.eshop.app.enums.TransactionType.WITHDRAWAL_PROFIT THEN w.amount ELSE 0 END),0) "
 			+ "FROM WalletEntity w join w.user u join u.roles r WHERE r.id = 2 AND (:role is null or w.role=:role) AND w.status=com.eshop.app.enums.EntityStatusType.Active")
 	BigDecimal totalProfit(String role);

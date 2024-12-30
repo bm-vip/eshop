@@ -10,7 +10,6 @@ import com.eshop.client.model.ExchangeModel;
 import com.eshop.client.model.ResetPassModel;
 import com.eshop.client.model.UserModel;
 import com.eshop.client.service.*;
-import com.eshop.client.service.impl.UserServiceImpl;
 import com.eshop.client.util.SessionHolder;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
@@ -25,6 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 
 import static com.eshop.client.util.StringUtils.generateFilterKey;
@@ -39,7 +39,7 @@ public class LoginController {
     final MessageConfig messages;
     final SessionHolder sessionHolder;
     final HttpServletRequest request;
-    final UserServiceImpl userService;
+    final UserService userService;
     final MailService mailService;
     final OneTimePasswordService oneTimePasswordService;
     final NotificationService notificationService;
@@ -49,6 +49,7 @@ public class LoginController {
     final CoinService coinService;
     final ExchangeService exchangeService;
     private final ParameterService parameterService;
+    private final WalletService walletService;
 
     @SneakyThrows
     @RequestMapping(value = "/{name}", method = RequestMethod.GET)
@@ -70,7 +71,11 @@ public class LoginController {
         });
         if(name.equals("referral-reward")) {
             modelAndView.addObject("referralRewards",parameterService.findAllByParameterGroupCode("REFERRAL_REWARD"));
-            modelAndView.addObject("countActiveChild",userService.countAllActiveChild(user.getId()));
+            Integer countAllActiveChild = userService.countAllActiveChild(user.getId());
+            Integer claimedReferralsCount = walletService.getClaimedReferrals(user.getId());
+            modelAndView.addObject("countActiveChild", countAllActiveChild);
+            modelAndView.addObject("claimedReferralsCount", claimedReferralsCount);
+            modelAndView.addObject("remainedReferralsCount", countAllActiveChild - claimedReferralsCount);
         }
         if(name.equals("arbitrage")) {
             var limit = arbitrageService.purchaseLimit(user.getId());
