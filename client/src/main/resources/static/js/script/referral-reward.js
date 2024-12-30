@@ -46,7 +46,7 @@ function generateReferralRewardItems(){
                             <div class="row">
                                 <table class="col-md-12 col-sm-12" style="width: 100%">
                                     <tr>
-                                        <td style="padding-left: 10px"><i class="fa fa-users"></i>&nbsp;${p.value} USD</td>
+                                        <td style="padding-left: 10px"><i class="fa fa-coins"></i>&nbsp;${p.value} USD</td>
                                         <td style="text-align: right"><a href="javascript:claimReferralReward(${p.title})" aria-disabled=${percentage < 100} type="button" class="btn btn-sm ${percentage >= 100 ? 'btn-success' : 'btn-secondary disabled'}">${resources.claim}</a></td>
                                     </tr>
                                 </table>

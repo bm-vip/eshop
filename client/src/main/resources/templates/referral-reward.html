@@ -47,7 +47,7 @@
                                 <div class="row">
                                     <table class="col-md-12 col-sm-12" style="width: 100%">
                                         <tr>
-                                            <td style="padding-left: 10px"><i class="fa fa-users"></i>&nbsp;<th:block th:text="${r.value} + ' USD'"></th:block></td>
+                                            <td style="padding-left: 10px"><i class="fa fa-coins"></i>&nbsp;<th:block th:text="${r.value} + ' USD'"></th:block></td>
                                             <td style="text-align: right"><a th:href="'javascript:claimReferralReward(' + ${r.title} +')'" th:attr="aria-disabled=${percentage < 100}" type="button" th:class="'btn btn-sm ' + ${percentage >= 100 ? 'btn-success' : 'btn-secondary disabled'}" th:text="#{claim}"></a></td>
                                         </tr>
                                     </table>
