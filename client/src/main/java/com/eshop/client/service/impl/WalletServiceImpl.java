@@ -293,16 +293,17 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter, WalletModel
 
         return allDates.collect(Collectors.toMap(epoch -> epoch, epoch -> map.getOrDefault(epoch, BigDecimal.ZERO)));
     }
+
     @Override
-    @Cacheable(cacheNames = "client", key = "'Wallet:' + #userId.toString() + ':' + transactionType.name() + ':allowedWithdrawalBalance'")
+    @Cacheable(cacheNames = "client", key = "'Wallet:' + #userId.toString() + ':' + #transactionType.name() + ':allowedWithdrawalBalance'")
     public BigDecimal allowedWithdrawalBalance(UUID userId, TransactionType transactionType) {
-        long countAllActiveChild = userService.countAllActiveChild(userId);
         if (transactionType.equals(TransactionType.WITHDRAWAL))
             return walletRepository.totalDeposit(userId);
         if (transactionType.equals(TransactionType.WITHDRAWAL_PROFIT))
             return walletRepository.totalProfit(userId);
         return BigDecimal.ZERO;
     }
+
     @Override
     @Transactional
     @CacheEvict(cacheNames = "client", key = "'Wallet:*'")
