@@ -9,20 +9,22 @@ import org.springframework.stereotype.Component;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.eshop.client.util.StringUtils.getTargetClassName;
+
 @Component
 public class NetworkStrategyFactory implements ApplicationContextAware {
-    private Map<Class<? extends NetworkStrategy>, NetworkStrategy> strategyMap;
+    private Map<String, NetworkStrategy> strategyMap;
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         Map<String, NetworkStrategy> beans = applicationContext.getBeansOfType(NetworkStrategy.class);
         strategyMap = new HashMap<>();
         for (NetworkStrategy strategy : beans.values()) {
-            strategyMap.put(strategy.getClass(), strategy);
+            strategyMap.put(getTargetClassName(strategy), strategy);
         }
     }
 
     public NetworkStrategy get(NetworkType networkType) {
-        NetworkStrategy strategy = strategyMap.get(networkType.getImplementationClass());
+        NetworkStrategy strategy = strategyMap.get(networkType.getImplementationClass().getSimpleName());
         if (strategy == null) {
             throw new RuntimeException("No implementation found for " + networkType);
         }

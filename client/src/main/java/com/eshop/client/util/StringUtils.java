@@ -1,5 +1,6 @@
 package com.eshop.client.util;
 
+import org.springframework.util.ClassUtils;
 import org.springframework.util.DigestUtils;
 
 import java.util.Arrays;
@@ -29,4 +30,7 @@ public class StringUtils {
         return className + ":" + id.toString() + ":id";
     }
 
+    public static String getTargetClassName(Object obj) {
+        return ClassUtils.getUserClass(obj).getSimpleName();
+    }
 }

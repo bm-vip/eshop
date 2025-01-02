@@ -1,6 +1,5 @@
 package com.eshop.client.strategy.impl;
 
-import com.eshop.app.strategy.impl.DepositStrategyImpl;
 import com.eshop.client.enums.EntityStatusType;
 import com.eshop.client.model.WalletModel;
 import com.eshop.client.repository.WalletRepository;

@@ -7,7 +7,6 @@ import com.eshop.client.enums.*;
 import com.eshop.client.filter.WalletFilter;
 import com.eshop.client.mapping.WalletMapper;
 import com.eshop.client.model.ParameterModel;
-import com.eshop.client.model.SubscriptionPackageModel;
 import com.eshop.client.model.WalletModel;
 import com.eshop.client.repository.UserRepository;
 import com.eshop.client.repository.WalletRepository;
@@ -15,8 +14,6 @@ import com.eshop.client.service.*;
 import com.eshop.client.strategy.TransactionStrategyFactory;
 import com.eshop.client.util.DateUtil;
 import com.eshop.client.util.SessionHolder;
-import com.eshop.exception.common.BadRequestException;
-import com.eshop.exception.common.InsufficentBalanceException;
 import com.eshop.exception.common.NotAcceptableException;
 import com.eshop.exception.common.NotFoundException;
 import com.querydsl.core.BooleanBuilder;
@@ -31,11 +28,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
-import static com.eshop.app.util.MapperHelper.get;
 import static com.eshop.client.util.DateUtil.toLocalDate;
 import static com.eshop.client.util.StringUtils.generateIdKey;
 

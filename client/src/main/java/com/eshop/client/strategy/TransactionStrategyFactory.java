@@ -9,7 +9,8 @@ import org.springframework.stereotype.Component;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.eshop.app.util.StringUtils.getTargetClassName;
+import static com.eshop.client.util.StringUtils.getTargetClassName;
+
 
 @Component
 public class TransactionStrategyFactory implements ApplicationContextAware {
