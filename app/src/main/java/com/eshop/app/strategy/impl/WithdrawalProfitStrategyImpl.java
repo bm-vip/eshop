@@ -48,7 +48,9 @@ public class WithdrawalProfitStrategyImpl implements TransactionStrategy {
             var balance = walletRepository.calculateUserBalance(model.getUser().getId());
             var currentSubscription = subscriptionService.findByUserAndActivePackage(model.getUser().getId());
             var nextSubscriptionPackage = subscriptionPackageService.findMatchedPackageByAmount(balance);
-            if (nextSubscriptionPackage != null && (currentSubscription == null || !currentSubscription.getSubscriptionPackage().getId().equals(nextSubscriptionPackage.getId()))) {
+            if(nextSubscriptionPackage == null)
+                subscriptionService.logicalDeleteById(currentSubscription.getId());
+            else if (currentSubscription == null || !currentSubscription.getSubscriptionPackage().getId().equals(nextSubscriptionPackage.getId())) {
                 subscriptionService.create(new SubscriptionModel().setSubscriptionPackage(nextSubscriptionPackage).setUser(model.getUser()).setStatus(EntityStatusType.Active));
             }
         }
