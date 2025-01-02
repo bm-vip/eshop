@@ -58,6 +58,10 @@ public interface WalletRepository extends BaseRepository<WalletEntity, Long> {
 			+ "AND w.user.id = :userId AND w.status=com.eshop.app.enums.EntityStatusType.Active")
 	BigDecimal totalWithdrawalByUserId(UUID userId);
 	@Query("SELECT coalesce(SUM(w.amount),0) "
+			+ "FROM WalletEntity w WHERE (w.transactionType = com.eshop.app.enums.TransactionType.WITHDRAWAL_PROFIT) "
+			+ "AND w.user.id = :userId AND w.status=com.eshop.app.enums.EntityStatusType.Active")
+	BigDecimal totalWithdrawalProfitByUserId(UUID userId);
+	@Query("SELECT coalesce(SUM(w.amount),0) "
 			+ "FROM WalletEntity w WHERE w.transactionType = com.eshop.app.enums.TransactionType.BONUS "
 			+ "AND w.user.id = :userId AND w.status=com.eshop.app.enums.EntityStatusType.Active")
 	BigDecimal totalBonusByUserId(UUID userId);

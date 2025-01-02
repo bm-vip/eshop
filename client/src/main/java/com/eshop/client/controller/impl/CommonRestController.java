@@ -1,8 +1,8 @@
 package com.eshop.client.controller.impl;
 
-import com.eshop.client.client.NetworkStrategy;
+import com.eshop.client.strategy.NetworkStrategy;
 import com.eshop.client.enums.NetworkType;
-import com.eshop.client.client.NetworkStrategyFactory;
+import com.eshop.client.strategy.NetworkStrategyFactory;
 import com.eshop.client.model.Select2Model;
 import com.eshop.client.util.ReflectionUtil;
 import io.swagger.v3.oas.annotations.tags.Tag;

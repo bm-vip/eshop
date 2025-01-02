@@ -1,5 +1,7 @@
 package com.eshop.app.util;
 
+import org.springframework.util.ClassUtils;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -16,5 +18,8 @@ public class StringUtils {
 
         // Join the list back into a string with commas
         return numbers;
+    }
+    public static String getTargetClassName(Object obj) {
+        return ClassUtils.getUserClass(obj).getSimpleName();
     }
 }

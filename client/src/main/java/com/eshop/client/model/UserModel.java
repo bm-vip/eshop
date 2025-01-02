@@ -41,7 +41,6 @@ public class UserModel extends BaseModel<UUID> {
     private Set<RoleModel> roles;
     private BigDecimal deposit;
     private BigDecimal withdrawal;
-    private BigDecimal bonus;
     private BigDecimal reward;
     private boolean emailVerified;
     private String role;

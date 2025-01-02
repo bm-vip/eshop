@@ -120,7 +120,6 @@ public class UserServiceImpl extends BaseServiceImpl<UserFilter,UserModel, UserE
         return super.findAll(filter, pageable, key).map(m->{
             m.setDeposit(walletRepository.totalDeposit(m.getId()));
             m.setWithdrawal(walletRepository.totalWithdrawal(m.getId()));
-            m.setBonus(walletRepository.totalBonus(m.getId()));
             m.setReward(walletRepository.totalProfit(m.getId()));
             return m;
         });
@@ -133,7 +132,6 @@ public class UserServiceImpl extends BaseServiceImpl<UserFilter,UserModel, UserE
             for (UserModel m : data.getData()) {
                 m.setDeposit(walletRepository.totalDeposit(m.getId()));
                 m.setWithdrawal(walletRepository.totalWithdrawal(m.getId()));
-                m.setBonus(walletRepository.totalBonus(m.getId()));
                 m.setReward(walletRepository.totalProfit(m.getId()));
             }
         }

@@ -112,4 +112,9 @@
         <dropColumn tableName="tbl_wallet" columnName="active"/>
         <dropColumn tableName="tbl_wallet_aud" columnName="active"/>
     </changeSet>
+    <changeSet id="05-9" author="administrator">
+        <createIndex tableName="tbl_wallet" indexName="idx_wallet_user_id">
+            <column name="user_id"/>
+        </createIndex>
+    </changeSet>
 </databaseChangeLog>

@@ -1,8 +1,8 @@
 package com.eshop.client.enums;
 
-import com.eshop.client.client.NetworkStrategy;
-import com.eshop.client.client.impl.BnbStrategyImpl;
-import com.eshop.client.client.impl.TronStrategyImpl;
+import com.eshop.client.strategy.NetworkStrategy;
+import com.eshop.client.strategy.impl.BnbStrategyImpl;
+import com.eshop.client.strategy.impl.TronStrategyImpl;
 import com.eshop.client.config.MessageConfig;
 import com.eshop.client.model.Select2Model;
 import org.springframework.beans.factory.annotation.Autowired;

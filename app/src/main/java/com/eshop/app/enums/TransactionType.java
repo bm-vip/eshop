@@ -2,6 +2,8 @@ package com.eshop.app.enums;
 
 import com.eshop.app.config.MessageConfig;
 import com.eshop.app.model.Select2Model;
+import com.eshop.app.strategy.TransactionStrategy;
+import com.eshop.app.strategy.impl.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -12,20 +14,22 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public enum TransactionType {
-    DEPOSIT("deposit"),
-    WITHDRAWAL("withdrawal"),
-    WITHDRAWAL_PROFIT("withdrawalProfit"),//both bonus and reward
-    BONUS("bonus"),//referrals
-    REWARD("reward"),//arbitrage
-    REWARD_REFERRAL("referralReward"),//referral reward
+    DEPOSIT("deposit", DepositStrategyImpl.class),
+    WITHDRAWAL("withdrawal", WithdrawalStrategyImpl.class),
+    WITHDRAWAL_PROFIT("withdrawalProfit", WithdrawalProfitStrategyImpl.class),//both bonus and reward
+    BONUS("bonus", BonusStrategyImpl.class), //referrals
+    REWARD("reward", RewardStrategyImpl.class), //arbitrage
+    REWARD_REFERRAL("referralReward", RewardReferralStrategyImpl.class),//referral reward
     ;
 
 
-    TransactionType(String title) {
+    TransactionType(String title,Class<? extends TransactionStrategy> implementationClass) {
         this.title = title;
+        this.implementationClass = implementationClass;
     }
     private MessageConfig messages;
     private String title;
+    private Class<? extends TransactionStrategy> implementationClass;
     public MessageConfig getMessages() {
         return messages;
     }
@@ -36,6 +40,9 @@ public enum TransactionType {
 
     public String getTitle() {
         return messages.getMessage(title);
+    }
+    public Class<? extends TransactionStrategy> getImplementationClass() {
+        return this.implementationClass;
     }
     public void setTitle(String title) {
         this.title = title;

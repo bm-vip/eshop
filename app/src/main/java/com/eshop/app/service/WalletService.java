@@ -19,6 +19,5 @@ public interface WalletService extends BaseService<WalletFilter, WalletModel, Lo
     BigDecimal totalReward();
 //    List<BalanceModel> totalProfit();
     Map<Long, BigDecimal> findAllWithinDateRange(long startDate, long endDate, TransactionType transactionType);
-    boolean validateTransaction(WalletModel model);
     BigDecimal referralDepositBonus(BigDecimal amount);
 }

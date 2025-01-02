@@ -93,8 +93,6 @@ function loadTable() {
     },{
         data: 'withdrawal'
     },{
-        data: 'bonus'
-    },{
         data: 'reward'
     },{
         data: 'modifiedDate',
@@ -122,8 +120,6 @@ function loadTable() {
         data: 'deposit'
     },{
         data: 'withdrawal'
-    },{
-        data: 'bonus'
     },{
         data: 'reward'
     },{

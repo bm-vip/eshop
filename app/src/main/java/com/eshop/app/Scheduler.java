@@ -11,6 +11,8 @@ import com.eshop.app.service.NotificationService;
 import com.eshop.app.service.SubscriptionPackageService;
 import com.eshop.app.service.SubscriptionService;
 import com.eshop.app.service.WalletService;
+import com.eshop.app.strategy.NetworkStrategy;
+import com.eshop.app.strategy.NetworkStrategyFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -28,13 +30,15 @@ public class Scheduler {
     private final SubscriptionPackageService subscriptionPackageService;
     private final NotificationService notificationService;
     private final WalletMapper walletMapper;
+    private final NetworkStrategyFactory networkStrategyFactory;
 
     @Scheduled(cron = "0 */3 * * * *")
     public void validateTransactions() {
         log.info("Wallet Scheduler has started!");
         walletRepository.findAllByStatusAndTransactionHashIsNotNullAndTransactionType(EntityStatusType.Pending, TransactionType.DEPOSIT).forEach(we -> {
             WalletModel model = walletMapper.toModel(we);
-            boolean transactionIsValid = walletService.validateTransaction(model);
+            var network = networkStrategyFactory.get(model.getNetwork());
+            boolean transactionIsValid = network.validate(model);
             if (transactionIsValid) {
                 model.setStatus(EntityStatusType.Active);
                 we.setStatus(EntityStatusType.Active);

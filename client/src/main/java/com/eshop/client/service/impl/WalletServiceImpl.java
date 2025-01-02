@@ -9,8 +9,10 @@ import com.eshop.client.mapping.WalletMapper;
 import com.eshop.client.model.ParameterModel;
 import com.eshop.client.model.SubscriptionPackageModel;
 import com.eshop.client.model.WalletModel;
+import com.eshop.client.repository.UserRepository;
 import com.eshop.client.repository.WalletRepository;
 import com.eshop.client.service.*;
+import com.eshop.client.strategy.TransactionStrategyFactory;
 import com.eshop.client.util.DateUtil;
 import com.eshop.client.util.SessionHolder;
 import com.eshop.exception.common.BadRequestException;
@@ -33,6 +35,7 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
+import static com.eshop.app.util.MapperHelper.get;
 import static com.eshop.client.util.DateUtil.toLocalDate;
 import static com.eshop.client.util.StringUtils.generateIdKey;
 
@@ -48,8 +51,10 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter, WalletModel
     private final UserService userService;
     private final MailService mailService;
     private final List<ParameterModel> referralRewardParameters;
+    private final TransactionStrategyFactory transactionStrategyFactory;
+    private final UserRepository userRepository;
 
-    public WalletServiceImpl(WalletRepository repository, WalletMapper mapper, SubscriptionService subscriptionService, SubscriptionPackageService subscriptionPackageService, JPAQueryFactory queryFactory, SessionHolder sessionHolder, ParameterService parameterService, UserService userService, MailService mailService) {
+    public WalletServiceImpl(WalletRepository repository, WalletMapper mapper, SubscriptionService subscriptionService, SubscriptionPackageService subscriptionPackageService, JPAQueryFactory queryFactory, SessionHolder sessionHolder, ParameterService parameterService, UserService userService, MailService mailService, TransactionStrategyFactory transactionStrategyFactory, UserRepository userRepository) {
         super(repository, mapper);
         this.walletRepository = repository;
         this.subscriptionService = subscriptionService;
@@ -60,6 +65,8 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter, WalletModel
         this.userService = userService;
         this.mailService = mailService;
         this.referralRewardParameters = parameterService.findAllByParameterGroupCode("REFERRAL_REWARD");
+        this.transactionStrategyFactory = transactionStrategyFactory;
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -94,75 +101,13 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter, WalletModel
     @Transactional
     public WalletModel create(WalletModel model, String allKey) {
         var user = userService.findById(model.getUser().getId(), generateIdKey("User", model.getUser().getId()));
-        var currentSubscription = subscriptionService.findByUserAndActivePackage(model.getUser().getId());
-        SubscriptionPackageModel currentSubscriptionPackage = currentSubscription.getSubscriptionPackage();
-        long countAllActiveChild = userService.countAllActiveChild(user.getId());
+        model.setRole(user.getRole());
 //        if(!user.isEmailVerified()) {
 //            mailService.sendVerification(user.getEmail(),"Email verification link");
 //            throw new ExpectationException("Please verify your email before make this transaction.");
 //        }
-        if (model.getTransactionType().equals(TransactionType.WITHDRAWAL_PROFIT)) {
-            if (currentSubscription == null)
-                throw new InsufficentBalanceException();
-            var totalProfit = walletRepository.totalProfit(model.getUser().getId());
-            if (totalProfit.compareTo(model.getAmount()) < 0)
-                throw new InsufficentBalanceException();
-            if (walletRepository.countAllByUserIdAndTransactionTypeAndStatus(user.getId(), TransactionType.WITHDRAWAL_PROFIT, EntityStatusType.Active) > 1
-                    && countAllActiveChild < currentSubscriptionPackage.getOrderCount()) {
-                throw new NotAcceptableException(String.format("To withdraw your profit you need to have at least %d referrals.", currentSubscriptionPackage.getOrderCount()));
-            }
-            if (model.getAmount().compareTo(new BigDecimal(minWithdrawAmount)) < 0)
-                throw new InsufficentBalanceException(String.format("Profit balance %s is insufficient for withdrawal!", minWithdrawAmount));
-            model.setStatus(EntityStatusType.Pending);
-        }
-        if (model.getTransactionType().equals(TransactionType.REWARD_REFERRAL)) {
-            var rewardReferrals = walletRepository.findAllReferralRewardByUserId(user.getId());
-            Map<Integer,WalletEntity> walletEntityMap = new HashMap<>();
-            rewardReferrals.forEach(w->{
-                Integer key = referralRewardParameters.stream()
-                        .filter(f -> Integer.valueOf(f.getValue()) <= w.getAmount().intValue())
-                        .mapToInt(m -> Integer.valueOf(m.getTitle()))
-                        .max()
-                        .orElse(0);
-                walletEntityMap.put(key, w);
-            });
-            var allowedReferralCount = countAllActiveChild - walletEntityMap.keySet().stream().mapToInt(Integer::valueOf).sum();
-            if(allowedReferralCount <= 0)
-                throw new NotAcceptableException("You have already claimed this referrals reward.");
-
-            var allowedAmount = referralRewardParameters.stream()
-                    .filter(f -> Long.valueOf(f.getTitle()) <= allowedReferralCount)
-                    .mapToLong(m -> Long.valueOf(m.getValue()))
-                    .max()
-                    .orElse(0L);
-            if(BigDecimal.valueOf(allowedAmount).compareTo(model.getAmount()) < 0)
-                throw new NotAcceptableException(String.format("Invalid requested, Amount is greater than the allowed amount (%d USD).", allowedAmount));
-            model.setActualAmount(model.getAmount());
-            model.setCurrency(CurrencyType.USDT);
-            model.setStatus(EntityStatusType.Active);
-        }
-        if (model.getTransactionType().equals(TransactionType.WITHDRAWAL)) {
-            if (currentSubscription == null)
-                throw new InsufficentBalanceException();
-            var totalDeposit = walletRepository.totalDeposit(model.getUser().getId());
-            if (totalDeposit.compareTo(model.getAmount()) < 0)
-                throw new InsufficentBalanceException();
-            if (model.getAmount().compareTo(currentSubscription.getFinalPrice()) >= 0) {
-                if (currentSubscription.getRemainingWithdrawalPerDay() > 0L)
-                    throw new NotAcceptableException(String.format("You can withdraw your funds after %d days.", currentSubscription.getRemainingWithdrawalPerDay()));
-                if (userService.countAllActiveChild(user.getId()) < currentSubscriptionPackage.getOrderCount()) {
-                    throw new NotAcceptableException(String.format("To withdraw your funds you need to have at least %d referrals.", currentSubscriptionPackage.getOrderCount()));
-                }
-            }
-            model.setStatus(EntityStatusType.Pending);
-        } else if (model.getTransactionType().equals(TransactionType.DEPOSIT)) {
-            //please deposit more than the subscription amount
-            var sp = subscriptionPackageService.findMatchedPackageByAmount(model.getAmount());
-            if (sp == null)
-                throw new BadRequestException("Please deposit at least the amount of the first subscription.");
-            model.setStatus(EntityStatusType.Pending);
-        }
-        model.setRole(user.getRole());
+        var transactionStrategy = transactionStrategyFactory.get(model.getTransactionType());
+        transactionStrategy.execute(model);
         clearCache("Wallet:");
         return super.create(model, allKey);
     }
@@ -170,23 +115,15 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter, WalletModel
     @Override
     @Transactional
     public WalletModel update(WalletModel model, String key, String allKey) {
-        var user = userService.findById(model.getUser().getId(), generateIdKey("User", model.getUser().getId()));
-//        if(!user.isEmailVerified()) {
-//            mailService.sendVerification(user.getEmail(),"Email verification link");
-//            throw new ExpectationException("Please verify your email before make this transaction.");
-//        }
-        model.setStatus(EntityStatusType.Pending);
-        var result = super.update(model, key, allKey);
-//        if(model.isActive()) {
-//            var balance = walletRepository.findBalance(model.getUser().getId());
-//            var subscriptionModel = subscriptionService.findByUserAndActivePackage(model.getUser().getId());
-//            for (BalanceModel balanceModel : balance) {
-//                var subscriptionPackage = subscriptionPackageService.findMatchedPackageByAmountAndCurrency(balanceModel.getTotalAmount(),balanceModel.getCurrency());
-//                if(subscriptionPackage != null && !subscriptionModel.getSubscriptionPackage().getId().equals(subscriptionPackage.getId())) {
-//                    subscriptionService.create(new SubscriptionModel().setSubscriptionPackage(subscriptionPackage).setUser(model.getUser()).setStatus(EntityStatusType.Active));
-//                }
-//            }
-//        }
+        var entity = repository.findById(model.getId()).orElseThrow(() -> new NotFoundException(String.format("%s not found by id %d", model.getClass().getName(), model.getId().toString())));
+        var user = userRepository.findById(model.getUser().getId()).orElseThrow(()->new NotFoundException("user not found"));
+        model.setRole(user.getRole());
+        if(!user.getId().equals(entity.getUser().getId()))
+            entity.setUser(user);
+
+        var transactionStrategy = transactionStrategyFactory.get(model.getTransactionType());
+        transactionStrategy.execute(model);
+        var result = mapper.toModel(repository.save(mapper.updateEntity(model, entity)));
         clearCache("Wallet:");
         return result;
     }

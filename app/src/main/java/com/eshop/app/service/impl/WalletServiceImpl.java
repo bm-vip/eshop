@@ -1,6 +1,6 @@
 package com.eshop.app.service.impl;
 
-import com.eshop.app.client.NetworkStrategyFactory;
+import com.eshop.app.strategy.NetworkStrategyFactory;
 import com.eshop.app.entity.QWalletEntity;
 import com.eshop.app.entity.WalletEntity;
 import com.eshop.app.enums.EntityStatusType;
@@ -8,13 +8,13 @@ import com.eshop.app.enums.RoleType;
 import com.eshop.app.enums.TransactionType;
 import com.eshop.app.filter.WalletFilter;
 import com.eshop.app.mapping.WalletMapper;
-import com.eshop.app.model.SubscriptionModel;
 import com.eshop.app.model.WalletModel;
 import com.eshop.app.repository.WalletRepository;
 import com.eshop.app.service.*;
+import com.eshop.app.strategy.TransactionStrategy;
+import com.eshop.app.strategy.TransactionStrategyFactory;
 import com.eshop.app.util.DateUtil;
 import com.eshop.exception.common.InsufficentBalanceException;
-import com.eshop.exception.common.NotAcceptableException;
 import com.eshop.exception.common.NotFoundException;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
@@ -27,7 +27,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.Date;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -49,8 +48,9 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter,WalletModel,
     private final NetworkStrategyFactory networkStrategyFactory;
     private final JPAQueryFactory queryFactory;
     private final RoleService roleService;
+    private final TransactionStrategyFactory transactionStrategyFactory;
 
-    public WalletServiceImpl(WalletRepository repository, WalletMapper mapper, SubscriptionPackageService subscriptionPackageService, SubscriptionService subscriptionService, ParameterServiceImpl parameterService, UserService userService, NotificationService notificationService, NetworkStrategyFactory networkStrategyFactory, JPAQueryFactory queryFactory, RoleService roleService) {
+    public WalletServiceImpl(WalletRepository repository, WalletMapper mapper, SubscriptionPackageService subscriptionPackageService, SubscriptionService subscriptionService, ParameterServiceImpl parameterService, UserService userService, NotificationService notificationService, NetworkStrategyFactory networkStrategyFactory, JPAQueryFactory queryFactory, RoleService roleService, TransactionStrategyFactory transactionStrategyFactory) {
         super(repository, mapper);
         this.walletRepository = repository;
         this.subscriptionPackageService = subscriptionPackageService;
@@ -61,6 +61,7 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter,WalletModel,
         this.networkStrategyFactory = networkStrategyFactory;
         this.queryFactory = queryFactory;
         this.roleService = roleService;
+        this.transactionStrategyFactory = transactionStrategyFactory;
     }
 
     @Override
@@ -113,42 +114,12 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter,WalletModel,
     @Transactional
     public WalletModel create(WalletModel model) {
         var user = userService.findById(model.getUser().getId());
-        var balance = walletRepository.calculateUserBalance(model.getUser().getId());
-        if(model.getTransactionType().equals(TransactionType.WITHDRAWAL)) {
-            if(balance.compareTo(model.getAmount()) < 0)
-                throw new InsufficentBalanceException();
-        }
         model.setRole(user.getRole());
-        var result =  super.create(model);
-        boolean transactionIsValid = validateTransaction(model);
-        if(model.getStatus().equals(EntityStatusType.Active) && (RoleType.hasRole(RoleType.ADMIN) || transactionIsValid)) {
-            balance = walletRepository.calculateUserBalance(model.getUser().getId());
-            var currentSubscription = subscriptionService.findByUserAndActivePackage(model.getUser().getId());
-
-            var nextSubscriptionPackage = subscriptionPackageService.findMatchedPackageByAmount(balance);
-            if(nextSubscriptionPackage != null && (currentSubscription == null || !currentSubscription.getSubscriptionPackage().getId().equals(nextSubscriptionPackage.getId()))) {
-                currentSubscription = subscriptionService.create(new SubscriptionModel().setSubscriptionPackage(nextSubscriptionPackage).setUser(model.getUser()).setStatus(EntityStatusType.Active));
-            }
-            final var newSubscription = currentSubscription;
-            if(model.getTransactionType().equals(TransactionType.WITHDRAWAL) && getOrDefault(()-> model.getAmount().compareTo(newSubscription.getSubscriptionPackage().getPrice()) >=0,false)){
-                if(RoleType.hasRole(RoleType.USER) && newSubscription.getRemainingWithdrawalPerDay() > 0)
-                    throw new NotAcceptableException(String.format("Withdrawal is allowed only after %d days", newSubscription.getRemainingWithdrawalPerDay()));
-            }
-            if(model.getTransactionType().equals(TransactionType.DEPOSIT) && walletRepository.countByUserIdAndTransactionTypeAndStatus(model.getUser().getId(),TransactionType.DEPOSIT,EntityStatusType.Active) == 1) {
-                if (get(() -> user.getParent()) != null) {
-                    WalletModel bonus1 = new WalletModel();
-                    bonus1.setStatus(EntityStatusType.Active);
-                    bonus1.setUser(user.getParent());
-                    bonus1.setAmount(referralDepositBonus(model.getAmount()));
-                    bonus1.setActualAmount(referralDepositBonus(model.getAmount()));
-                    bonus1.setTransactionType(TransactionType.BONUS);
-                    bonus1.setRole(user.getRole());
-                    create(bonus1);
-                }
-            }
-            notificationService.sendTransactionNotification(model);
-
-        }
+        var transactionStrategy = transactionStrategyFactory.get(model.getTransactionType());
+        transactionStrategy.beforeSave(model);
+        var result = super.create(model);
+        transactionStrategy.afterSave(model);
+        notificationService.sendTransactionNotification(model);
         return result;
     }
 
@@ -158,38 +129,12 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter,WalletModel,
         var entity = repository.findById(model.getId()).orElseThrow(() -> new NotFoundException(String.format("%s not found by id %d", model.getClass().getName(), model.getId().toString())));
         if(get(()->model.getUser().getId())!=null)
             entity.setUser(entityManager.getReference(entity.getUser().getClass(), model.getUser().getId()));
+        var transactionStrategy = transactionStrategyFactory.get(model.getTransactionType());
+        transactionStrategy.beforeSave(model);
         var result = mapper.toModel(repository.save(mapper.updateEntity(model, entity)));
-        if(model.getStatus().equals(EntityStatusType.Active) && (RoleType.hasRole(RoleType.ADMIN) || validateTransaction(model))) {
-            var balance = walletRepository.calculateUserBalance(model.getUser().getId());
-            var currentSubscription = subscriptionService.findByUserAndActivePackage(model.getUser().getId());
+        transactionStrategy.afterSave(result);
+        notificationService.sendTransactionNotification(model);
 
-            var subscriptionPackage = subscriptionPackageService.findMatchedPackageByAmount(balance);
-            if(subscriptionPackage != null && (currentSubscription == null || !currentSubscription.getSubscriptionPackage().getId().equals(subscriptionPackage.getId()))) {
-                currentSubscription = subscriptionService.create(new SubscriptionModel().setSubscriptionPackage(subscriptionPackage).setUser(model.getUser()).setStatus(EntityStatusType.Active));
-            }
-            final var newSubscription = currentSubscription;
-            if(model.getTransactionType().equals(TransactionType.WITHDRAWAL) && getOrDefault(()-> model.getAmount().compareTo(newSubscription.getSubscriptionPackage().getPrice()) >=0,false)){
-                if(RoleType.hasRole(RoleType.USER) && newSubscription.getRemainingWithdrawalPerDay() > 0)
-                    throw new NotAcceptableException(String.format("Withdrawal is allowed only after %d days.", newSubscription.getRemainingWithdrawalPerDay()));
-                if(userService.countAllActiveChild(model.getUser().getId()) < newSubscription.getSubscriptionPackage().getOrderCount())
-                    throw new NotAcceptableException(String.format("To withdraw your funds you need to have at least %d referrals.", newSubscription.getSubscriptionPackage().getOrderCount()));
-            }
-            if(model.getTransactionType().equals(TransactionType.DEPOSIT) && walletRepository.countByUserIdAndTransactionTypeAndStatus(model.getUser().getId(),TransactionType.DEPOSIT,EntityStatusType.Active) == 1) {
-                var user = userService.findById(model.getUser().getId());
-                if (get(() -> user.getParent()) != null) {
-                    WalletModel bonus1 = new WalletModel();
-                    bonus1.setStatus(EntityStatusType.Active);
-                    bonus1.setUser(user.getParent());
-                    bonus1.setAmount(referralDepositBonus(model.getAmount()));
-                    bonus1.setActualAmount(referralDepositBonus(model.getAmount()));
-                    bonus1.setTransactionType(TransactionType.BONUS);
-                    bonus1.setRole(user.getRole());
-                    create(bonus1);
-                }
-            }
-            notificationService.sendTransactionNotification(model);
-
-        }
         return result;
     }
 
@@ -282,24 +227,5 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter,WalletModel,
         var allDates = toLocalDate(startDate).datesUntil(toLocalDate(endDate).plusDays(1)).map(DateUtil::toEpoch);
 
         return allDates.collect(Collectors.toMap(epoch -> epoch, epoch -> map.getOrDefault(epoch, BigDecimal.ZERO)));
-    }
-    @Override
-    public boolean validateTransaction(WalletModel model) {
-        try {
-            var network = networkStrategyFactory.get(model.getNetwork());
-            var transaction = network.getTransactionInfo(model.getTransactionHash());
-            if (transaction == null)
-                return false;
-            if (!transaction.isSuccess())
-                return false;
-            if (transaction.getAmount().subtract(model.getActualAmount().setScale(4, RoundingMode.HALF_UP)).abs().compareTo(new BigDecimal("0.0001")) != 0)
-                return false;
-            if (!transaction.getToAddress().equals(model.getAddress()))
-                return false;
-            return true;
-        } catch (Exception e){
-            log.error("Transaction not valid. {}", e.getMessage());
-            return false;
-        }
     }
 }

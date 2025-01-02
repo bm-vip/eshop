@@ -116,8 +116,6 @@ columns = [{
 },{
     data: 'withdrawal'
 },{
-    data: 'bonus'
-},{
     data: 'reward'
 }, {
     data: 'id',

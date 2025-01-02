@@ -1,7 +1,7 @@
 package com.eshop.app.controller.impl;
 
-import com.eshop.app.client.NetworkStrategy;
-import com.eshop.app.client.NetworkStrategyFactory;
+import com.eshop.app.strategy.NetworkStrategy;
+import com.eshop.app.strategy.NetworkStrategyFactory;
 import com.eshop.app.enums.NetworkType;
 import com.eshop.app.model.Select2Model;
 import com.eshop.app.util.ReflectionUtil;
