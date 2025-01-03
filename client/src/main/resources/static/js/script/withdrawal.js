@@ -118,7 +118,7 @@ function afterSubmitForm(entity) {
             $(".btn-primary").removeAttr("disabled");
             if (data.error == null) {
                 clearAll();
-                show_success(resources.saveSuccess);
+                //show_success(resources.saveSuccess);
             } else {
                 show_error(data.error);
             }

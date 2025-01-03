@@ -95,7 +95,7 @@ public interface WalletRepository extends BaseRepository<WalletEntity, Long> {
 
 	@Query("""
 			SELECT coalesce(SUM(w.amount),0) 
-			FROM WalletEntity w (WHERE w.transactionType = com.eshop.app.enums.TransactionType.REWARD) 
+			FROM WalletEntity w WHERE (w.transactionType = com.eshop.app.enums.TransactionType.REWARD) 
 			AND w.user.id = :userId AND w.status=com.eshop.app.enums.EntityStatusType.Active""")
 	BigDecimal totalRewardByUserId(UUID userId);
 
