@@ -7,11 +7,11 @@
         $("#totalOnline").text(get(() => data, 0));
     });
 
-    $.get("api/v1/subscription/find-active-by-user/" + currentUser.id, function (data) {
-        if(isNullOrEmpty(data)) {
-            $(".reverse_timer").remove();
-        } else $("#totalDepositReverseTimer").text(data.remainingWithdrawalPerDay);
-    });
+    // $.get("api/v1/subscription/find-active-by-user/" + currentUser.id, function (data) {
+    //     if(isNullOrEmpty(data)) {
+    //         $(".reverse_timer").remove();
+    //     } else $("#totalDepositReverseTimer").text(data.remainingWithdrawalPerDay);
+    // });
     $.getJSON("/api/v1/wallet/total-bonus/" + currentUser.id, function (data) {
         $("#referralBonus").text(get(() => data, 0));
     });
