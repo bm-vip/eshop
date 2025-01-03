@@ -17,7 +17,7 @@ import java.math.BigDecimal;
 public class WalletModel extends BaseModel<Long> {
     @NotNull
     private BigDecimal amount;
-    @Column(name = "actual_amount", nullable = false)
+    @NotNull
     private BigDecimal actualAmount;
     @NotNull
     private TransactionType transactionType;

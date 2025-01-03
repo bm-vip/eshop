@@ -1,5 +1,6 @@
 package com.eshop.client.strategy.impl;
 
+import com.eshop.client.enums.CurrencyType;
 import com.eshop.client.enums.EntityStatusType;
 import com.eshop.client.model.WalletModel;
 import com.eshop.client.repository.WalletRepository;
@@ -30,6 +31,8 @@ public class WithdrawalProfitStrategyImpl implements TransactionStrategy {
 
     @Override
     public void execute(WalletModel model) {
+        model.setActualAmount(model.getAmount());
+        model.setCurrency(CurrencyType.USDT);
         var totalProfit = walletRepository.totalProfit(model.getUser().getId());
         if(totalProfit.compareTo(model.getAmount())<0)
             throw new InsufficentBalanceException();

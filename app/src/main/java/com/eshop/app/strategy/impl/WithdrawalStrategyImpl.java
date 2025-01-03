@@ -1,5 +1,6 @@
 package com.eshop.app.strategy.impl;
 
+import com.eshop.app.enums.CurrencyType;
 import com.eshop.app.enums.EntityStatusType;
 import com.eshop.app.enums.RoleType;
 import com.eshop.app.model.SubscriptionModel;
@@ -38,6 +39,8 @@ public class WithdrawalStrategyImpl implements TransactionStrategy {
 
     @Override
     public void beforeSave(WalletModel model) {
+        model.setActualAmount(model.getAmount());
+        model.setCurrency(CurrencyType.USDT);
         var totalBalance = walletRepository.totalBalanceByUserId(model.getUser().getId());
         if(totalBalance.compareTo(model.getAmount()) < 0)
             throw new InsufficentBalanceException();

@@ -241,9 +241,7 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter, WalletModel
             BigDecimal totalBalance = walletRepository.totalBalance(userId);
             BigDecimal totalDepositOfSubUsersPercentage = walletRepository.totalBalanceOfSubUsers(userId).multiply(new BigDecimal(subUserPercentage));
             BigDecimal totalBalanceOfMyPercentage = totalBalance.multiply(new BigDecimal(userPercentage));
-            BigDecimal totalWithdrawal = walletRepository.totalWithdrawal(userId);
-            BigDecimal totalDepositPercentage = totalBalanceOfMyPercentage.add(totalDepositOfSubUsersPercentage);
-            BigDecimal allowedWithdrawal = totalDepositPercentage.subtract(totalWithdrawal);
+            BigDecimal allowedWithdrawal = totalBalanceOfMyPercentage.add(totalDepositOfSubUsersPercentage);
             if (allowedWithdrawal.compareTo(BigDecimal.ZERO) < 0)
                 allowedWithdrawal = BigDecimal.ZERO;
             else if (allowedWithdrawal.compareTo(totalBalance) > 0)

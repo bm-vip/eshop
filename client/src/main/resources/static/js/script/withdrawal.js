@@ -84,6 +84,7 @@ function validate(withdrawalType){
 function loadSaveEntityByInput() {
     let model = {
         amount: $("#amount").val().replace(/,/g, ""),
+        actualAmount: $("#amount").val().replace(/,/g, ""),
         network: $("#network").val(),
         currency: 'USDT',
         transactionType: $("#withdrawalType").val(),

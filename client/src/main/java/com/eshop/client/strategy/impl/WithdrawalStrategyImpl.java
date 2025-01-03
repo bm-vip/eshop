@@ -1,5 +1,6 @@
 package com.eshop.client.strategy.impl;
 
+import com.eshop.client.enums.CurrencyType;
 import com.eshop.client.enums.EntityStatusType;
 import com.eshop.client.model.WalletModel;
 import com.eshop.client.repository.WalletRepository;
@@ -33,6 +34,8 @@ public class WithdrawalStrategyImpl implements TransactionStrategy {
 
     @Override
     public void execute(WalletModel model) {
+        model.setActualAmount(model.getAmount());
+        model.setCurrency(CurrencyType.USDT);
         var currentSubscription = subscriptionService.findByUserAndActivePackage(model.getUser().getId());
         if (currentSubscription == null)
             throw new InsufficentBalanceException();

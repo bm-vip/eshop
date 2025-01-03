@@ -7,7 +7,6 @@ import com.eshop.app.enums.TransactionType;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
-import javax.persistence.Column;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 
@@ -16,7 +15,7 @@ import java.math.BigDecimal;
 public class WalletModel extends BaseModel<Long> {
     @NotNull
     private BigDecimal amount;
-    @Column(name = "actual_amount", nullable = false)
+    @NotNull
     private BigDecimal actualAmount;
     @NotNull
     private TransactionType transactionType;
