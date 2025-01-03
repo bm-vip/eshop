@@ -74,7 +74,7 @@ public class UserServiceImpl extends BaseServiceImpl<UserFilter,UserModel, UserE
     public Page<UserModel> findAll(UserFilter filter, Pageable pageable) {
         return super.findAll(filter, pageable).map(m-> {
             m.setDeposit(walletRepository.totalDepositByUserId(m.getId()));
-            m.setWithdrawal(walletRepository.totalWithdrawalByUserId(m.getId()));
+            m.setWithdrawal(walletRepository.totalWithdrawalOrProfitByUserId(m.getId()));
             m.setReward(walletRepository.totalProfitByUserId(m.getId()));
             return m;
         });
@@ -86,7 +86,7 @@ public class UserServiceImpl extends BaseServiceImpl<UserFilter,UserModel, UserE
         if(!CollectionUtils.isEmpty(data.getData())) {
             for (UserModel m : data.getData()) {
                 m.setDeposit(walletRepository.totalDepositByUserId(m.getId()));
-                m.setWithdrawal(walletRepository.totalWithdrawalByUserId(m.getId()));
+                m.setWithdrawal(walletRepository.totalWithdrawalOrProfitByUserId(m.getId()));
                 m.setReward(walletRepository.totalProfitByUserId(m.getId()));
             }
         }

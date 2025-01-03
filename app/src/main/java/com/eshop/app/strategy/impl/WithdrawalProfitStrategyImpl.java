@@ -5,6 +5,7 @@ import com.eshop.app.enums.RoleType;
 import com.eshop.app.model.SubscriptionModel;
 import com.eshop.app.model.WalletModel;
 import com.eshop.app.repository.WalletRepository;
+import com.eshop.app.service.ParameterService;
 import com.eshop.app.service.SubscriptionPackageService;
 import com.eshop.app.service.SubscriptionService;
 import com.eshop.app.strategy.NetworkStrategyFactory;
@@ -17,27 +18,54 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 
 @Service
-@RequiredArgsConstructor
 public class WithdrawalProfitStrategyImpl implements TransactionStrategy {
     private final WalletRepository walletRepository;
     private final NetworkStrategyFactory networkStrategyFactory;
     private final SubscriptionService subscriptionService;
     private final SubscriptionPackageService subscriptionPackageService;
+    private final String minWithdrawAmount;
+    private final String subUserPercentage;
+    private final String userPercentage;
+
+    public WithdrawalProfitStrategyImpl(WalletRepository walletRepository, NetworkStrategyFactory networkStrategyFactory, SubscriptionService subscriptionService, SubscriptionPackageService subscriptionPackageService, ParameterService parameterService) {
+        this.walletRepository = walletRepository;
+        this.networkStrategyFactory = networkStrategyFactory;
+        this.subscriptionService = subscriptionService;
+        this.subscriptionPackageService = subscriptionPackageService;
+        this.minWithdrawAmount = parameterService.findByCode("MIN_WITHDRAW").getValue();
+        this.subUserPercentage = parameterService.findByCode("SUB_USER_PERCENTAGE").getValue();
+        this.userPercentage = parameterService.findByCode("USER_PERCENTAGE").getValue();
+    }
 
     @Override
     public void beforeSave(WalletModel model) {
-        var balance = walletRepository.totalProfitByUserId(model.getUser().getId());
-        if (balance.compareTo(model.getAmount()) < 0)
+        var totalProfit = walletRepository.totalProfitByUserId(model.getUser().getId());
+        if (totalProfit.compareTo(model.getAmount()) < 0)
             throw new InsufficentBalanceException();
+
+        if (model.getAmount().compareTo(new BigDecimal(minWithdrawAmount)) < 0)
+            throw new InsufficentBalanceException(String.format("Your requested amount %s should greater than %s", model.getAmount().toString(), minWithdrawAmount));
 
         var network = networkStrategyFactory.get(model.getNetwork());
         if(model.getStatus().equals(EntityStatusType.Active) && (RoleType.hasRole(RoleType.ADMIN) || network.validate(model))) {
-            BigDecimal totalDeposit = walletRepository.totalDepositByUserId(model.getUser().getId()).multiply(BigDecimal.valueOf(0.3));
-            BigDecimal totalWithdrawalProfit = walletRepository.totalWithdrawalProfitByUserId(model.getUser().getId());
-            BigDecimal allowedWithdrawal = totalDeposit.subtract(totalWithdrawalProfit);
-            if (allowedWithdrawal.compareTo(model.getAmount()) < 0)
-                throw new NotAcceptableException(String.format("You can withdraw profit up to 30%% of your deposited amount (%d USD).<br/>Your total withdrawal profit is %d USD.<br/> Your allowed withdrawal profit is %d USD.",
-                        totalDeposit.longValue(), totalWithdrawalProfit.longValue(), allowedWithdrawal.longValue()));
+            synchronized (model.getUser().getId().toString().intern()) {
+                BigDecimal totalDepositOfSubUsersPercentage = walletRepository.totalDepositOfSubUsers(model.getUser().getId()).multiply(new BigDecimal(subUserPercentage));
+                BigDecimal totalDepositOfMinePercentage = walletRepository.totalDepositByUserId(model.getUser().getId()).multiply(new BigDecimal(userPercentage));
+                BigDecimal totalWithdrawalProfit = walletRepository.totalWithdrawalProfitByUserId(model.getUser().getId());
+                BigDecimal totalDepositPercentage = totalDepositOfMinePercentage.add(totalDepositOfSubUsersPercentage);
+                BigDecimal allowedWithdrawal = totalDepositPercentage.subtract(totalWithdrawalProfit);
+                if (allowedWithdrawal.compareTo(BigDecimal.ZERO) < 0)
+                    allowedWithdrawal = BigDecimal.ZERO;
+                else if (allowedWithdrawal.compareTo(totalProfit) > 0)
+                    allowedWithdrawal = totalProfit;
+
+                if (allowedWithdrawal.compareTo(model.getAmount()) < 0) {
+                    throw new NotAcceptableException("""
+                            You can withdraw your profit amount up to : <strong>%d USD</strong>.<br/>
+                            To increase your withdrawal amount, please bring more referrals!"""
+                            .formatted(allowedWithdrawal.longValue()));
+                }
+            }
         }
     }
 

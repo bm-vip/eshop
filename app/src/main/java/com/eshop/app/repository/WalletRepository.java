@@ -49,12 +49,23 @@ public interface WalletRepository extends BaseRepository<WalletEntity, Long> {
 		return deposits.subtract(withdrawals);
 	}
 
-	@Query("SELECT coalesce(SUM(w.amount),0) "
-			+ "FROM WalletEntity w WHERE w.transactionType = com.eshop.app.enums.TransactionType.DEPOSIT "
-			+ "AND w.user.id = :userId AND w.status=com.eshop.app.enums.EntityStatusType.Active")
+	@Query("""
+			SELECT coalesce(SUM(w.amount),0) 
+			FROM WalletEntity w WHERE w.transactionType = com.eshop.app.enums.TransactionType.DEPOSIT
+			AND w.user.id = :userId AND w.status=com.eshop.app.enums.EntityStatusType.Active""")
 	BigDecimal totalDepositByUserId(UUID userId);
+
+	@Query("SELECT coalesce(SUM(w.amount),0) "
+			+ "FROM WalletEntity w join w.user u WHERE w.transactionType = com.eshop.app.enums.TransactionType.DEPOSIT "
+			+ "AND u.parent.id = :parentId AND w.status=com.eshop.app.enums.EntityStatusType.Active")
+	BigDecimal totalDepositOfSubUsers(UUID parentId);
+
 	@Query("SELECT coalesce(SUM(w.amount),0) "
 			+ "FROM WalletEntity w WHERE (w.transactionType = com.eshop.app.enums.TransactionType.WITHDRAWAL OR w.transactionType = com.eshop.app.enums.TransactionType.WITHDRAWAL_PROFIT) "
+			+ "AND w.user.id = :userId AND w.status=com.eshop.app.enums.EntityStatusType.Active")
+	BigDecimal totalWithdrawalOrProfitByUserId(UUID userId);
+	@Query("SELECT coalesce(SUM(w.amount),0) "
+			+ "FROM WalletEntity w WHERE (w.transactionType = com.eshop.app.enums.TransactionType.WITHDRAWAL) "
 			+ "AND w.user.id = :userId AND w.status=com.eshop.app.enums.EntityStatusType.Active")
 	BigDecimal totalWithdrawalByUserId(UUID userId);
 	@Query("SELECT coalesce(SUM(w.amount),0) "

@@ -52,6 +52,8 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter, WalletModel
     private final List<ParameterModel> referralRewardParameters;
     private final TransactionStrategyFactory transactionStrategyFactory;
     private final UserRepository userRepository;
+    private final String subUserPercentage;
+    private final String userPercentage;
 
     public WalletServiceImpl(WalletRepository repository, WalletMapper mapper, SubscriptionService subscriptionService, SubscriptionPackageService subscriptionPackageService, JPAQueryFactory queryFactory, SessionHolder sessionHolder, ParameterService parameterService, UserService userService, MailService mailService, TransactionStrategyFactory transactionStrategyFactory, UserRepository userRepository) {
         super(repository, mapper);
@@ -64,6 +66,8 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter, WalletModel
         this.userService = userService;
         this.mailService = mailService;
         this.referralRewardParameters = parameterService.findAllByParameterGroupCode("REFERRAL_REWARD");
+        this.subUserPercentage = parameterService.findByCode("SUB_USER_PERCENTAGE").getValue();
+        this.userPercentage = parameterService.findByCode("USER_PERCENTAGE").getValue();
         this.transactionStrategyFactory = transactionStrategyFactory;
         this.userRepository = userRepository;
     }
@@ -233,10 +237,32 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter, WalletModel
     @Override
     @Cacheable(cacheNames = "client", key = "'Wallet:' + #userId.toString() + ':' + #transactionType.name() + ':allowedWithdrawalBalance'")
     public BigDecimal allowedWithdrawalBalance(UUID userId, TransactionType transactionType) {
-        if (transactionType.equals(TransactionType.WITHDRAWAL))
-            return walletRepository.totalDeposit(userId);
-        if (transactionType.equals(TransactionType.WITHDRAWAL_PROFIT))
-            return walletRepository.totalProfit(userId);
+        if (transactionType.equals(TransactionType.WITHDRAWAL)) {
+            BigDecimal totalDeposit = walletRepository.totalDeposit(userId);
+            BigDecimal totalDepositOfSubUsersPercentage = walletRepository.totalDepositOfSubUsers(userId).multiply(new BigDecimal(subUserPercentage));
+            BigDecimal totalDepositOfMinePercentage = totalDeposit.multiply(new BigDecimal(userPercentage));
+            BigDecimal totalWithdrawal = walletRepository.totalWithdrawal(userId);
+            BigDecimal totalDepositPercentage = totalDepositOfMinePercentage.add(totalDepositOfSubUsersPercentage);
+            BigDecimal allowedWithdrawal = totalDepositPercentage.subtract(totalWithdrawal);
+            if (allowedWithdrawal.compareTo(BigDecimal.ZERO) < 0)
+                allowedWithdrawal = BigDecimal.ZERO;
+            else if (allowedWithdrawal.compareTo(totalDeposit) > 0)
+                allowedWithdrawal = totalDeposit;
+            return allowedWithdrawal;
+        }
+        if (transactionType.equals(TransactionType.WITHDRAWAL_PROFIT)) {
+            BigDecimal totalProfit = walletRepository.totalProfit(userId);
+            BigDecimal totalDepositOfSubUsersPercentage = walletRepository.totalDepositOfSubUsers(userId).multiply(new BigDecimal(subUserPercentage));
+            BigDecimal totalDepositOfMinePercentage = walletRepository.totalDeposit(userId).multiply(new BigDecimal(userPercentage));
+            BigDecimal totalWithdrawalProfit = walletRepository.totalWithdrawalProfit(userId);
+            BigDecimal totalDepositPercentage = totalDepositOfMinePercentage.add(totalDepositOfSubUsersPercentage);
+            BigDecimal allowedWithdrawal = totalDepositPercentage.subtract(totalWithdrawalProfit);
+            if (allowedWithdrawal.compareTo(BigDecimal.ZERO) < 0)
+                allowedWithdrawal = BigDecimal.ZERO;
+            else if (allowedWithdrawal.compareTo(totalProfit) > 0)
+                allowedWithdrawal = totalProfit;
+            return allowedWithdrawal;
+        }
         return BigDecimal.ZERO;
     }
 

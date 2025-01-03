@@ -7,9 +7,6 @@
         $("#totalOnline").text(get(() => data, 0));
     });
 
-    $.getJSON("/api/v1/wallet/total-deposit/" + currentUser.id, function (data) {
-        $("#totalDeposit").text(get(() => data, 0));
-    });
     $.get("api/v1/subscription/find-active-by-user/" + currentUser.id, function (data) {
         if(isNullOrEmpty(data)) {
             $(".reverse_timer").remove();
@@ -19,8 +16,12 @@
         $("#referralBonus").text(get(() => data, 0));
     });
 
-    $.getJSON("/api/v1/wallet/total-profit/" + currentUser.id, function (data) {
-        $("#totalProfit").text(get(() => data, 0));
+    $.getJSON("/api/v1/wallet/total-profit/" + currentUser.id, function (totalProfit) {
+        $("#totalProfit").text(get(() => totalProfit, 0));
+        $.getJSON("/api/v1/wallet/total-deposit/" + currentUser.id, function (totalDeposit) {
+            $("#totalDeposit").text(get(() => totalDeposit, 0));
+            $("#totalBalance").text(get(() => parseFloat(totalDeposit) + parseFloat(totalProfit), 0));
+        });
     });
 
     $.getJSON("/api/v1/wallet/total-withdrawal/" + currentUser.id, function (data) {

@@ -16,3 +16,5 @@ id,created_by,created_date,modified_by,modified_date,version,title,code,value,pa
 15,administrator,2022-03-29 22:07:51.381060,administrator,2022-03-29 22:07:51.381060,0,100,INVITE_100_FRIENDS,150,5
 16,administrator,2022-03-29 22:07:51.381060,administrator,2022-03-29 22:07:51.381060,0,500,INVITE_500_FRIENDS,800,5
 17,administrator,2022-03-29 22:07:51.381060,administrator,2022-03-29 22:07:51.381060,0,1000,INVITE_1000_FRIENDS,2000,5
+18,administrator,2022-03-29 22:07:51.381060,administrator,2022-03-29 22:07:51.381060,0,sub user percentage to calculate withdrawal amount,SUB_USER_PERCENTAGE,0.1,2
+19,administrator,2022-03-29 22:07:51.381060,administrator,2022-03-29 22:07:51.381060,0,user percentage to calculate withdrawal amount,USER_PERCENTAGE,0.3,2

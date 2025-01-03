@@ -44,17 +44,6 @@ function customTableOptions(){
     return tbl_option;
 }
 
-function loadAllowedWithdrawalInformation(withdrawalType) {
-    $.get(`api/v1/wallet/allowed-withdrawal-balance/${currentUser.id}/${withdrawalType}`, function (allowedAmount){
-        let minWithdraw = businessRules.find(x => x.code == 'MIN_WITHDRAW').value ?? '15';
-        let transferFee = businessRules.find(x => x.code == 'TRANSFER_FEE').value ?? '2';
-        $("#amount").attr('placeholder',`${minWithdraw} ~ ${allowedAmount}`);
-        $("#withdraw-notice .alert-content ul").html(`<li>${resources.minWithdrawalNotice.format(minWithdraw)}</li>
-                                                      <li>${resources.maxWithdrawalNotice.format(allowedAmount)}</li>
-                                                      <li>${resources.transferFee.format(transferFee)}</li>`);
-    });
-}
-
 function onLoad() {
     $.getJSON("/api/v1/user/" + currentUser.id, function (user) {
         $("#walletAddress").val(user.walletAddress);
@@ -68,29 +57,29 @@ function onLoad() {
     });
 }
 function validate(withdrawalType){
-    loadAllowedWithdrawalInformation(withdrawalType);
-    if(withdrawalType == 'WITHDRAWAL_PROFIT') {
-        $.getJSON("/api/v1/wallet/total-profit/" + currentUser.id, function (totalProfit) {
-            if (parseFloat(totalProfit) < parseFloat(businessRules.find(x => x.code == 'MIN_WITHDRAW').value)) {
+    $.get(`api/v1/wallet/allowed-withdrawal-balance/${currentUser.id}/${withdrawalType}`, function (allowedAmount){
+        let minWithdraw = businessRules.find(x => x.code == 'MIN_WITHDRAW').value ?? '15';
+        let transferFee = businessRules.find(x => x.code == 'TRANSFER_FEE').value ?? '2';
+        $("#amount").attr('placeholder',`${minWithdraw} ~ ${allowedAmount}`);
+        $("#withdraw-notice .alert-content ul").html(`<li>${resources.minWithdrawalNotice.format(minWithdraw)}</li>
+                                                      <li>${resources.maxWithdrawalNotice.format(allowedAmount)}</li>
+                                                      <li>${resources.transferFee.format(transferFee)}</li>`);
+        if(withdrawalType == 'WITHDRAWAL_PROFIT') {
+            if (parseFloat(allowedAmount) < parseFloat(businessRules.find(x => x.code == 'MIN_WITHDRAW').value)) {
                 $("#saveWithdraw").addClass("disabled").attr("aria-disabled", true).attr('disabled',true);
-                show_warning(`Profit balance ${totalProfit} is insufficient for withdrawal!`);
+                show_warning(`Insufficient allowed profit (${allowedAmount}) to withdraw!`);
             } else {
                 $("#saveWithdraw").removeClass("disabled").removeAttr("aria-disabled").removeAttr('disabled');
             }
-        });
-    } else if(withdrawalType == 'WITHDRAWAL') {
-        $.get("/api/v1/subscription/find-active-by-user/" + currentUser.id, function (subscription) {
-            if(isNullOrEmpty(subscription)) {
+        } else if(withdrawalType == 'WITHDRAWAL') {
+            if(parseInt(allowedAmount) <= 0) {
                 $("#saveWithdraw").addClass("disabled").attr("aria-disabled", true).attr('disabled',true);
-                show_warning(`Insufficient fund to withdraw!`);
-            } else if (subscription.remainingWithdrawalPerDay > 0) {
-                $("#saveWithdraw").addClass("disabled").attr("aria-disabled", true).attr('disabled',true);
-                show_warning(`You can withdraw your funds after ${subscription.remainingWithdrawalPerDay} days!`);
+                show_warning(`Insufficient allowed fund (${allowedAmount}) to withdraw!`);
             } else {
                 $("#saveWithdraw").removeClass("disabled").removeAttr("aria-disabled").removeAttr('disabled');
             }
-        });
-    }
+        }
+    });
 }
 function loadSaveEntityByInput() {
     let model = {
