@@ -238,25 +238,24 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletFilter, WalletModel
     @Cacheable(cacheNames = "client", key = "'Wallet:' + #userId.toString() + ':' + #transactionType.name() + ':allowedWithdrawalBalance'")
     public BigDecimal allowedWithdrawalBalance(UUID userId, TransactionType transactionType) {
         if (transactionType.equals(TransactionType.WITHDRAWAL)) {
-            BigDecimal totalDeposit = walletRepository.totalDeposit(userId);
-            BigDecimal totalDepositOfSubUsersPercentage = walletRepository.totalDepositOfSubUsers(userId).multiply(new BigDecimal(subUserPercentage));
-            BigDecimal totalDepositOfMinePercentage = totalDeposit.multiply(new BigDecimal(userPercentage));
+            BigDecimal totalBalance = walletRepository.totalBalance(userId);
+            BigDecimal totalDepositOfSubUsersPercentage = walletRepository.totalBalanceOfSubUsers(userId).multiply(new BigDecimal(subUserPercentage));
+            BigDecimal totalBalanceOfMyPercentage = totalBalance.multiply(new BigDecimal(userPercentage));
             BigDecimal totalWithdrawal = walletRepository.totalWithdrawal(userId);
-            BigDecimal totalDepositPercentage = totalDepositOfMinePercentage.add(totalDepositOfSubUsersPercentage);
+            BigDecimal totalDepositPercentage = totalBalanceOfMyPercentage.add(totalDepositOfSubUsersPercentage);
             BigDecimal allowedWithdrawal = totalDepositPercentage.subtract(totalWithdrawal);
             if (allowedWithdrawal.compareTo(BigDecimal.ZERO) < 0)
                 allowedWithdrawal = BigDecimal.ZERO;
-            else if (allowedWithdrawal.compareTo(totalDeposit) > 0)
-                allowedWithdrawal = totalDeposit;
+            else if (allowedWithdrawal.compareTo(totalBalance) > 0)
+                allowedWithdrawal = totalBalance;
             return allowedWithdrawal;
         }
         if (transactionType.equals(TransactionType.WITHDRAWAL_PROFIT)) {
             BigDecimal totalProfit = walletRepository.totalProfit(userId);
-            BigDecimal totalDepositOfSubUsersPercentage = walletRepository.totalDepositOfSubUsers(userId).multiply(new BigDecimal(subUserPercentage));
-            BigDecimal totalDepositOfMinePercentage = walletRepository.totalDeposit(userId).multiply(new BigDecimal(userPercentage));
-            BigDecimal totalWithdrawalProfit = walletRepository.totalWithdrawalProfit(userId);
-            BigDecimal totalDepositPercentage = totalDepositOfMinePercentage.add(totalDepositOfSubUsersPercentage);
-            BigDecimal allowedWithdrawal = totalDepositPercentage.subtract(totalWithdrawalProfit);
+            BigDecimal totalDepositOfSubUsersPercentage = walletRepository.totalBalanceOfSubUsers(userId).multiply(new BigDecimal(subUserPercentage));
+            BigDecimal totalBalanceOfMinePercentage = walletRepository.totalBalance(userId).multiply(new BigDecimal(userPercentage));
+
+            BigDecimal allowedWithdrawal = totalBalanceOfMinePercentage.add(totalDepositOfSubUsersPercentage);
             if (allowedWithdrawal.compareTo(BigDecimal.ZERO) < 0)
                 allowedWithdrawal = BigDecimal.ZERO;
             else if (allowedWithdrawal.compareTo(totalProfit) > 0)

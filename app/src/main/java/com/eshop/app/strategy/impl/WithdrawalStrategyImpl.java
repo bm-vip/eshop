@@ -38,22 +38,20 @@ public class WithdrawalStrategyImpl implements TransactionStrategy {
 
     @Override
     public void beforeSave(WalletModel model) {
-        var totalDeposit = walletRepository.totalDepositByUserId(model.getUser().getId());
-        if(totalDeposit.compareTo(model.getAmount()) < 0)
+        var totalBalance = walletRepository.totalBalanceByUserId(model.getUser().getId());
+        if(totalBalance.compareTo(model.getAmount()) < 0)
             throw new InsufficentBalanceException();
 
         var network = networkStrategyFactory.get(model.getNetwork());
         if(model.getStatus().equals(EntityStatusType.Active) && (RoleType.hasRole(RoleType.ADMIN) || network.validate(model))) {
             synchronized (model.getUser().getId().toString().intern()) {
-                BigDecimal totalDepositOfSubUsersPercentage = walletRepository.totalDepositOfSubUsers(model.getUser().getId()).multiply(new BigDecimal(subUserPercentage));
-                BigDecimal totalDepositOfMinePercentage = totalDeposit.multiply(new BigDecimal(userPercentage));
-                BigDecimal totalWithdrawal = walletRepository.totalWithdrawalByUserId(model.getUser().getId());
-                BigDecimal totalDepositPercentage = totalDepositOfMinePercentage.add(totalDepositOfSubUsersPercentage);
-                BigDecimal allowedWithdrawal = totalDepositPercentage.subtract(totalWithdrawal);
+                BigDecimal totalDepositOfSubUsersPercentage = walletRepository.totalBalanceOfSubUsers(model.getUser().getId()).multiply(new BigDecimal(subUserPercentage));
+                BigDecimal totalDepositOfMinePercentage = totalBalance.multiply(new BigDecimal(userPercentage));
+                BigDecimal allowedWithdrawal = totalDepositOfMinePercentage.add(totalDepositOfSubUsersPercentage);
                 if (allowedWithdrawal.compareTo(BigDecimal.ZERO) < 0)
                     allowedWithdrawal = BigDecimal.ZERO;
-                else if (allowedWithdrawal.compareTo(totalDeposit) > 0)
-                    allowedWithdrawal = totalDeposit;
+                else if (allowedWithdrawal.compareTo(totalBalance) > 0)
+                    allowedWithdrawal = totalBalance;
 
                 if (allowedWithdrawal.compareTo(model.getAmount()) < 0) {
                     throw new NotAcceptableException("""

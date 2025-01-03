@@ -41,11 +41,9 @@ public class WithdrawalProfitStrategyImpl implements TransactionStrategy {
         if (model.getAmount().compareTo(new BigDecimal(minWithdrawAmount)) < 0)
             throw new InsufficentBalanceException(String.format("Your requested amount %s should greater than %s", model.getAmount().toString(), minWithdrawAmount));
         synchronized (model.getUser().getId().toString().intern()) {
-            BigDecimal totalDepositOfSubUsersPercentage = walletRepository.totalDepositOfSubUsers(model.getUser().getId()).multiply(new BigDecimal(subUserPercentage));
-            BigDecimal totalDepositOfMinePercentage = walletRepository.totalDeposit(model.getUser().getId()).multiply(new BigDecimal(userPercentage));
-            BigDecimal totalWithdrawalProfit = walletRepository.totalWithdrawalProfit(model.getUser().getId());
-            BigDecimal totalDepositPercentage = totalDepositOfMinePercentage.add(totalDepositOfSubUsersPercentage);
-            BigDecimal allowedWithdrawal = totalDepositPercentage.subtract(totalWithdrawalProfit);
+            BigDecimal totalDepositOfSubUsersPercentage = walletRepository.totalBalanceOfSubUsers(model.getUser().getId()).multiply(new BigDecimal(subUserPercentage));
+            BigDecimal totalDepositOfMyPercentage = walletRepository.totalBalance(model.getUser().getId()).multiply(new BigDecimal(userPercentage));
+            BigDecimal allowedWithdrawal = totalDepositOfMyPercentage.add(totalDepositOfSubUsersPercentage);
             if (allowedWithdrawal.compareTo(BigDecimal.ZERO) < 0)
                 allowedWithdrawal = BigDecimal.ZERO;
             else if (allowedWithdrawal.compareTo(totalProfit) > 0)

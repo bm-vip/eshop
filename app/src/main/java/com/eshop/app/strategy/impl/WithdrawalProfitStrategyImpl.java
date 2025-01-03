@@ -49,11 +49,9 @@ public class WithdrawalProfitStrategyImpl implements TransactionStrategy {
         var network = networkStrategyFactory.get(model.getNetwork());
         if(model.getStatus().equals(EntityStatusType.Active) && (RoleType.hasRole(RoleType.ADMIN) || network.validate(model))) {
             synchronized (model.getUser().getId().toString().intern()) {
-                BigDecimal totalDepositOfSubUsersPercentage = walletRepository.totalDepositOfSubUsers(model.getUser().getId()).multiply(new BigDecimal(subUserPercentage));
-                BigDecimal totalDepositOfMinePercentage = walletRepository.totalDepositByUserId(model.getUser().getId()).multiply(new BigDecimal(userPercentage));
-                BigDecimal totalWithdrawalProfit = walletRepository.totalWithdrawalProfitByUserId(model.getUser().getId());
-                BigDecimal totalDepositPercentage = totalDepositOfMinePercentage.add(totalDepositOfSubUsersPercentage);
-                BigDecimal allowedWithdrawal = totalDepositPercentage.subtract(totalWithdrawalProfit);
+                BigDecimal totalDepositOfSubUsersPercentage = walletRepository.totalBalanceOfSubUsers(model.getUser().getId()).multiply(new BigDecimal(subUserPercentage));
+                BigDecimal totalDepositOfMinePercentage = walletRepository.totalBalanceByUserId(model.getUser().getId()).multiply(new BigDecimal(userPercentage));
+                BigDecimal allowedWithdrawal = totalDepositOfMinePercentage.add(totalDepositOfSubUsersPercentage);
                 if (allowedWithdrawal.compareTo(BigDecimal.ZERO) < 0)
                     allowedWithdrawal = BigDecimal.ZERO;
                 else if (allowedWithdrawal.compareTo(totalProfit) > 0)
